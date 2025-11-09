@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthed() { return request.auth != null; }
+    function isOwner(doc) { return isAuthed() && doc.uid == request.auth.uid; }
+    match /users/{uid} { allow read, write: if isAuthed() && uid == request.auth.uid; }
+    match /challenges/{id} { allow read: if isAuthed(); allow create, update: if isAuthed(); }
+    match /spots/{id} { allow read: if true; }
+    match /checkins/{id} { allow create: if isAuthed(); allow read: if isOwner(resource.data); }
+    match /wallets/{uid} { allow read, write: if isOwner(resource.data); }
+  }
+}
