@@ -1,0 +1,79 @@
+packages/ui/theme.ts (Shared)
+tsexport { SKATE } from '../../apps/mobile/theme'; // Alias for shared
+packages/ui/components/GrittyButton.tsx
+tsximport React from 'react';
+import { Pressable, Text } from 'react-native';
+import { SKATE } from '../theme';
+
+interface Props { children: React.ReactNode; onPress: () => void; }
+
+export const GrittyButton: React.FC<Props> = ({ children, onPress }) => (
+  <Pressable onPress={onPress} style={styles.button}>
+    <Text style={styles.text}>{children}</Text>
+  </Pressable>
+);
+
+const styles = {
+  button: {
+    backgroundColor: SKATE.colors.blood,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: SKATE.radius.lg,
+    borderWidth: 2,
+    borderColor: SKATE.colors.neon,
+  },
+  text: { color: 'white', fontWeight: '900', textAlign: 'center' },
+};
+packages/utils/geo.ts
+ts// Haversine exported for reuse
+export function haversine(a: [number, number], b: { lat: number; lng: number }): number {
+  // Same as above
+}
+infra/firebase/firestore.rules
+textrules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthed() { return request.auth != null; }
+    function isOwner(doc) { return isAuthed() && doc.uid == request.auth.uid; }
+    match /users/{uid} { allow read, write: if isAuthed() && uid == request.auth.uid; }
+    match /challenges/{id} { allow read: if isAuthed(); allow create, update: if isAuthed(); }
+    match /spots/{id} { allow read: if true; }
+    match /checkins/{id} { allow create: if isAuthed(); allow read: if isOwner(resource.data); }
+    match /wallets/{uid} { allow read, write: if isOwner(resource.data); }
+  }
+}
+infra/firebase/functions/index.ts (Heshur + Jobs)
+tsimport { onCall, onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { defineSecret } from 'firebase-functions/params';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(defineSecret('GEMINI_KEY').value!);
+
+const systemPrompt = `You are Heshur, an old-soul skate guru. Gritty but kind. Offer specific skate advice, spot tips, trick progressions. No toxicity. Always steer back to skating.`;
+
+export const heshurChat = onCall(async (request) => {
+  if (!request.auth) throw new Error('Unauthenticated');
+  const { message } = request.data;
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const result = await model.generateContent(systemPrompt + '\nUser: ' + message);
+  return { reply: result.response.text() };
+});
+
+export const onChallengeCreate = onDocumentCreated('challenges/{id}', async (event) => {
+  // Validate 15s clip, notify opponent via FCM
+  console.log('New challenge:', event.params.id);
+});
+.github/workflows/ci.yml
+yamlname: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint && pnpm typecheck && pnpm test
