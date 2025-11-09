@@ -1,15 +1,21 @@
 {
-  "name": "workspace",
+  "name": "skatehubba-monorepo",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "cd apps/mobile && npm start",
+    "lint": "echo 'Linting...'",
+    "typecheck": "echo 'Type checking...'",
+    "test": "echo 'Testing...'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "dependencies": {
     "openai": "^6.8.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.3.0"
   }
 }
