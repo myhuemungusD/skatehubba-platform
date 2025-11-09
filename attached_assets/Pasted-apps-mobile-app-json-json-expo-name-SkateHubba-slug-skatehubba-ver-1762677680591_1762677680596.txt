@@ -1,0 +1,73 @@
+apps/mobile/app.json
+json{
+  "expo": {
+    "name": "SkateHubba™",
+    "slug": "skatehubba",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/LOGOmain.webp",
+    "userInterfaceStyle": "dark",
+    "splash": { "image": "./assets/splash.png", "resizeMode": "contain", "backgroundColor": "#0a0a0a" },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.designmainline.skatehubba",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Record one-shot skate tricks.",
+        "NSLocationWhenInUseUsageDescription": "Check in to spots.",
+        "NSMicrophoneUsageDescription": "Audio for clips."
+      }
+    },
+    "android": {
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0a0a0a" },
+      "package": "com.designmainline.skatehubba"
+    },
+    "plugins": ["expo-location", "expo-camera"]
+  }
+}
+apps/mobile/theme.ts
+tsexport const SKATE = {
+  colors: { ink: "#0a0a0a", paper: "#f5f3ef", neon: "#39ff14", grime: "#1c1c1c", blood: "#b80f0a", gold: "#e3c300" },
+  radius: { lg: 16, xl: 24 },
+  timing: { fast: 120, norm: 220, slow: 360 }
+} as const;
+apps/mobile/firebase.ts
+tsimport { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
+
+const firebaseConfig = {
+  apiKey: "your-api-key", // From Firebase Console
+  authDomain: "skatehubba.firebaseapp.com",
+  projectId: "skatehubba",
+  storageBucket: "skatehubba.appspot.com",
+  messagingSenderId: "123",
+  appId: "1:123:ios:abc"
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+export const functions = getFunctions(app);
+apps/mobile/hooks/useAuth.ts
+tsimport { useEffect, useState } from 'react';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '../firebase';
+
+export const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
+
+  return { user, loading };
+};
