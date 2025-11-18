@@ -5,8 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { Eye, EyeOff, Mail, User, Lock } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { Checkbox } from "../components/ui/checkbox";
+import type { ConfirmationResult } from "firebase/auth";
+import { registerUser, loginUser, loginWithGoogle, setupRecaptcha, sendPhoneVerification, verifyPhoneCode } from "../lib/auth";
 import { trackEvent } from "../lib/analytics";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -25,9 +26,10 @@ export default function AuthPage() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState<any>(null);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isPhoneLoading, setIsPhoneLoading] = useState(false);
+  const [keepMeLoggedIn, setKeepMeLoggedIn] = useState(true); // Default to checked
 
   // Registration form
   const registerForm = useForm<RegisterInput>({
@@ -52,18 +54,10 @@ export default function AuthPage() {
   // Registration mutation - Firebase-only with email verification
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterInput) => {
-      // 1. Create Firebase user
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const firebaseUser = userCredential.user;
-
-      // 2. Update Firebase profile
-      await updateProfile(firebaseUser, {
-        displayName: `${data.firstName} ${data.lastName}`.trim()
+      const firebaseUser = await registerUser(data.email, data.password, {
+        firstName: data.firstName,
+        lastName: data.lastName,
       });
-
-      // 3. Send email verification (without custom URL to avoid domain allowlist issues)
-      const { sendEmailVerification } = await import('firebase/auth');
-      await sendEmailVerification(firebaseUser);
 
       trackEvent('sign_up', { method: 'firebase' });
       return firebaseUser;
@@ -90,19 +84,9 @@ export default function AuthPage() {
   // Login mutation - Firebase-only with email verification check
   const loginMutation = useMutation({
     mutationFn: async (data: LoginInput) => {
-      // 1. Authenticate with Firebase
-      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-      const firebaseUser = userCredential.user;
-
-      // 2. Check email verification
-      if (!firebaseUser.emailVerified) {
-        const { signOut } = await import('firebase/auth');
-        await signOut(auth);
-        throw new Error("Please verify your email before logging in.");
-      }
-
+      const result = await loginUser(data.email, data.password);
       trackEvent('login', { method: 'firebase' });
-      return firebaseUser;
+      return result;
     },
     onSuccess: () => {
       toast({
@@ -110,8 +94,8 @@ export default function AuthPage() {
         description: "You've successfully signed in.",
         variant: "default",
       });
-      // Force reload to refresh auth state
-      window.location.href = '/';
+      // Force reload to refresh auth state and redirect to map
+      window.location.href = '/map';
     },
     onError: (error: any) => {
       toast({
@@ -134,34 +118,13 @@ export default function AuthPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      const firebaseUser = userCredential.user;
-
-      // Get ID token and authenticate with backend
-      const idToken = await firebaseUser.getIdToken();
-      
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${idToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({}),
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
-      }
-
-      toast({ 
+      await loginWithGoogle();
+      toast({
         title: "Welcome! 🛹",
         description: "You've successfully signed in with Google."
       });
       trackEvent('login', { method: 'google' });
-      window.location.href = "/";
+      window.location.href = "/map";
     } catch (err: any) {
       toast({ 
         title: "Google sign-in failed", 
@@ -173,24 +136,14 @@ export default function AuthPage() {
     }
   };
 
-  // Phone Authentication
-  const setupRecaptcha = (elementId: string): RecaptchaVerifier => {
-    return new RecaptchaVerifier(auth, elementId, {
-      size: 'invisible',
-      callback: () => {
-        // reCAPTCHA solved
-      }
-    });
-  };
-
   const handleSendCode = async () => {
     setIsPhoneLoading(true);
     try {
-      const recaptchaVerifier = setupRecaptcha("recaptcha-container");
-      const confirmation = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
+      const recaptchaVerifier = await setupRecaptcha("recaptcha-container");
+      const confirmation = await sendPhoneVerification(phone, recaptchaVerifier);
       setConfirmationResult(confirmation);
       setShowOtp(true);
-      toast({ 
+      toast({
         title: "Code sent! 📱",
         description: "Check your phone for the verification code."
       });
@@ -208,37 +161,21 @@ export default function AuthPage() {
   const handleVerifyCode = async () => {
     setIsPhoneLoading(true);
     try {
-      const userCredential = await confirmationResult.confirm(otp);
-      const firebaseUser = userCredential.user;
-      
-      // Get ID token and authenticate with backend
-      const idToken = await firebaseUser.getIdToken();
-      
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${idToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({}),
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
+      if (!confirmationResult) {
+        throw new Error("Request a verification code before entering the OTP.");
       }
 
-      toast({ 
+      await verifyPhoneCode(confirmationResult, otp);
+      toast({
         title: "Welcome! 🛹",
         description: "You've successfully signed in."
       });
       trackEvent('login', { method: 'phone' });
-      window.location.href = "/";
+      window.location.href = "/map";
     } catch (err: any) {
-      toast({ 
-        title: "Verification failed", 
-        description: "Invalid code. Please try again.",
+      toast({
+        title: "Verification failed",
+        description: err instanceof Error ? err.message : "Invalid code. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -282,7 +219,7 @@ export default function AuthPage() {
                   <div className="space-y-2">
                     <Label htmlFor="login-email" className="text-white">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
                       <Input
                         id="login-email"
                         type="email"
@@ -300,7 +237,7 @@ export default function AuthPage() {
                   <div className="space-y-2">
                     <Label htmlFor="login-password" className="text-white">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
                       <Input
                         id="login-password"
                         type={showPassword ? "text" : "password"}
@@ -316,13 +253,30 @@ export default function AuthPage() {
                         className="absolute right-1 top-1 h-8 w-8 text-gray-400 hover:text-white"
                         onClick={() => setShowPassword(!showPassword)}
                         data-testid="button-toggle-password"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                       </Button>
                     </div>
                     {loginForm.formState.errors.password && (
                       <p className="text-sm text-red-400">{loginForm.formState.errors.password.message}</p>
                     )}
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="keep-logged-in"
+                      checked={keepMeLoggedIn}
+                      onCheckedChange={(checked) => setKeepMeLoggedIn(checked === true)}
+                      className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                      data-testid="checkbox-keep-logged-in"
+                    />
+                    <label
+                      htmlFor="keep-logged-in"
+                      className="text-sm text-gray-300 cursor-pointer"
+                    >
+                      Keep me logged in
+                    </label>
                   </div>
 
                   <Button
@@ -367,12 +321,13 @@ export default function AuthPage() {
                         onChange={(e) => setPhone(e.target.value)}
                         className="bg-[#181818] border-gray-600 text-white placeholder:text-gray-500"
                         data-testid="input-phone"
+                        aria-label="Phone number for verification"
                       />
                       <Button
                         type="button"
                         onClick={handleSendCode}
                         disabled={isPhoneLoading || !phone}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                        className="w-full bg-success hover:bg-success-hover text-white"
                         data-testid="button-send-code"
                       >
                         {isPhoneLoading ? "Sending..." : "Send Code"}
@@ -387,6 +342,7 @@ export default function AuthPage() {
                         onChange={(e) => setOtp(e.target.value)}
                         className="bg-[#181818] border-gray-600 text-white placeholder:text-gray-500"
                         data-testid="input-otp"
+                        aria-label="SMS verification code"
                       />
                       <Button
                         type="button"
@@ -428,7 +384,7 @@ export default function AuthPage() {
                     <div className="space-y-2">
                       <Label htmlFor="register-firstName" className="text-white">First Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
                         <Input
                           id="register-firstName"
                           type="text"
@@ -446,7 +402,7 @@ export default function AuthPage() {
                     <div className="space-y-2">
                       <Label htmlFor="register-lastName" className="text-white">Last Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
                         <Input
                           id="register-lastName"
                           type="text"
@@ -465,7 +421,7 @@ export default function AuthPage() {
                   <div className="space-y-2">
                     <Label htmlFor="register-email" className="text-white">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
                       <Input
                         id="register-email"
                         type="email"
@@ -483,7 +439,7 @@ export default function AuthPage() {
                   <div className="space-y-2">
                     <Label htmlFor="register-password" className="text-white">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
                       <Input
                         id="register-password"
                         type={showConfirmPassword ? "text" : "password"}
@@ -499,8 +455,9 @@ export default function AuthPage() {
                         className="absolute right-1 top-1 h-8 w-8 text-gray-400 hover:text-white"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         data-testid="button-toggle-register-password"
+                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                       >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                       </Button>
                     </div>
                     {registerForm.formState.errors.password && (

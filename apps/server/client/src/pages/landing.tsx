@@ -48,7 +48,7 @@ export default function Landing() {
                 onClick={() => {
                   window.location.href = '/donate';
                 }}
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold"
+                className="bg-success hover:bg-success-hover text-white px-6 py-2 rounded-lg font-semibold"
                 data-testid="button-donate-nav"
               >
                 Donate
@@ -109,7 +109,7 @@ export default function Landing() {
             <div className="flex justify-center">
               <Button 
                 onClick={() => window.location.href = '/donate'}
-                className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                className="bg-success hover:bg-success-hover text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 data-testid="button-donate-cta"
               >
                 Support Project

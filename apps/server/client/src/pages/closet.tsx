@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Package, Trophy, Star, Lock } from 'lucide-react';
+import { Package, Trophy, Star, Lock, Shirt } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { ClosetGrid } from '../components/skater/ClosetGrid';
 
 export default function ClosetPage() {
   const { user, isAuthenticated } = useAuth();
@@ -14,6 +15,12 @@ export default function ClosetPage() {
 
   const { data: inventory, isLoading } = useQuery({
     queryKey: ['/api/inventory', user?.uid],
+    enabled: !!user?.uid,
+  });
+
+  // Fetch user's closet items (gear)
+  const { data: closetItems, isLoading: closetLoading } = useQuery({
+    queryKey: ['/api/closet'],
     enabled: !!user?.uid,
   });
 
@@ -119,8 +126,16 @@ export default function ClosetPage() {
             <p className="text-gray-300">Manage your trick collectibles and achievements</p>
           </div>
 
-          <Tabs defaultValue="tricks" className="w-full">
+          <Tabs defaultValue="gear" className="w-full">
             <TabsList className="bg-neutral-900 border-neutral-700">
+              <TabsTrigger
+                value="gear"
+                className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black"
+                data-testid="tab-gear"
+              >
+                <Shirt className="w-4 h-4 mr-2" />
+                Gear Closet
+              </TabsTrigger>
               <TabsTrigger
                 value="tricks"
                 className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black"
@@ -138,6 +153,15 @@ export default function ClosetPage() {
                 Achievements
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="gear" className="mt-6">
+              <div className="mb-4">
+                <p className="text-gray-300 text-sm">
+                  Your skate gear collection - decks, trucks, wheels, shoes, and more!
+                </p>
+              </div>
+              <ClosetGrid items={closetItems || []} isLoading={closetLoading} />
+            </TabsContent>
 
             <TabsContent value="tricks" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -168,7 +192,7 @@ export default function ClosetPage() {
                     </CardHeader>
                     <CardContent>
                       {trick.owned ? (
-                        <Badge className="bg-[#24d52b]/20 text-[#24d52b] border-[#24d52b]/30">
+                        <Badge className="bg-success/20 text-success border-success/30">
                           <Star className="w-3 h-3 mr-1" />
                           Owned
                         </Badge>
@@ -203,7 +227,7 @@ export default function ClosetPage() {
                           }`}
                         />
                         {achievement.earned ? (
-                          <Badge className="bg-[#24d52b]/20 text-[#24d52b] border-[#24d52b]/30">
+                          <Badge className="bg-success/20 text-success border-success/30">
                             Earned
                           </Badge>
                         ) : (

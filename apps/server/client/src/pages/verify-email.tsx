@@ -79,7 +79,7 @@ export default function VerifyEmailPage() {
                 <Mail className="h-16 w-16 text-orange-500 animate-pulse" />
               )}
               {verificationStatus === 'success' && (
-                <CheckCircle className="h-16 w-16 text-green-500" />
+                <CheckCircle className="h-16 w-16 text-success" />
               )}
               {verificationStatus === 'error' && (
                 <XCircle className="h-16 w-16 text-red-500" />
@@ -99,7 +99,7 @@ export default function VerifyEmailPage() {
 
             {verificationStatus === 'success' && (
               <div className="space-y-4">
-                <p className="text-green-400 text-sm">
+                <p className="text-success text-sm">
                   🎉 Welcome to the SkateHubba community! Your account is now active.
                 </p>
                 <Button

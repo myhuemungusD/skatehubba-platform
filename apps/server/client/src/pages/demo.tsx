@@ -135,13 +135,13 @@ export default function Demo() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="p-4 bg-green-500/20 rounded-lg border border-green-500/30">
+                    <div className="p-4 bg-success/20 rounded-lg border border-success/30">
                       <div className="flex items-center gap-3 mb-2">
-                        <User className="w-5 h-5 text-green-400" />
-                        <span className="text-green-400 font-semibold">Demo Account Ready!</span>
+                        <User className="w-5 h-5 text-success" />
+                        <span className="text-success font-semibold">Demo Account Ready!</span>
                       </div>
                       <p className="text-[#fafafa]">
-                        Username: <Badge variant="outline" className="ml-2 border-green-500/50 text-green-400">
+                        Username: <Badge variant="outline" className="ml-2 border-success/50 text-success">
                           {demoUser?.username}
                         </Badge>
                       </p>
@@ -198,7 +198,7 @@ export default function Demo() {
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <Badge variant="outline" className="border-green-500/50 text-green-400">
+                    <Badge variant="outline" className="border-success/50 text-success">
                       Adaptive Flow
                     </Badge>
                     <p className="text-sm text-gray-300">
@@ -220,7 +220,7 @@ export default function Demo() {
               <CardContent>
                 <div className="space-y-3 font-mono text-sm">
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-green-600/20 text-green-400 border-green-600/30">GET</Badge>
+                    <Badge className="bg-success/20 text-success border-success/30">GET</Badge>
                     <span className="text-gray-300">/api/tutorial/steps</span>
                   </div>
                   <div className="flex items-center gap-2">

@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'wouter';
 import Navigation from '../components/Navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Trophy, Medal, TrendingUp, MapPin, Award, Crown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { ProfileSearch } from '../components/search/ProfileSearch';
 
 interface LeaderboardEntry {
   rank: number;
@@ -160,7 +162,12 @@ export default function LeaderboardPage() {
               <Trophy className="w-10 h-10 text-[#ff6a00]" />
               Legendary Spot Leaderboard
             </h1>
-            <p className="text-gray-300">Top skaters ranked by check-ins, spots, and tricks unlocked</p>
+            <p className="text-gray-300 mb-4">Top skaters ranked by check-ins, spots, and tricks unlocked</p>
+            
+            {/* Profile Search */}
+            <div className="mt-6">
+              <ProfileSearch />
+            </div>
           </div>
 
           {/* Top 3 Podium */}
@@ -183,7 +190,9 @@ export default function LeaderboardPage() {
                   </div>
                   <CardTitle className="text-xl">{entry.displayName}</CardTitle>
                   <CardDescription className="text-white/80 flex items-center gap-1">
-                    {entry.username}
+                    <Link href={`/skater/${entry.username.replace('@', '')}`} className="hover:text-orange-400 transition-colors cursor-pointer">
+                      {entry.username}
+                    </Link>
                     {entry.isPro && (
                       <Badge variant="outline" className="bg-orange-500/30 text-white border-orange-400 text-xs ml-1">
                         PRO
@@ -245,14 +254,18 @@ export default function LeaderboardPage() {
 
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-[#fafafa] font-semibold">{entry.displayName}</h3>
+                        <Link href={`/skater/${entry.username.replace('@', '')}`}>
+                          <h3 className="text-[#fafafa] font-semibold hover:text-orange-400 transition-colors cursor-pointer">{entry.displayName}</h3>
+                        </Link>
                         {entry.isPro && (
                           <Badge variant="outline" className="bg-orange-500/20 text-orange-400 border-orange-500/30 text-xs">
                             PRO
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-gray-400">{entry.username}</p>
+                      <Link href={`/skater/${entry.username.replace('@', '')}`}>
+                        <p className="text-sm text-gray-400 hover:text-orange-400 transition-colors cursor-pointer">{entry.username}</p>
+                      </Link>
                     </div>
 
                     <div className="hidden md:flex items-center gap-6 text-sm">
@@ -274,7 +287,7 @@ export default function LeaderboardPage() {
                       <div className="text-center">
                         <p className="text-gray-400">Tricks</p>
                         <p className="text-[#fafafa] font-semibold flex items-center gap-1">
-                          <Award className="w-3 h-3 text-green-500" />
+                          <Award className="w-3 h-3 text-success" />
                           {entry.tricksUnlocked}
                         </p>
                       </div>

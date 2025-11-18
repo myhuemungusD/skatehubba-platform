@@ -16,7 +16,7 @@ export default function OrderConfirmation() {
       <div className="mx-auto max-w-2xl p-6">
         <div className="text-center py-20" data-testid="order-confirmation-success">
           <div className="mb-8">
-            <CheckCircle className="w-24 h-24 mx-auto text-green-500 mb-6" />
+            <CheckCircle className="w-24 h-24 mx-auto text-success mb-6" />
             <h1 className="text-4xl font-bold mb-4">Order Confirmed! 🎉</h1>
             <p className="text-xl text-gray-300 mb-2">
               Thank you for your purchase!

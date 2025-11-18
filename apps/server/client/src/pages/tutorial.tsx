@@ -373,7 +373,7 @@ export default function Tutorial({ userId }: TutorialProps) {
                       isCurrent 
                         ? 'bg-orange-400/20 border-orange-400' 
                         : isCompleted
-                        ? 'bg-green-500/20 border-green-500/50'
+                        ? 'bg-success/20 border-success/50'
                         : 'bg-black/40 border-gray-600 hover:border-gray-500'
                     }`}
                     onClick={() => setCurrentStepIndex(index)}
@@ -383,7 +383,7 @@ export default function Tutorial({ userId }: TutorialProps) {
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-lg ${
                           isCompleted 
-                            ? 'bg-green-500/20 text-green-400' 
+                            ? 'bg-success/20 text-success' 
                             : isCurrent
                             ? 'bg-orange-400/20 text-orange-400'
                             : 'bg-gray-700 text-gray-400'

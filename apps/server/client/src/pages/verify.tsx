@@ -74,21 +74,21 @@ export default function VerifyPage() {
           <CardContent className="space-y-6">
             <div className="bg-[#181818] rounded-lg p-4 space-y-3">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-white font-medium">Step 1: Check your inbox</p>
                   <p className="text-gray-400 text-sm">Look for an email from Firebase</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-white font-medium">Step 2: Click the verification link</p>
                   <p className="text-gray-400 text-sm">This will verify your account</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-white font-medium">Step 3: Return and sign in</p>
                   <p className="text-gray-400 text-sm">Come back to this page to continue</p>

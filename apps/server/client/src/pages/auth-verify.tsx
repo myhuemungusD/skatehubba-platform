@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { applyActionCode, getAuth } from "firebase/auth";
-import { auth } from "../lib/firebase";
 import { Card, CardContent } from "../components/ui/card";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/button";
@@ -15,6 +14,15 @@ export default function AuthVerifyPage() {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
+        // Import auth dynamically to catch initialization errors
+        const { auth } = await import("../lib/firebase");
+        
+        if (!auth) {
+          setStatus("error");
+          setMessage("Firebase authentication not configured. Please contact support.");
+          return;
+        }
+
         // Get the action code from URL query params
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode');
@@ -66,7 +74,7 @@ export default function AuthVerifyPage() {
 
             {status === "success" && (
               <div className="text-center py-8">
-                <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
                 <h2 className="text-2xl font-bold text-white mb-2">Email Verified! ✅</h2>
                 <p className="text-gray-300 mb-6">{message}</p>
                 <p className="text-gray-400 text-sm mb-4">Redirecting to sign in...</p>

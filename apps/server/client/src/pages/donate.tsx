@@ -345,19 +345,19 @@ export default function Donate() {
                     </div>
 
                     {/* Alternative Options */}
-                    <div className="p-4 bg-green-500/10 rounded-lg border border-green-400/30">
-                      <h4 className="text-green-400 font-semibold mb-3">Alternative Options</h4>
+                    <div className="p-4 bg-success/10 rounded-lg border border-success/30">
+                      <h4 className="text-success font-semibold mb-3">Alternative Options</h4>
                       <div className="space-y-2">
                         <a
                           href="https://gofund.me/4d6b7234"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors font-medium text-sm sm:text-base"
+                          className="inline-flex items-center gap-2 bg-success hover:bg-success-hover text-white px-3 sm:px-4 py-2 rounded-lg transition-colors font-medium text-sm sm:text-base"
                         >
                           🎯 GoFundMe
                         </a>
                         <p className="text-sm text-gray-300">
-                          Or send directly to <strong className="text-green-400">$SkateHubbaApp</strong> via CashApp
+                          Or send directly to <strong className="text-success">$SkateHubbaApp</strong> via CashApp
                         </p>
                       </div>
                     </div>
@@ -404,7 +404,7 @@ export default function Donate() {
                   target="_blank" 
                   rel="noopener noreferrer"
                   onClick={() => trackButtonClick('quick_donate_stripe', 'donation_page')}
-                  className="inline-block w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 sm:py-4 text-base sm:text-lg rounded-lg shadow-lg transition-all transform hover:scale-105"
+                  className="inline-block w-full bg-success hover:bg-success-hover text-white font-semibold py-3 sm:py-4 text-base sm:text-lg rounded-lg shadow-lg transition-all transform hover:scale-105"
                   data-testid="button-quick-donate"
                 >
                   💚 Donate Any Amount
@@ -416,8 +416,8 @@ export default function Donate() {
             <Card className="bg-black/30 border-orange-400/30 backdrop-blur-sm">
               <CardContent className="p-4">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-green-400">
-                    <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Secure</Badge>
+                  <div className="flex items-center gap-2 text-success">
+                    <Badge className="bg-success/20 text-success border-success/30">Secure</Badge>
                     <span className="text-sm">Payments powered by Stripe</span>
                   </div>
                   <div className="text-sm text-gray-400">
