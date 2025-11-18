@@ -1,0 +1,21 @@
+{
+  "name": "@skatehubba/firebase",
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "echo 'No build needed for TS source packages'",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:rules": "firebase deploy --only firestore:rules"
+  },
+  "dependencies": {
+    "firebase": "^10.8.0",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^6.6.0",
+    "@google/generative-ai": "^0.24.1",
+    "@skatehubba/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "~5.3.0"
+  }
+}

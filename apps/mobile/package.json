@@ -1,14 +1,17 @@
 {
-  "name": "skatehubba-mobile",
+  "name": "@skatehubba/mobile",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "dev": "expo start",
-    "build": "eas build",
+    "build": "echo 'Use eas build for production builds'",
     "submit": "eas submit",
     "test": "jest",
     "e2e": "detox test"
   },
   "dependencies": {
+    "react": "^18.2.0",
+    "react-native": "~0.74.0",
     "expo": "~51.0.0",
     "expo-camera": "~15.0.0",
     "expo-location": "~17.0.0",
@@ -20,7 +23,12 @@
     "zustand": "^4.5.0",
     "react-native-reanimated": "~3.10.0",
     "react-native-vision-camera": "^4.0.0",
-    "react-native-video": "^6.0.0"
+    "react-native-video": "^6.0.0",
+    "@skatehubba/ui": "workspace:*",
+    "@skatehubba/types": "workspace:*",
+    "@skatehubba/firebase": "workspace:*",
+    "@skatehubba/utils": "workspace:*",
+    "@skatehubba/gameundici": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

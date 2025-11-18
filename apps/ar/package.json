@@ -1,0 +1,9 @@
+{
+  "name": "@skatehubba/ar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unity AR build output directory",
+  "scripts": {
+    "build": "echo 'Build AR with Unity and output to this directory'"
+  }
+}
