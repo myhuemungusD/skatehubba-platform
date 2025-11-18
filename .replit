@@ -18,6 +18,10 @@ author = "agent"
 task = "workflow.run"
 args = "SkateHubba Status"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SkateHubba Server"
+
 [[workflows.workflow]]
 name = "SkateHubba Status"
 author = "agent"
@@ -29,6 +33,22 @@ args = "node status-check.js"
 [workflows.workflow.metadata]
 outputType = "console"
 
+[[workflows.workflow]]
+name = "SkateHubba Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd apps/server && NODE_ENV=development npx tsx server/index.ts"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 40185
+externalPort = 3000

@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === "development") {
   const vite = await import("vite");
   createViteServer = vite.createServer;
   createLogger = vite.createLogger;
-  viteConfig = (await import("../vite.config.js")).default;
+  viteConfig = (await import("../vite.config.override.js")).default;
   viteLogger = createLogger();
 }
 
