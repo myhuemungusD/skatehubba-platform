@@ -270,7 +270,7 @@ async function startServer() {
     // In production, serve static files
     const { serveStatic } = await import('./vite.ts');
     serveStatic(app);
-    console.log('📦 Serving static files from dist/public');
+    console.log('📦 Serving static files from dist/client');
   }
   
   server.listen(PORT, () => {

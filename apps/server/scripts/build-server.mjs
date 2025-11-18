@@ -10,21 +10,11 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
-// Copy the client build to server's public directory
-const clientDir = 'dist/public';
-const serverPublicDir = path.join(outputDir, 'public');
+// Client is already built to dist/client, no need to copy
+const clientDir = 'dist/client';
 
-if (fs.existsSync(clientDir)) {
-  console.log('📂 Copying client assets to server public directory...');
-  
-  // Remove existing public directory
-  if (fs.existsSync(serverPublicDir)) {
-    fs.rmSync(serverPublicDir, { recursive: true });
-  }
-  
-  // Copy client build to server public
-  fs.cpSync(clientDir, serverPublicDir, { recursive: true });
-  console.log('✅ Client assets copied successfully');
+if (!fs.existsSync(clientDir)) {
+  console.warn('⚠️  Client build not found at dist/client - make sure to run build:client first');
 }
 
 // ESBuild configuration for server bundling
