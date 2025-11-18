@@ -4,23 +4,24 @@ import helmet from "helmet";
 
 const app = express();
 
-// Enhanced security headers
+// Enhanced security headers - relaxed for Replit development
 app.use(helmet({
-  contentSecurityPolicy: {
+  contentSecurityPolicy: process.env.NODE_ENV === 'development' ? false : {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://www.google.com", "https://www.gstatic.com"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.google.com", "https://www.gstatic.com", "https://js.stripe.com", "https://replit.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "https://*.firebaseapp.com", "https://*.googleapis.com", "https://*.replit.app", "https://*.replit.dev"],
-      fontSrc: ["'self'", "data:"],
+      connectSrc: ["'self'", "https://*.firebaseapp.com", "https://*.googleapis.com", "https://*.replit.app", "https://*.replit.dev", "https://*.stripe.com"],
+      fontSrc: ["'self'", "data:", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
-      frameSrc: ["'self'", "https://www.google.com"],
+      frameSrc: ["'self'", "https://www.google.com", "https://js.stripe.com"],
     },
   },
+  crossOriginEmbedderPolicy: false,
   hsts: {
-    maxAge: 31536000, // 1 year
+    maxAge: 31536000,
     includeSubDomains: true,
     preload: true
   },
@@ -44,10 +45,11 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
-    // In development, allow any .replit.dev or localhost
-    if (process.env.NODE_ENV === 'development' && 
-        (origin.includes('.replit.dev') || origin.includes('localhost'))) {
-      return callback(null, true);
+    // In development, allow any .replit.dev, .replit.app, or localhost
+    if (process.env.NODE_ENV === 'development') {
+      if (origin.includes('.replit.dev') || origin.includes('.replit.app') || origin.includes('localhost')) {
+        return callback(null, true);
+      }
     }
     
     // Check whitelist
@@ -55,7 +57,12 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Reject
+    // In development, allow all origins as fallback
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    // Reject in production
     callback(new Error('CORS policy violation'));
   },
   credentials: true,
