@@ -17,10 +17,6 @@
     "test": "turbo run test",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/.next apps/*/dist packages/*/dist"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@types/react-native": "^0.72.8",
