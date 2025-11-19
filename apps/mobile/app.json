@@ -10,7 +10,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.designmainline.skatehubba",
+      "bundleIdentifier": "com.skatehubba.app",
       "infoPlist": {
         "NSCameraUsageDescription": "Record one-shot skate tricks.",
         "NSLocationWhenInUseUsageDescription": "Check in to spots.",

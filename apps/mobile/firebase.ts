@@ -5,12 +5,12 @@ import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "skatehubba.firebaseapp.com",
-  projectId: "skatehubba",
-  storageBucket: "skatehubba.appspot.com",
-  messagingSenderId: "123",
-  appId: "1:123:ios:abc"
+  apiKey: "AIzaSyBvxRdM9YufW01yATOKmpUmp2zJJxaogH4",
+  authDomain: "sk8hub-d7806.firebaseapp.com",
+  projectId: "sk8hub-d7806",
+  storageBucket: "sk8hub-d7806.firebasestorage.app",
+  messagingSenderId: "665573979824",
+  appId: "1:665573979824:android:5eab00edc09ceb9fee2d75"
 };
 
 const app = initializeApp(firebaseConfig);
