@@ -4,11 +4,21 @@
 Full-stack skateboarding social platform with React Native mobile app, Next.js web app, Express API backend, and Unity AR integration. Built as a modern monorepo using pnpm workspaces and Turborepo.
 
 ## Recent Changes (November 20, 2025)
-- **Authentication Fully Functional**: Google OAuth working with popup + redirect fallback
+- **Web App Authentication Fully Functional**: Google OAuth working with popup + redirect fallback
   - Fixed OAuth flow to handle both popup and redirect methods
   - Updated all sign-in redirects to go to `/shop` (Hubba Shop)
   - Email/password login, Google OAuth, and phone auth all redirect to shop after sign-in
   - Firebase domain authorized: `123befe2-ef9e-44d2-bd98-d9ac095d8429-00-fv9kiszcdkp8.worf.replit.dev`
+  - Fixed critical bug: auth/routes.ts was importing firebase-admin directly instead of initialized admin with FIREBASE_ADMIN_KEY
+- **Mobile App Native Authentication Implemented**: React Native Google Sign-In with Firebase
+  - Installed native packages: @react-native-firebase/app, @react-native-firebase/auth, @react-native-google-signin/google-signin
+  - Created Zustand auth store with Google Sign-In integration (lib/auth.ts)
+  - Set up Expo Router with auth guards and no-loop navigation (app/_layout.tsx)
+  - Built sign-in screen with native Google button (app/sign-in.tsx)
+  - Created post-auth landing screen (app/map.tsx)
+  - Configured app.json with expo-dev-client, deep linking, and native plugins
+  - Fixed critical issues: added accessToken for Android, prevented redirect loops, added error handling
+  - Ready for testing with `npx expo run:android` (requires dev client build)
 - **Database Setup Complete**: Created unified schema at `apps/server/db/schema.ts` with 12 tables
   - Successfully ran migrations with drizzle-kit
   - All tables created: users, spots, challenges, check_ins, sessions, subscribers, donations, etc.

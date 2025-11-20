@@ -2,7 +2,9 @@
   "expo": {
     "name": "SkateHubba™",
     "slug": "skatehubba",
+    "scheme": "skatehubba",
     "version": "1.0.0",
+    "platforms": ["ios", "android"],
     "orientation": "portrait",
     "icon": "./assets/LOGOmain.webp",
     "userInterfaceStyle": "dark",
@@ -11,6 +13,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.skatehubba.app",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "Record one-shot skate tricks.",
         "NSLocationWhenInUseUsageDescription": "Check in to spots.",
@@ -19,8 +22,34 @@
     },
     "android": {
       "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0a0a0a" },
-      "package": "com.skathubba.app"
+      "package": "com.skathubba.app",
+      "googleServicesFile": "./android/app/google-services.json",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "skatehubba" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
-    "plugins": ["expo-location", "expo-camera"]
+    "plugins": [
+      "expo-location", 
+      "expo-camera",
+      "expo-dev-client",
+      [
+        "expo-build-properties",
+        { 
+          "android": { 
+            "compileSdkVersion": 34, 
+            "targetSdkVersion": 34 
+          } 
+        }
+      ],
+      "@react-native-google-signin/google-signin"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }
