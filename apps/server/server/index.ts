@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverPath = path.join(__dirname, 'index.js');
-const tsxBinary = path.resolve(__dirname, '../../node_modules/tsx/dist/cli.mjs');
+const tsxBinary = path.resolve(__dirname, '../../../node_modules/tsx/dist/cli.mjs');
 
 console.log('🔄 Starting SkateHubba fullstack application...');
 console.log('🌐 Unified Server (Frontend + API): http://localhost:5000');
