@@ -2,8 +2,6 @@
   deps = [
     pkgs.nodejs_22
     pkgs.pnpm
+    pkgs.nodePackages.pnpm
   ];
-  env = {
-    PNPM_HOME = "${pkgs.pnpm}/bin";
-  };
 }
