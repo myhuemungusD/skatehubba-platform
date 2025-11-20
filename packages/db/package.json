@@ -3,9 +3,26 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.mjs",
-  "types": "./src/index.ts",
-  "files": ["dist", "src"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js",
+      "default": "./dist/schema.js"
+    },
+    "./validations": {
+      "types": "./dist/validations.d.ts",
+      "import": "./dist/validations.js",
+      "default": "./dist/validations.js"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch"
