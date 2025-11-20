@@ -11,6 +11,10 @@ author = "agent"
 task = "workflow.run"
 args = "SkateHubba API"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SkateHubba Web"
+
 [[workflows.workflow]]
 name = "SkateHubba API"
 author = "agent"
@@ -23,6 +27,22 @@ task = "shell.exec"
 args = "node apps/server/dist/server/index.js"
 waitForPort = 8000
 
+[[workflows.workflow]]
+name = "SkateHubba Web"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pnpm --filter @skatehubba/web run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
 [[ports]]
 localPort = 8000
 externalPort = 8000
@@ -32,8 +52,8 @@ localPort = 8001
 externalPort = 80
 
 [[ports]]
-localPort = 5000
-externalPort = 80
+localPort = 39229
+externalPort = 3000
 
 [agent]
 expertMode = true

@@ -1,6 +1,0 @@
-{
-  "buildCommand": "cd ../.. && pnpm run build --filter @skatehubba/web",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "installCommand": "cd ../.. && pnpm install --frozen-lockfile"
-}
