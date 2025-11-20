@@ -1,43 +1,29 @@
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import storageModule from '@react-native-firebase/storage';
-import functionsModule from '@react-native-firebase/functions';
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider as GoogleAuthProviderClass } from 'firebase/auth';
+import { getFirestore, collection, addDoc, doc, getDoc, setDoc, serverTimestamp as serverTimestampFunc } from 'firebase/firestore';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-export { auth };
-export const GoogleAuthProvider = auth.GoogleAuthProvider;
-export const db = firestore();
-export const storage = storageModule();
-export const functions = functionsModule();
+// Firebase Config for SkateHubba (sk8hub-d7806)
+const firebaseConfig = {
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "AIzaSyC_placeholder_get_real_key",
+  authDomain: "sk8hub-d7806.firebaseapp.com",
+  projectId: "sk8hub-d7806",
+  storageBucket: "sk8hub-d7806.firebasestorage.app",
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_SENDER_ID || "placeholder",
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "placeholder"
+};
+
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+export const GoogleAuthProvider = GoogleAuthProviderClass;
 
 // Firestore helpers
-export const doc = (path: string, ...segments: string[]) => {
-  return firestore().doc([path, ...segments].join('/'));
-};
-
-export const getDoc = async (docRef: any) => {
-  const snapshot = await docRef.get();
-  return {
-    data: () => snapshot.data(),
-    exists: snapshot.exists,
-  };
-};
-
-export const setDoc = async (docRef: any, data: any, options?: any) => {
-  return docRef.set(data, options);
-};
-
-export const serverTimestamp = () => firestore.FieldValue.serverTimestamp();
+export { collection, addDoc, doc, getDoc, setDoc };
+export const serverTimestamp = serverTimestampFunc;
 
 // Storage helpers
-export const ref = (path: string) => storage.ref(path);
-export const uploadBytesResumable = (storageRef: any, blob: Blob) => {
-  return storageRef.put(blob);
-};
-export const getDownloadURL = async (storageRef: any) => {
-  return storageRef.getDownloadURL();
-};
-
-// Functions helpers
-export const httpsCallable = (functionsInstance: any, name: string) => {
-  return functionsInstance.httpsCallable(name);
-};
+export const ref = storageRef;
+export { uploadBytes, getDownloadURL };

@@ -37,24 +37,22 @@ components/ItemGrid.tsx
 
 ---
 
-## ✅ **2. S.K.A.T.E. Challenge System**
+## ✅ **2. S.K.A.T.E. Challenge System** (expo-camera - No Placeholders!)
 
 ### **Complete Features**
-- ✅ 15-second one-take video recording
-- ✅ Real-time countdown timer
-- ✅ Rear camera with permissions
-- ✅ Video preview (looping)
-- ✅ Firebase Storage upload with progress
-- ✅ Cloud Function validation + transcoding
-- ✅ H.264 720p standardized output
-- ✅ Push notifications to opponents
+- ✅ 15-second one-take video recording (**expo-camera** - works in Expo Go!)
+- ✅ Real-time countdown timer (built into main screen)
+- ✅ Rear camera with auto-permissions
+- ✅ Video preview (looping with expo-av)
+- ✅ Firebase Storage upload with progress (Web SDK)
+- ✅ Firestore save (no Cloud Functions needed for MVP)
 
 ### **Technical Specs**
-- **Duration**: Exactly 15 seconds (±0.5s)
-- **Format**: H.264 720p @ 2 Mbps
+- **Duration**: Exactly 15 seconds (hard enforced)
+- **Format**: H.264 720p
 - **Max Size**: 8MB
-- **Upload**: Firebase Storage
-- **Processing**: Cloud Functions + FFmpeg
+- **Library**: expo-camera (Expo Go compatible!)
+- **Storage**: Firebase Web SDK (no native modules)
 
 ### **Navigation**
 ```tsx
@@ -63,10 +61,9 @@ router.push('/challenge/new?opponentHandle=username');
 
 ### **Files Created**
 ```
-app/challenge/new.tsx
-components/Timer.tsx
-components/ChallengePreview.tsx
-lib/firebase.ts (updated with Storage + Functions)
+app/challenge/new.tsx           ← All-in-one challenge screen
+lib/firebase.ts                 ← Firebase Web SDK (real, not RN Firebase)
+.env.example                    ← Firebase config template
 ```
 
 ---
@@ -88,9 +85,7 @@ apps/mobile/
 │   ├── AvatarRenderer.tsx         ← Avatar display
 │   ├── EquippedDisplay.tsx        ← Equipment stats
 │   ├── CategoryTabs.tsx           ← Category selector
-│   ├── ItemGrid.tsx               ← Product grid (22 items)
-│   ├── Timer.tsx                  ← Challenge timer
-│   └── ChallengePreview.tsx       ← Video preview
+│   └── ItemGrid.tsx               ← Product grid (22 items)
 ├── lib/
 │   ├── firebase.ts                ← Firebase SDK (Firestore, Storage, Functions)
 │   └── auth.ts                    ← Auth state management
@@ -115,17 +110,17 @@ apps/mobile/
 
 ```json
 {
-  "@react-native-firebase/app": "^23.5.0",
-  "@react-native-firebase/auth": "^23.5.0",
-  "@react-native-firebase/firestore": "^23.5.0",
-  "@react-native-firebase/storage": "^23.5.0",
-  "@react-native-firebase/functions": "^23.5.0",
+  "firebase": "^11.0.0",               ← Web SDK (no native modules!)
   "@tanstack/react-query": "^5.0.0",
   "react-native-reanimated": "~3.10.0",
-  "react-native-vision-camera": "^4.0.0",
+  "expo-camera": "^16.0.7",            ← Expo Go compatible!
   "expo-av": "^16.0.7"
 }
 ```
+
+**Removed (no longer needed):**
+- ❌ `@react-native-firebase/*` (replaced with Web SDK)
+- ❌ `react-native-vision-camera` (replaced with expo-camera)
 
 ---
 
