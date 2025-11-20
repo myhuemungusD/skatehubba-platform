@@ -18,8 +18,9 @@ if (!fs.existsSync(clientDir)) {
 }
 
 // ESBuild configuration for server bundling
+// Bundle the actual Express server with all TypeScript dependencies compiled
 const config = {
-  entryPoints: ['server/index.ts'],
+  entryPoints: ['server/index.js'],
   bundle: true,
   platform: 'node',
   outfile: 'dist/server/index.js',
@@ -27,12 +28,18 @@ const config = {
   packages: 'external',
   external: [
     '@neondatabase/serverless',
+    '@skatehubba/db',
     'pg',
-    'ws'
+    'ws',
+    'express',
+    'cors',
+    'helmet',
+    'firebase-admin'
   ],
-  target: 'node18',
+  target: 'node22',
   minify: false,
   sourcemap: true,
+  mainFields: ['module', 'main'],
 };
 
 try {

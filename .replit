@@ -1,2 +1,35 @@
+modules = ["nodejs-22"]
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SkateHubba API"
+
+[[workflows.workflow]]
+name = "SkateHubba API"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "NODE_ENV=production node apps/server/dist/server/index.js"
+waitForPort = 8000
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+
+[[ports]]
+localPort = 43303
+externalPort = 80
+
 [agent]
 expertMode = true

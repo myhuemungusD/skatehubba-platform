@@ -13,7 +13,7 @@
     "dev:studio": "turbo dev --filter @skatehubba/studio",
     "dev:all": "turbo dev --parallel",
     "build": "turbo build",
-    "start": "node apps/server/dist/server/index.js",
+    "start": "NODE_ENV=production node apps/server/dist/server/index.js",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
