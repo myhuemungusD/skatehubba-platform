@@ -4,7 +4,7 @@ import { z } from "zod";
 import { subscribeLimit } from "./index";
 import { Resend } from "resend";
 import { db, eq } from "./db";
-import { users, insertUserSchema, selectUserSchema, tutorialSteps, userProgress } from "../shared/schema";
+import { users, insertUserSchema, selectUserSchema, tutorialSteps, userProgress } from "@skatehubba/db";
 import { hashPassword, comparePassword } from "./storage";
 import fs from 'fs/promises';
 import path from 'path';
@@ -23,7 +23,7 @@ import {
   insertUserProgressSchema, 
   updateUserProgressSchema,
   NewSubscriberInput
-} from "../shared/schema.ts";
+} from "@skatehubba/db";
 import crypto from "crypto";
 import validator from "validator";
 import { sendSubscriberNotification } from "./email";

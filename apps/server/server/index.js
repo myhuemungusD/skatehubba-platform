@@ -82,7 +82,7 @@ async function initializeDatabase() {
     const dbModule = await import('./db.ts');
     const storageModule = await import('./storage.ts');
     const emailModule = await import('./email.ts');
-    const schemaModule = await import('../shared/schema.ts');
+    const schemaModule = await import('@skatehubba/db');
     const firebaseAuthModule = await import('./auth/routes.ts');
     
     // Initialize Firebase Admin first

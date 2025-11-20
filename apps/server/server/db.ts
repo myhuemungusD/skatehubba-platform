@@ -1,6 +1,6 @@
 import { neon, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from "../shared/schema.ts";
+import * as schema from "@skatehubba/db";
 import { env } from './config/env';
 
 const sql = neon(env.DATABASE_URL);
