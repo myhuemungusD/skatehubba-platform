@@ -1,28 +1,27 @@
 {
   "name": "@skatehubba/db",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.mjs",
   "types": "./src/index.ts",
-  "exports": {
-    ".": {
-      "import": "./src/index.ts",
-      "types": "./src/index.ts"
-    },
-    "./schema": {
-      "import": "./src/schema.ts",
-      "types": "./src/schema.ts"
-    },
-    "./validations": {
-      "import": "./src/validations.ts",
-      "types": "./src/validations.ts"
-    }
-  },
+  "files": ["dist", "src"],
   "scripts": {
-    "build": "echo 'No build needed for TS source packages'",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "tsup": {
+    "entry": {
+      "index": "src/index.ts",
+      "schema": "src/schema.ts",
+      "validations": "src/validations.ts"
+    },
+    "format": ["esm"],
+    "dts": true,
+    "clean": true,
+    "sourcemap": true,
+    "outDir": "dist",
+    "skipNodeModulesBundle": true
   },
   "dependencies": {
     "drizzle-orm": "^0.33.0",
@@ -32,6 +31,7 @@
   "devDependencies": {
     "@types/node": "^20.14.15",
     "drizzle-kit": "^0.24.2",
+    "tsup": "^8.2.4",
     "typescript": "~5.9.2"
   }
 }

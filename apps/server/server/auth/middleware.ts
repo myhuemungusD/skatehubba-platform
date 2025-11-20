@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { AuthService } from './service.ts';
-import type { CustomUser } from '../../shared/schema.ts';
+import type { CustomUser } from '@skatehubba/db';
 import admin from 'firebase-admin';
 import { env } from '../config/env';
 
