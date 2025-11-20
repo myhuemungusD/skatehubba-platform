@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, onAuthStateChanged, signInWithPhoneNumber, RecaptchaVerifier, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, onAuthStateChanged, signInWithPhoneNumber, RecaptchaVerifier, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { auth } from "./firebase";
 
 export async function registerUser(email: string, password: string) {
@@ -49,29 +49,74 @@ export async function loginUser(email: string, password: string) {
 
 export async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
-  const userCredential = await signInWithPopup(auth, provider);
-  const firebaseUser = userCredential.user;
   
-  // Get ID token and authenticate with backend
-  const idToken = await firebaseUser.getIdToken();
-  
-  const response = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${idToken}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({}),
-    credentials: 'include',
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Login failed');
+  // Try popup first (works in most cases)
+  try {
+    const userCredential = await signInWithPopup(auth, provider);
+    const firebaseUser = userCredential.user;
+    
+    // Get ID token and authenticate with backend
+    const idToken = await firebaseUser.getIdToken();
+    
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${idToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({}),
+      credentials: 'include',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Login failed');
+    }
+    
+    const result = await response.json();
+    return result;
+  } catch (error: any) {
+    // If popup is blocked or fails, fall back to redirect
+    if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+      console.log('Popup blocked, using redirect method...');
+      await signInWithRedirect(auth, provider);
+      // Redirect will happen, no need to return anything
+      return null;
+    }
+    throw error;
   }
-  
-  const result = await response.json();
-  return result;
+}
+
+// Check for redirect result when page loads
+export async function checkRedirectResult() {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result && result.user) {
+      // User successfully signed in via redirect
+      const idToken = await result.user.getIdToken();
+      
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({}),
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Login failed');
+      }
+      
+      return await response.json();
+    }
+  } catch (error) {
+    console.error('Redirect result error:', error);
+    throw error;
+  }
+  return null;
 }
 
 export async function logoutUser() {
