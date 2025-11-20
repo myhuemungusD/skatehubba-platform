@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "SkateHubba Express API server",
-  "main": "index.js",
+  "main": "dist/server/index.js",
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=production node dist/server/index.js",
-    "dev": "NODE_ENV=development npx tsx server/index.ts",
+    "start": "cross-env NODE_ENV=production node dist/server/index.js",
+    "dev": "cross-env NODE_ENV=development tsx server/index.ts",
     "build": "node scripts/build-server.mjs",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
@@ -31,7 +31,6 @@
     "connect-pg-simple": "^9.0.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "date-fns": "^3.6.0",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
@@ -58,6 +57,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/compression": "^1.8.1",
     "@types/cookie-parser": "^1.4.9",

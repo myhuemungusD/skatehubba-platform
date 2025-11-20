@@ -38,3 +38,6 @@ expertMode = true
 deploymentTarget = "autoscale"
 run = ["node", "apps/server/dist/server/index.js"]
 build = ["sh", "-c", "corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile && pnpm run build"]
+
+[nix]
+channel = "stable-25_05"
