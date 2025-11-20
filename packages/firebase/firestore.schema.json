@@ -1,0 +1,100 @@
+{
+  "users": {
+    "{uid}": {
+      "handle": "string",
+      "stance": "string",
+      "sponsors": ["string"],
+      "shops": ["string"],
+      "teams": ["string"],
+      "board": {
+        "deck": "string",
+        "trucks": "string",
+        "wheels": "string",
+        "bearings": "string"
+      },
+      "stats": {
+        "wins": "integer",
+        "losses": "integer",
+        "points": "integer",
+        "mbds": "integer"
+      },
+      "fcmToken": "string",
+      "createdAt": "timestamp",
+      "updatedAt": "timestamp"
+    }
+  },
+  "challenges": {
+    "{id}": {
+      "createdBy": "string",
+      "opponent": "string",
+      "status": "string",
+      "rules": {
+        "oneTake": true,
+        "durationSec": 15
+      },
+      "clipA": {
+        "url": "string",
+        "duration": "number",
+        "ts": "timestamp"
+      },
+      "clipB": {
+        "url": "string",
+        "duration": "number",
+        "ts": "timestamp"
+      },
+      "winner": "string?",
+      "createdAt": "timestamp",
+      "deadline": "timestamp"
+    }
+  },
+  "spots": {
+    "{id}": {
+      "name": "string",
+      "geo": { "lat": "number", "lng": "number" },
+      "difficulty": "string",
+      "activeBounties": [
+        {
+          "trick": "string",
+          "reward": "integer",
+          "expires": "timestamp"
+        }
+      ],
+      "createdAt": "timestamp"
+    }
+  },
+  "checkins": {
+    "{id}": {
+      "uid": "string",
+      "spotId": "string",
+      "ts": "timestamp",
+      "proofVideoUrl": "string",
+      "geo": { "lat": "number", "lng": "number" }
+    }
+  },
+  "wallets": {
+    "{uid}": {
+      "hubbaBucks": "integer",
+      "updatedAt": "timestamp",
+      "transactions": [
+        {
+          "amount": "integer",
+          "type": "string",
+          "ref": "string",
+          "ts": "timestamp"
+        }
+      ]
+    }
+  },
+  "closet": {
+    "{uid}": {
+      "items": {
+        "{itemId}": {
+          "type": "string",
+          "brand": "string",
+          "color": "string",
+          "purchasedAt": "timestamp"
+        }
+      }
+    }
+  }
+}

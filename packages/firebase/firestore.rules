@@ -1,12 +1,67 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAuthed() { return request.auth != null; }
-    function isOwner(doc) { return isAuthed() && doc.uid == request.auth.uid; }
-    match /users/{uid} { allow read, write: if isAuthed() && uid == request.auth.uid; }
-    match /challenges/{id} { allow read: if isAuthed(); allow create, update: if isAuthed(); }
-    match /spots/{id} { allow read: if true; }
-    match /checkins/{id} { allow create: if isAuthed(); allow read: if isOwner(resource.data); }
-    match /wallets/{uid} { allow read, write: if isOwner(resource.data); }
+    function authed() { return request.auth != null; }
+    function self(u) { return authed() && u == request.auth.uid; }
+    function validClip(clip) {
+      return clip.keys().hasAll(['url', 'duration', 'ts']) &&
+             clip.duration is number && clip.duration <= 15 &&
+             clip.url is string && clip.url.matches('gs://.*') &&
+             clip.ts is timestamp;
+    }
+
+    match /users/{u} {
+      allow read: if authed();
+      allow create, update: if self(u) && 
+        request.resource.data.handle is string && 
+        request.resource.data.handle.size() <= 20 &&
+        request.resource.data.stance in ['regular', 'goofy'];
+    }
+
+    match /challenges/{c} {
+      allow read: if authed();
+      allow create: if authed() &&
+        request.resource.data.rules.oneTake == true &&
+        request.resource.data.rules.durationSec == 15 &&
+        request.resource.data.createdBy == request.auth.uid &&
+        request.resource.data.opponent is string &&
+        validClip(request.resource.data.clipA) &&
+        request.resource.data.status == 'pending' &&
+        !request.resource.data.keys().hasAny(['winner', 'deadline']);
+      allow update: if authed() &&
+        (resource.data.createdBy == request.auth.uid || resource.data.opponent == request.auth.uid) &&
+        resource.data.opponent == request.auth.uid &&
+        !resource.data.keys().hasAll(['clipB']) &&
+        request.resource.data.keys().hasAll(['clipB']) &&
+        validClip(request.resource.data.clipB) &&
+        request.resource.data.status == resource.data.status &&
+        (!request.resource.data.keys().hasAny(['winner']) || request.resource.data.winner == resource.data.winner) &&
+        (!request.resource.data.keys().hasAny(['deadline']) || request.resource.data.deadline == resource.data.deadline);
+    }
+
+    match /spots/{s} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /checkins/{c} {
+      allow read: if authed();
+      allow create: if authed() &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.proofVideoUrl is string &&
+        request.resource.data.geo.lat is number && 
+        request.resource.data.geo.lng is number;
+    }
+
+    match /wallets/{u} {
+      allow read, update: if self(u);
+      allow create: if false;
+    }
+
+    match /closet/{u}/items/{i} {
+      allow read, create, delete: if self(u) &&
+        request.resource.data.type in ['top', 'bottom', 'deck', 'hardware'] &&
+        request.resource.data.brand is string;
+    }
   }
 }
