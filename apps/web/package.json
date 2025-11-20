@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@skatehubba/api-sdk": "workspace:*",
+    "@skatehubba/firebase": "workspace:*",
+    "@skatehubba/types": "workspace:*",
+    "@tanstack/react-query": "^5.0.0",
+    "firebase": "^12.6.0",
     "next": "^14.2.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@skatehubba/types": "workspace:*",
-    "@skatehubba/firebase": "workspace:*",
-    "@skatehubba/api-sdk": "workspace:*"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
