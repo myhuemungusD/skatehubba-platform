@@ -3,7 +3,12 @@
 ## Overview
 Full-stack skateboarding social platform with React Native mobile app, Next.js web app, Express API backend, and Unity AR integration. Built as a modern monorepo using pnpm workspaces and Turborepo.
 
-## Recent Changes (November 19, 2025)
+## Recent Changes (November 20, 2025)
+- **Authentication Fully Functional**: Google OAuth working with popup + redirect fallback
+  - Fixed OAuth flow to handle both popup and redirect methods
+  - Updated all sign-in redirects to go to `/shop` (Hubba Shop)
+  - Email/password login, Google OAuth, and phone auth all redirect to shop after sign-in
+  - Firebase domain authorized: `123befe2-ef9e-44d2-bd98-d9ac095d8429-00-fv9kiszcdkp8.worf.replit.dev`
 - **Database Setup Complete**: Created unified schema at `apps/server/db/schema.ts` with 12 tables
   - Successfully ran migrations with drizzle-kit
   - All tables created: users, spots, challenges, check_ins, sessions, subscribers, donations, etc.

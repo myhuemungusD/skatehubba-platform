@@ -29,7 +29,7 @@ export default function SigninPage() {
         title: "Welcome back! 🛹",
         description: "You've successfully signed in."
       });
-      window.location.href = "/map";
+      window.location.href = "/shop";
     } catch (err: any) {
       const errorMessage = err.message;
       
@@ -71,7 +71,7 @@ export default function SigninPage() {
         title: "Welcome back! 🛹",
         description: "You've successfully signed in with Google."
       });
-      window.location.href = "/map";
+      window.location.href = "/shop";
     } catch (err: any) {
       toast({ 
         title: "Google sign-in failed", 
@@ -119,7 +119,7 @@ export default function SigninPage() {
         title: "Welcome back! 🛹",
         description: "You've successfully signed in."
       });
-      window.location.href = "/map";
+      window.location.href = "/shop";
     } catch (err: any) {
       toast({
         title: "Verification failed",

@@ -110,7 +110,12 @@ export async function checkRedirectResult() {
         throw new Error(errorData.error || 'Login failed');
       }
       
-      return await response.json();
+      const data = await response.json();
+      
+      // Redirect to shop after successful Google sign-in
+      window.location.href = "/shop";
+      
+      return data;
     }
   } catch (error) {
     console.error('Redirect result error:', error);
