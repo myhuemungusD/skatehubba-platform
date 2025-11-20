@@ -19,14 +19,35 @@ export async function initializeDatabase() {
 
     if (existingSteps.length === 0) {
       console.log("Seeding tutorial steps...");
-      // Seed tutorial steps - basic implementation
       const defaultSteps = [
         {
           title: "Welcome to SkateHubba",
           description: "Learn the basics of navigating the skate community",
           type: "intro" as const,
-          content: { videoUrl: "https://example.com/intro-video" },
+          content: { 
+            text: "Welcome to SkateHubba! Tap anywhere to check out spots, join challenges, and connect with skaters worldwide." 
+          },
           order: 1,
+          isActive: true
+        },
+        {
+          title: "Find Skate Spots",
+          description: "Discover and check-in to nearby skate spots",
+          type: "feature" as const,
+          content: { 
+            text: "Use the map to find skate spots near you. Check in within 30m to unlock tricks and earn rewards!" 
+          },
+          order: 2,
+          isActive: true
+        },
+        {
+          title: "Join S.K.A.T.E. Challenges",
+          description: "Compete in one-take video challenges",
+          type: "feature" as const,
+          content: { 
+            text: "Challenge friends to a game of S.K.A.T.E.! Record your trick, send it, and see if they can match it." 
+          },
+          order: 3,
           isActive: true
         }
       ];

@@ -586,21 +586,20 @@ You're knowledgeable about skateboarding culture, tricks, spots, and the SkateHu
         });
       }
 
-      // Mock spot data (in production this would come from database/Firestore)
-      const mockSpots: Record<string, { lat: number; lng: number; name: string }> = {
-        'spot-1': { lat: 40.7128, lng: -74.0060, name: 'Downtown Rails' },
-        'spot-2': { lat: 40.7589, lng: -73.9851, name: 'City Plaza Stairs' },
-        'spot-3': { lat: 40.7829, lng: -73.9654, name: 'Riverside Park' },
-        'spot-4': { lat: 40.7489, lng: -73.9680, name: 'Industrial Ledges' },
-      };
-
-      const spot = mockSpots[spotId];
-      if (!spot) {
+      // Query spot from database
+      const spotData = await storage.getSpot(spotId);
+      if (!spotData) {
         return res.status(404).json({
           success: false,
           message: "Spot not found"
         });
       }
+
+      const spot = {
+        lat: spotData.latitude,
+        lng: spotData.longitude,
+        name: spotData.name
+      };
 
       // Calculate distance using Haversine formula
       const R = 6371e3; // Earth radius in meters

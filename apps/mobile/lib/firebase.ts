@@ -4,14 +4,24 @@ import { getFirestore, collection, addDoc, doc, getDoc, setDoc, serverTimestamp 
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Firebase Config for SkateHubba (sk8hub-d7806)
+// Set these in .env file (see .env.example)
 const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "AIzaSyC_placeholder_get_real_key",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: "sk8hub-d7806.firebaseapp.com",
   projectId: "sk8hub-d7806",
   storageBucket: "sk8hub-d7806.firebasestorage.app",
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_SENDER_ID || "placeholder",
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "placeholder"
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID
 };
+
+// Validate required config
+if (!firebaseConfig.apiKey || !firebaseConfig.messagingSenderId || !firebaseConfig.appId) {
+  throw new Error(
+    'Missing Firebase configuration. Please add EXPO_PUBLIC_FIREBASE_API_KEY, ' +
+    'EXPO_PUBLIC_FIREBASE_SENDER_ID, and EXPO_PUBLIC_FIREBASE_APP_ID to your .env file. ' +
+    'Get these from Firebase Console → Project Settings → Web App'
+  );
+}
 
 const app = initializeApp(firebaseConfig);
 

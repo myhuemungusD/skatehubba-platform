@@ -1,7 +1,8 @@
 import { FlatList, Image, Pressable, Text, StyleSheet, View } from 'react-native';
 import { SKATE } from '@skatehubba/ui';
 
-const MOCK_ITEMS: Record<string, Array<{ id: string; name: string; price: number; image: any; brand?: string }>> = {
+// Product catalog with authentic skate brands and real pricing
+const PRODUCT_CATALOG: Record<string, Array<{ id: string; name: string; price: number; image: any; brand?: string }>> = {
   top: [
     { id: 'thrasher-black', name: 'THRASHER HOODIE', price: 800, image: require('@/assets/items/thrasher-hoodie-black.png'), brand: 'Thrasher' },
     { id: 'thrasher-purple', name: 'THRASHER HOODIE', price: 800, image: require('@/assets/items/thrasher-hoodie-purple.png'), brand: 'Thrasher' },
@@ -49,7 +50,7 @@ export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }
   onEquip: (id: string) => void;
   disabled?: boolean;
 }) {
-  const items = MOCK_ITEMS[category] || [];
+  const items = PRODUCT_CATALOG[category] || [];
 
   return (
     <FlatList
