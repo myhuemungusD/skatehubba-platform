@@ -41,6 +41,7 @@ const ClosetPage = lazy(() => import("./pages/closet"));
 const MapPage = lazy(() => import("./pages/map"));
 const SkateGamePage = lazy(() => import("./pages/skate-game"));
 const LeaderboardPage = lazy(() => import("./pages/leaderboard"));
+const TestAuthPage = lazy(() => import("./pages/test-auth"));
 
 function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -72,6 +73,7 @@ function AppRoutes() {
           <Route path="/auth/verify" component={AuthVerifyPage} />
           <Route path="/verify-email" component={VerifyEmailPage} />
           <Route path="/verified" component={VerifiedPage} />
+          <Route path="/test-auth" component={TestAuthPage} />
           <Route path="/tutorial" component={() => <AuthPage />} />
           {/* Protected routes with email verification */}
           <Route path="/map" component={() => <ProtectedRoute><MapPage /></ProtectedRoute>} />
