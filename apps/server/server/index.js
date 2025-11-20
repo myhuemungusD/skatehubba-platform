@@ -274,7 +274,8 @@ async function startServer() {
   }
   
   // Start Express HTTP server (pure API - no client assets)
-  app.listen(PORT, () => {
+  // Bind to 0.0.0.0 for Replit deployment compatibility
+  app.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 SkateHubba API Server running on port ${PORT}`);
     console.log(`🎯 Mode: ${process.env.NODE_ENV || 'development'}`);
     console.log(`📧 Email signup endpoint: POST /api/subscribe`);
