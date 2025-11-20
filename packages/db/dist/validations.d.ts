@@ -5,8 +5,8 @@ declare const NewSubscriberInput: z.ZodObject<{
     email: z.ZodEffects<z.ZodString, string, string>;
     isActive: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    firstName: string | null;
     email: string;
+    firstName: string | null;
     isActive?: boolean | undefined;
 }, {
     email: string;
@@ -22,16 +22,16 @@ declare const SubscriberSchema: z.ZodObject<{
     isActive: z.ZodBoolean;
     createdAt: z.ZodDate;
 }, "strip", z.ZodTypeAny, {
+    id: string;
+    email: string;
     firstName: string | null;
-    email: string;
-    isActive: boolean;
-    id: string;
     createdAt: Date;
+    isActive: boolean;
 }, {
-    email: string;
-    isActive: boolean;
     id: string;
+    email: string;
     createdAt: Date;
+    isActive: boolean;
     firstName?: string | undefined;
 }>;
 type SubscriberData = z.infer<typeof SubscriberSchema>;
@@ -45,15 +45,15 @@ declare const registerSchema: z.ZodObject<{
     firstName: z.ZodString;
     lastName: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    firstName: string;
     email: string;
-    password: string;
+    firstName: string;
     lastName: string;
+    password: string;
 }, {
-    firstName: string;
     email: string;
-    password: string;
+    firstName: string;
     lastName: string;
+    password: string;
 }>;
 declare const loginSchema: z.ZodObject<{
     email: z.ZodString;
@@ -83,11 +83,11 @@ declare const resetPasswordSchema: z.ZodObject<{
     token: z.ZodString;
     password: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    password: string;
     token: string;
+    password: string;
 }, {
-    password: string;
     token: string;
+    password: string;
 }>;
 type RegisterInput = z.infer<typeof registerSchema>;
 type LoginInput = z.infer<typeof loginSchema>;

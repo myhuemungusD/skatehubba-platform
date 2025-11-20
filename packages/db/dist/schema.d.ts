@@ -1430,11 +1430,10 @@ declare const feedback: drizzle_orm_pg_core.PgTableWithColumns<{
     dialect: "pg";
 }>;
 declare const insertTutorialStepSchema: zod.ZodObject<Omit<{
-    type: zod.ZodString;
-    isActive: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
     id: zod.ZodOptional<zod.ZodNumber>;
     title: zod.ZodString;
     description: zod.ZodString;
+    type: zod.ZodString;
     content: zod.ZodOptional<zod.ZodNullable<zod.ZodType<string | number | boolean | {
         [key: string]: string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | /*elided*/ any | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null;
     } | (string | number | boolean | {
@@ -1485,12 +1484,12 @@ declare const insertTutorialStepSchema: zod.ZodObject<Omit<{
         [key: string]: string | number | boolean | /*elided*/ any | /*elided*/ any | null;
     } | /*elided*/ any | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null>>>;
     order: zod.ZodNumber;
+    isActive: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
 }, "id">, zod.UnknownKeysParam, zod.ZodTypeAny, {
-    type: string;
     title: string;
     description: string;
+    type: string;
     order: number;
-    isActive?: boolean | null | undefined;
     content?: (string | number | boolean | {
         [key: string]: string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | /*elided*/ any | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null;
     } | (string | number | boolean | {
@@ -1516,12 +1515,12 @@ declare const insertTutorialStepSchema: zod.ZodObject<Omit<{
     } | (string | number | boolean | {
         [key: string]: string | number | boolean | /*elided*/ any | /*elided*/ any | null;
     } | /*elided*/ any | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null) | undefined;
+    isActive?: boolean | null | undefined;
 }, {
-    type: string;
     title: string;
     description: string;
+    type: string;
     order: number;
-    isActive?: boolean | null | undefined;
     content?: (string | number | boolean | {
         [key: string]: string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | (string | number | boolean | /*elided*/ any | /*elided*/ any | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null;
     } | (string | number | boolean | {
@@ -1547,6 +1546,7 @@ declare const insertTutorialStepSchema: zod.ZodObject<Omit<{
     } | (string | number | boolean | {
         [key: string]: string | number | boolean | /*elided*/ any | /*elided*/ any | null;
     } | /*elided*/ any | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null) | undefined;
+    isActive?: boolean | null | undefined;
 }>;
 declare const insertUserProgressSchema: zod.ZodObject<Omit<{
     id: zod.ZodOptional<zod.ZodNumber>;
@@ -1779,11 +1779,11 @@ declare const updateUserProgressSchema: zod.ZodObject<Pick<{
     } | /*elided*/ any | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null)[] | null) | undefined;
 }>;
 declare const insertSubscriberSchema: zod.ZodObject<Omit<{
-    firstName: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    email: zod.ZodString;
-    isActive: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
     id: zod.ZodOptional<zod.ZodNumber>;
+    email: zod.ZodString;
+    firstName: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     createdAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
+    isActive: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
 }, "id" | "createdAt">, zod.UnknownKeysParam, zod.ZodTypeAny, {
     email: string;
     firstName?: string | null | undefined;
@@ -1794,43 +1794,43 @@ declare const insertSubscriberSchema: zod.ZodObject<Omit<{
     isActive?: boolean | null | undefined;
 }>;
 declare const insertDonationSchema: zod.ZodObject<{
-    firstName: zod.ZodString;
-    status: zod.ZodOptional<zod.ZodString>;
     id: zod.ZodOptional<zod.ZodNumber>;
+    firstName: zod.ZodString;
     createdAt: zod.ZodOptional<zod.ZodDate>;
+    status: zod.ZodOptional<zod.ZodString>;
     amount: zod.ZodNumber;
     paymentIntentId: zod.ZodString;
 }, zod.UnknownKeysParam, zod.ZodTypeAny, {
     firstName: string;
     amount: number;
     paymentIntentId: string;
-    status?: string | undefined;
     id?: number | undefined;
     createdAt?: Date | undefined;
+    status?: string | undefined;
 }, {
     firstName: string;
     amount: number;
     paymentIntentId: string;
-    status?: string | undefined;
     id?: number | undefined;
     createdAt?: Date | undefined;
+    status?: string | undefined;
 }>;
 declare const insertFeedbackSchema: zod.ZodObject<Omit<{
-    status: zod.ZodOptional<zod.ZodString>;
-    message: zod.ZodString;
-    type: zod.ZodString;
     id: zod.ZodOptional<zod.ZodNumber>;
     createdAt: zod.ZodOptional<zod.ZodDate>;
+    status: zod.ZodOptional<zod.ZodString>;
+    type: zod.ZodString;
     userId: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     userEmail: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-}, "status" | "id" | "createdAt">, zod.UnknownKeysParam, zod.ZodTypeAny, {
-    message: string;
+    message: zod.ZodString;
+}, "id" | "createdAt" | "status">, zod.UnknownKeysParam, zod.ZodTypeAny, {
     type: string;
+    message: string;
     userId?: string | null | undefined;
     userEmail?: string | null | undefined;
 }, {
-    message: string;
     type: string;
+    message: string;
     userId?: string | null | undefined;
     userEmail?: string | null | undefined;
 }>;

@@ -27,6 +27,10 @@ waitForPort = 8000
 localPort = 8000
 externalPort = 8000
 
+[[ports]]
+localPort = 8001
+externalPort = 80
+
 [agent]
 expertMode = true
 
