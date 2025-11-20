@@ -23,10 +23,6 @@ args = "SkateHubba Status"
 task = "workflow.run"
 args = "SkateHubba API"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "SkateHubba Web"
-
 [[workflows.workflow]]
 name = "SkateHubba Status"
 author = "agent"
@@ -49,18 +45,6 @@ waitForPort = 8000
 
 [workflows.workflow.metadata]
 outputType = "console"
-
-[[workflows.workflow]]
-name = "SkateHubba Web"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd /home/runner/workspace/apps/web && pnpm run dev"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[ports]]
 localPort = 5000
