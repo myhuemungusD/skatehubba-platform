@@ -4,6 +4,7 @@
   "private": true,
   "packageManager": "pnpm@8.15.0",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "turbo dev --parallel",
     "dev:server": "turbo dev --filter @skatehubba/server",
     "dev:web": "turbo dev --filter @skatehubba/web",

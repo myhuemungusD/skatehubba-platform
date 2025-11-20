@@ -20,7 +20,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=production node apps/server/dist/server/index.js"
+args = "node apps/server/dist/server/index.js"
 waitForPort = 8000
 
 [[ports]]
@@ -32,8 +32,8 @@ expertMode = true
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["node", "apps/server/dist/server/index.js"]
-build = ["sh", "-c", "corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile && pnpm run build"]
+run = ["sh", "-c", "NODE_ENV=production node apps/server/dist/server/index.js"]
+build = ["sh", "-c", "corepack enable && corepack prepare pnpm@8.15.0 --activate && pnpm install --frozen-lockfile && pnpm run build"]
 
 [nix]
 channel = "stable-25_05"
