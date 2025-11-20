@@ -1,0 +1,14 @@
+PLACEHOLDER FILE
+
+Please replace this with an actual shop-interior.jpg image.
+
+Recommended sources:
+- Unsplash: https://unsplash.com/s/photos/skate-shop
+- Pexels: https://www.pexels.com/search/skateboard%20shop/
+
+Specifications:
+- Size: 1080x1920px (portrait orientation)
+- Format: JPG
+- Style: Skateboard shop interior with wooden floors, graffiti walls, deck displays
+
+For now, the app will show a fallback dark background if this image is missing.

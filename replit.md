@@ -33,6 +33,7 @@ The project employs a monorepo structure with pnpm workspaces and Turborepo for 
 - **Core Features**: Landing page, full authentication, interactive map with spot management, S.K.A.T.E. game challenges, leaderboards, in-app shop, user closets, and interactive tutorials.
 - **Challenge System**: Secure, server-validated challenge adjudication with anti-self-vote mechanisms, deadlines, and rewards (Hubba Bucks).
 - **Spot Management**: Users can check-in at spots, add new spots, and receive rewards.
+- **Closet/Avatar System** (Mobile): Full avatar customization with equipment categories (tops, bottoms, deck parts, stickers), real-time 3D rotation animations, and Firebase Firestore persistence. Users can equip items from their inventory and showcase their personalized avatar.
 - **AI Integration**: Heshur Chat, a Gemini AI-powered skate mentor proxy.
 
 ### External Dependencies
@@ -45,5 +46,6 @@ The project employs a monorepo structure with pnpm workspaces and Turborepo for 
     - Auth Domain: `sk8hub-d7806.firebaseapp.com`
 - **Build Tool**: Turborepo
 - **Package Manager**: pnpm
-- **UI Libraries**: shadcn/ui (web), `@react-native-firebase/app`, `@react-native-firebase/auth`, `@react-native-google-signin/google-signin` (mobile)
+- **UI Libraries**: shadcn/ui (web), `@react-native-firebase/app`, `@react-native-firebase/auth`, `@react-native-firebase/firestore`, `@react-native-google-signin/google-signin` (mobile)
+- **Mobile Utilities**: `@tanstack/react-query` (data fetching), `react-native-reanimated` (animations)
 - **AI**: Gemini AI (for Heshur Chat)

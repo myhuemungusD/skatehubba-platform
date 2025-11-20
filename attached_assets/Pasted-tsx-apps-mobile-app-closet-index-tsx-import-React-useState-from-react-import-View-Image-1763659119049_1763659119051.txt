@@ -1,0 +1,456 @@
+tsx// apps/mobile/app/closet/index.tsx
+import React, { useState } from 'react';
+import { View, ImageBackground, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useAuth } from '@/hooks/useAuth';
+import { SKATE } from '@/theme';
+import { AvatarRenderer } from '@/components/AvatarRenderer';
+import { EquippedDisplay } from '@/components/EquippedDisplay';
+import { CategoryTabs } from '@/components/CategoryTabs';
+import { ItemGrid } from '@/components/ItemGrid';
+
+const { width, height } = Dimensions.get('window');
+
+type Category = 'top' | 'bottom' | 'deck' | 'trucks' | 'wheels' | 'bearings' | 'hardware' | 'stickers';
+
+const BACKGROUND = require('@/assets/closet/shop-interior.jpg');
+
+export default function ClosetScreen() {
+  const { uid = useAuth().user?.uid } = useLocalSearchParams<{ uid?: string }>();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const isOwnCloset = !uid || uid === useAuth().user?.uid;
+  const [activeCategory, setActiveCategory] = useState<Category>('top');
+
+  const rotateY = useSharedValue(0);
+
+  const { data: closet } = useQuery({
+    queryKey: ['closet', uid],
+    queryFn: async () => {
+      const snap = await getDoc(doc(db, 'closet', uid || ''));
+      return snap.data() || { equipped: {}, owned: {} };
+    },
+  });
+
+  const { data: equipped } = useQuery({
+    queryKey: ['equipped', uid],
+    queryFn: async () => {
+      const snap = await getDoc(doc(db, 'users', uid || '', 'public', 'equipment'));
+      return snap.data()?.equipped || {};
+    },
+  });
+
+  const equipMutation = useMutation({
+    mutationFn: async ({ category, itemId }: { category: Category; itemId: string }) => {
+      await setDoc(doc(db, 'users', uid!, 'public', 'equipment'), {
+        equipped: { ...equipped, [category]: itemId },
+      }, { merge: true });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipped', uid] });
+      rotateY.value = withTiming(360, { duration: 600 });
+    },
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotateY: `${rotateY.value}deg` }],
+  }));
+
+  return (
+    <ImageBackground source={BACKGROUND} style={styles.container} resizeMode="cover">
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Text style={styles.backText}>← BACK</Text>
+        </Pressable>
+        <Text style={styles.title}>BACKPACK</Text>
+      </View>
+
+      <View style={styles.avatarContainer}>
+        <Animated.View style={[styles.avatarWrapper, animatedStyle]}>
+          <AvatarRenderer equipped={equipped || {}} size={height * 0.5} />
+        </Animated.View>
+        {isOwnCloset && <EquippedDisplay equipped={equipped || {}} />}
+      </View>
+
+      <View style={styles.shopFloor}>
+        <CategoryTabs
+          categories={['TOP', 'BOTTOM', 'DECK', 'TRUCKS', 'WHEELS', 'BEARINGS', 'HARDWARE', 'STICKERS']}
+          activeCategory={activeCategory.toUpperCase()}
+          onSelect={(cat) => setActiveCategory(cat.toLowerCase() as Category)}
+        />
+
+        <ItemGrid
+          category={activeCategory}
+          ownedItems={closet?.owned?.[activeCategory] || []}
+          equippedId={equipped?.[activeCategory]}
+          onEquip={(itemId) => equipMutation.mutate({ category: activeCategory, itemId })}
+          disabled={!isOwnCloset}
+        />
+
+        {isOwnCloset && (
+          <Pressable style={styles.equipBtn} onPress={() => router.push('/closet/equip')}>
+            <Text style={styles.equipText}>EQUIP</Text>
+          </Pressable>
+        )}
+      </View>
+    </ImageBackground>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: SKATE.colors.ink },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+  },
+  backBtn: { padding: 10 },
+  backText: { color: SKATE.colors.neon, fontFamily: 'BakerScript', fontSize: 24 },
+  title: {
+    color: SKATE.colors.gold,
+    fontFamily: 'BakerScript',
+    fontSize: 48,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 4, height: 4 },
+    textShadowRadius: 0,
+  },
+  avatarContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarWrapper: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    elevation: 20,
+  },
+  shopFloor: {
+    height: height * 0.45,
+    backgroundColor: 'rgba(28,28,28,0.96)',
+    borderTopLeftRadius: SKATE.radius.xl,
+    borderTopRightRadius: SKATE.radius.xl,
+    paddingTop: 20,
+  },
+  equipBtn: {
+    backgroundColor: SKATE.colors.gold,
+    marginHorizontal: 40,
+    marginTop: 20,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#000',
+  },
+  equipText: {
+    color: '#000',
+    fontFamily: 'BakerScript',
+    fontSize: 36,
+    fontWeight: '900',
+  },
+});
+tsx// packages/ui/components/CategoryTabs.tsx
+import { ScrollView, Pressable, Text, StyleSheet } from 'react-native';
+import { SKATE } from '@/theme';
+
+export function CategoryTabs({ 
+  categories, 
+  activeCategory, 
+  onSelect 
+}: { 
+  categories: string[]; 
+  activeCategory: string;
+  onSelect: (cat: string) => void 
+}) {
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.container}>
+      {categories.map((cat) => {
+        const isActive = cat === activeCategory;
+        return (
+          <Pressable key={cat} style={[styles.tab, isActive && styles.activeTab]} onPress={() => onSelect(cat)}>
+            <Text style={[styles.tabText, isActive && styles.activeText]}>{cat}</Text>
+          </Pressable>
+        );
+      })}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { paddingHorizontal: 20 },
+  tab: {
+    backgroundColor: SKATE.colors.grime,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    marginRight: 12,
+    borderRadius: 8,
+    borderWidth: 3,
+    borderColor: '#000',
+  },
+  activeTab: {
+    backgroundColor: SKATE.colors.blood,
+    borderColor: SKATE.colors.gold,
+  },
+  tabText: {
+    color: SKATE.colors.gold,
+    fontFamily: 'BakerScript',
+    fontSize: 24,
+  },
+  activeText: {
+    color: SKATE.colors.neon,
+  },
+});
+tsx// packages/ui/components/ItemGrid.tsx
+import { FlatList, Image, Pressable, Text, StyleSheet, View } from 'react-native';
+import { SKATE } from '@/theme';
+
+const MOCK_ITEMS: Record<string, Array<{ id: string; name: string; price: number; image: any; brand?: string }>> = {
+  top: [
+    { id: 'thrasher-black', name: 'THRASHER HOODIE', price: 800, image: require('@/assets/items/thrasher-hoodie-black.png'), brand: 'Thrasher' },
+    { id: 'thrasher-purple', name: 'THRASHER HOODIE', price: 800, image: require('@/assets/items/thrasher-hoodie-purple.png'), brand: 'Thrasher' },
+    { id: 'hours-hoodie', name: 'HOURS CREW', price: 950, image: require('@/assets/items/hours-crew-neck.png'), brand: 'Hours is Yours' },
+    { id: 'pd-tee', name: 'PISS DRUNK TEE', price: 600, image: require('@/assets/items/pd-tee.png'), brand: 'PD' },
+    { id: 'shake-junt-flannel', name: 'SHAKE JUNT FLANNEL', price: 700, image: require('@/assets/items/shake-junt-flannel.png'), brand: 'Shake Junt' },
+  ],
+  bottom: [
+    { id: 'pd-cargo', name: 'PD CARGO PANTS', price: 850, image: require('@/assets/items/pd-cargo.png'), brand: 'PD' },
+    { id: 'hours-denim', name: 'HOURS JEANS', price: 900, image: require('@/assets/items/hours-denim.png'), brand: 'Hours is Yours' },
+    { id: 'baker-pants', name: 'BAKER CARGO', price: 750, image: require('@/assets/items/baker-cargo.png'), brand: 'Baker' },
+  ],
+  deck: [
+    { id: 'pd-dollin-deck', name: 'DOLLIN PD DECK', price: 650, image: require('@/assets/items/pd-dollin-deck.png'), brand: 'PD' },
+    { id: 'hours-herman-deck', name: 'HERMAN HIY DECK', price: 700, image: require('@/assets/items/hours-herman-deck.png'), brand: 'Hours is Yours' },
+    { id: 'shake-junt-deck', name: 'SHAKE JUNT DECK', price: 600, image: require('@/assets/items/shake-junt-deck.png'), brand: 'Shake Junt' },
+    { id: 'baker-skull-deck', name: 'BAKER SKULL', price: 620, image: require('@/assets/items/baker-skull-deck.png'), brand: 'Baker' },
+  ],
+  trucks: [
+    { id: 'independent', name: 'INDEPENDENT 139', price: 550, image: require('@/assets/items/independent-trucks.png'), brand: 'Independent' },
+    { id: 'thunder', name: 'THUNDER 147', price: 580, image: require('@/assets/items/thunder-trucks.png'), brand: 'Thunder' },
+  ],
+  wheels: [
+    { id: 'spitfire', name: 'SPITFIRE 52MM', price: 400, image: require('@/assets/items/spitfire-wheels.png'), brand: 'Spitfire' },
+    { id: 'bones', name: 'BONES STF 53MM', price: 420, image: require('@/assets/items/bones-wheels.png'), brand: 'Bones' },
+  ],
+  bearings: [
+    { id: 'bones-reds', name: 'BONES REDS', price: 300, image: require('@/assets/items/bones-reds.png'), brand: 'Bones' },
+    { id: 'bronson', name: 'BRONSON G3', price: 350, image: require('@/assets/items/bronson-bearings.png'), brand: 'Bronson' },
+  ],
+  hardware: [
+    { id: 'shake-junt-hardware', name: 'SHAKE JUNT BOLTS', price: 50, image: require('@/assets/items/shake-junt-hardware.png'), brand: 'Shake Junt' },
+  ],
+  stickers: [
+    { id: 'pd-sticker', name: 'PD LOGO STICKER', price: 20, image: require('@/assets/items/pd-sticker.png'), brand: 'PD' },
+    { id: 'hours-sticker', name: 'HIY CLOCK STICKER', price: 25, image: require('@/assets/items/hours-sticker.png'), brand: 'Hours is Yours' },
+    { id: 'shake-junt-sticker', name: 'SHAKE JUNT HAND STICKER', price: 15, image: require('@/assets/items/shake-junt-sticker.png'), brand: 'Shake Junt' },
+  ],
+};
+
+export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }: {
+  category: string;
+  ownedItems: string[];
+  equippedId?: string;
+  onEquip: (id: string) => void;
+  disabled?: boolean;
+}) {
+  const items = MOCK_ITEMS[category] || [];
+
+  return (
+    <FlatList
+      data={items}
+      numColumns={3}
+      keyExtractor={(i) => i.id}
+      contentContainerStyle={{ padding: 20 }}
+      renderItem={({ item }) => {
+        const isOwned = ownedItems.includes(item.id);
+        const isEquipped = equippedId === item.id;
+
+        return (
+          <Pressable
+            style={[
+              styles.item, 
+              !isOwned && styles.locked, 
+              isEquipped && styles.equippedItem
+            ]}
+            disabled={disabled || !isOwned}
+            onPress={() => onEquip(item.id)}
+          >
+            <View style={styles.imageContainer}>
+              <Image source={item.image} style={styles.image} resizeMode="contain" />
+              {item.brand && <Text style={styles.brand}>{item.brand}</Text>}
+            </View>
+            <Text style={styles.name}>{item.name}</Text>
+            {isEquipped && <Text style={styles.equipped}>EQUIPPED</Text>}
+            {!isOwned && <Text style={styles.price}>{item.price} ₿</Text>}
+          </Pressable>
+        );
+      }}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  item: {
+    flex: 1,
+    margin: 8,
+    backgroundColor: '#1c1c1c',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#000',
+    minHeight: 140,
+  },
+  locked: { opacity: 0.4 },
+  equippedItem: {
+    borderColor: SKATE.colors.neon,
+    backgroundColor: 'rgba(57, 255, 20, 0.1)',
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  image: { width: 80, height: 80 },
+  brand: { 
+    color: SKATE.colors.blood, 
+    fontFamily: 'BakerScript', 
+    fontSize: 10, 
+    marginTop: 4,
+    textTransform: 'uppercase',
+  },
+  name: { 
+    color: SKATE.colors.gold, 
+    fontFamily: 'BakerScript', 
+    fontSize: 12, 
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  equipped: { 
+    color: SKATE.colors.neon, 
+    fontSize: 10, 
+    marginTop: 4, 
+    fontWeight: 'bold',
+  },
+  price: { 
+    color: SKATE.colors.blood, 
+    fontWeight: 'bold', 
+    marginTop: 4,
+    fontSize: 12,
+  },
+});
+tsx// packages/ui/components/AvatarRenderer.tsx
+import React from 'react';
+import { View, Image } from 'react-native';
+import { SKATE } from '@/theme';
+
+const AVATAR_BASE = require('@/assets/avatar/base.png');
+
+export function AvatarRenderer({ equipped, size = 200 }: { equipped: Record<string, string>; size?: number }) {
+  return (
+    <View style={{ width: size, height: size, position: 'relative' }}>
+      <Image source={AVATAR_BASE} style={{ width: size, height: size }} resizeMode="contain" />
+      
+      {/* Top Layer */}
+      {equipped.top && (
+        <Image 
+          source={require('@/assets/items/' + equipped.top + '.png')} 
+          style={{ position: 'absolute', top: size * 0.1, left: size * 0.1, width: size * 0.8, height: size * 0.6 }} 
+          resizeMode="contain" 
+        />
+      )}
+      
+      {/* Bottom Layer */}
+      {equipped.bottom && (
+        <Image 
+          source={require('@/assets/items/' + equipped.bottom + '.png')} 
+          style={{ position: 'absolute', bottom: size * 0.05, left: size * 0.1, width: size * 0.8, height: size * 0.5 }} 
+          resizeMode="contain" 
+        />
+      )}
+      
+      {/* Deck Layer */}
+      {equipped.deck && (
+        <Image 
+          source={require('@/assets/items/' + equipped.deck + '.png')} 
+          style={{ position: 'absolute', bottom: size * 0.05, left: size * 0.3, width: size * 0.4, height: size * 0.1 }} 
+          resizeMode="contain" 
+        />
+      )}
+      
+      {/* Stickers (overlay on deck or top) */}
+      {equipped.stickers && (
+        <Image 
+          source={require('@/assets/items/' + equipped.stickers + '.png')} 
+          style={{ position: 'absolute', top: size * 0.2, right: size * 0.1, width: 40, height: 40 }} 
+          resizeMode="contain" 
+        />
+      )}
+    </View>
+  );
+}
+tsx// theme/index.ts
+export const SKATE = {
+  colors: {
+    ink: "#0a0a0a",
+    paper: "#f5f3ef", 
+    neon: "#39ff14",
+    grime: "#1c1c1c",
+    blood: "#b80f0a",  // PD-inspired red
+    gold: "#e3c300",
+    piss: "#f4d03f",   // Subtle yellow tint for PD chaos
+    hours: "#2c3e50",  // Herman's refined navy/grime
+  },
+  radius: { lg: 16, xl: 24 }, 
+  timing: { fast: 120, norm: 220, slow: 360 }
+};
+YAML# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: {version:9}
+      - uses: actions/setup-node@v4
+        with: {node-version:'20'}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint && pnpm typecheck && pnpm test
+      - run: pnpm build  # Expo build check
+      - run: pnpm e2e    # Detox E2E for closet flow
+JSON// apps/mobile/detox/e2e/closet.test.js (excerpt)
+describe('Closet Flow', () => {
+  it('should equip PD tee and rotate avatar', async () => {
+    await device.reloadReactNative();
+    await element(by.id('closet-tab')).tap();
+    await element(by.text('TOP')).tap();
+    await element(by.id('pd-tee')).tap();
+    expect(element(by.text('EQUIPPED'))).toBeVisible();
+    // Avatar rotation assertion via screenshot
+    await expect(element(by.id('avatar'))).toHaveScreenshot('equipped-pd');
+  });
+
+  it('should switch to Hours deck and verify brand', async () => {
+    await element(by.text('DECK')).tap();
+    await element(by.id('hours-herman-deck')).tap();
+    await element(by.text('Hours is Yours')).toBeVisible();
+  });
+});
+TypeScript// packages/utils/brandValidation.ts
+export const BRAND_MAP: Record<string, { name: string; vibe: 'gritty' | 'refined' | 'chaos' }> = {
+  'PD': { name: 'Piss Drunk', vibe: 'chaos' },
+  'Hours is Yours': { name: 'HIY', vibe: 'refined' },
+  'Shake Junt': { name: 'Shake Junt', vibe: 'gritty' },
+  Baker: { name: 'Baker', vibe: 'gritty' },
+};
+
+export function getBrandVibe(brandId: string): 'gritty' | 'refined' | 'chaos' {
+  return BRAND_MAP[brandId]?.vibe || 'gritty';
+}
