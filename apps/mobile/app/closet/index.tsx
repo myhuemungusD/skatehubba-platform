@@ -7,10 +7,10 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { SKATE } from '@skatehubba/ui';
-import { AvatarRenderer } from '@/components/closet/AvatarRenderer';
-import { EquippedDisplay } from '@/components/closet/EquippedDisplay';
-import { CategoryTabs } from '@/components/closet/CategoryTabs';
-import { ItemGrid } from '@/components/closet/ItemGrid';
+import { AvatarRenderer } from '@/components/AvatarRenderer';
+import { EquippedDisplay } from '@/components/EquippedDisplay';
+import { CategoryTabs } from '@/components/CategoryTabs';
+import { ItemGrid } from '@/components/ItemGrid';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,14 +20,14 @@ const BACKGROUND = require('@/assets/closet/shop-interior.jpg');
 
 export default function ClosetScreen() {
   const { uid: paramUid } = useLocalSearchParams<{ uid?: string }>();
+  const { user } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
   
   const uid = paramUid || user?.uid;
   const isOwnCloset = !paramUid || paramUid === user?.uid;
+  const [activeCategory, setActiveCategory] = useState<Category>('top');
 
-  const [selectedCategory, setSelectedCategory] = useState<Category>('top');
   const rotateY = useSharedValue(0);
 
   const { data: closet } = useQuery({
@@ -73,8 +73,6 @@ export default function ClosetScreen() {
     transform: [{ rotateY: `${rotateY.value}deg` }],
   }));
 
-  const categories: Category[] = ['top', 'bottom', 'deck', 'trucks', 'wheels', 'bearings', 'hardware', 'stickers'];
-
   return (
     <ImageBackground source={BACKGROUND} style={styles.container} resizeMode="cover">
       <View style={styles.header}>
@@ -93,16 +91,16 @@ export default function ClosetScreen() {
 
       <View style={styles.shopFloor}>
         <CategoryTabs
-          categories={categories.map((c) => c.toUpperCase())}
-          selected={selectedCategory.toUpperCase()}
-          onSelect={(cat) => setSelectedCategory(cat.toLowerCase() as Category)}
+          categories={['TOP', 'BOTTOM', 'DECK', 'TRUCKS', 'WHEELS', 'BEARINGS', 'HARDWARE', 'STICKERS']}
+          activeCategory={activeCategory.toUpperCase()}
+          onSelect={(cat) => setActiveCategory(cat.toLowerCase() as Category)}
         />
 
         <ItemGrid
-          category={selectedCategory}
-          ownedItems={closet?.owned?.[selectedCategory] || []}
-          equippedId={equipped?.[selectedCategory]}
-          onEquip={(itemId) => equipMutation.mutate({ category: selectedCategory, itemId })}
+          category={activeCategory}
+          ownedItems={closet?.owned?.[activeCategory] || []}
+          equippedId={equipped?.[activeCategory]}
+          onEquip={(itemId) => equipMutation.mutate({ category: activeCategory, itemId })}
           disabled={!isOwnCloset}
         />
 
