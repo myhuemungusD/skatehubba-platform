@@ -6,9 +6,7 @@
     "version": "1.0.0",
     "platforms": ["ios", "android"],
     "orientation": "portrait",
-    "icon": "./assets/LOGOmain.webp",
     "userInterfaceStyle": "dark",
-    "splash": { "image": "./assets/splash.png", "resizeMode": "contain", "backgroundColor": "#0a0a0a" },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
@@ -21,7 +19,6 @@
       }
     },
     "android": {
-      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0a0a0a" },
       "package": "com.skathubba.app",
       "googleServicesFile": "./android/app/google-services.json",
       "intentFilters": [
@@ -46,7 +43,7 @@
           } 
         }
       ],
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin/app.plugin.js"
     ],
     "experiments": {
       "typedRoutes": true
