@@ -35,24 +35,22 @@ function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-black text-white p-4 text-center">
-        <h1 className="text-4xl font-bold">SkateHubba</h1>
+    <>
+      <header className="header">
+        <h1>SkateHubba</h1>
         {user ? (
-          <div className="flex items-center gap-4 justify-center mt-2">
-            <img src={user.photoURL} alt="" className="w-10 h-10 rounded-full" />
-            <span className="font-semibold">{user.displayName}</span>
+          <div className="user-info">
+            <img src={user.photoURL} alt="" />
+            <span>{user.displayName}</span>
           </div>
         ) : (
-          <button onClick={signIn} className="mt-4 bg-red-600 px-6 py-3 rounded-full font-bold hover:bg-red-700">
+          <button onClick={signIn} className="sign-in-btn">
             Sign in with Google
           </button>
         )}
       </header>
 
-      {/* Map */}
-      <div className="flex-1">
+      <div className="map-container">
         <MapContainer center={[37.7749, -122.4194]} zoom={10} style={{ height: '100%', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -63,7 +61,7 @@ function App() {
           </Marker>
         </MapContainer>
       </div>
-    </div>
+    </>
   )
 }
 
