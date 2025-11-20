@@ -1,15 +1,18 @@
 // Fullstack TypeScript wrapper - launches both frontend and backend
 import { spawn } from 'child_process';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const serverPath = path.join(process.cwd(), 'server', 'index.js');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const serverPath = path.join(__dirname, 'index.js');
+const tsxBinary = path.resolve(__dirname, '../../node_modules/tsx/dist/cli.mjs');
 
 console.log('🔄 Starting SkateHubba fullstack application...');
 console.log('🌐 Unified Server (Frontend + API): http://localhost:5000');
 
 // Start unified server on port 5000 with tsx to handle TypeScript
 // This server includes both the API and Vite middleware for the frontend
-const apiServer = spawn('npx', ['tsx', serverPath], {
+const apiServer = spawn('node', [tsxBinary, serverPath], {
   stdio: 'pipe',
   env: { ...process.env, NODE_ENV: 'development', PORT: '5000' }
 });
