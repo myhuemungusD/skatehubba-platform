@@ -27,5 +27,14 @@ waitForPort = 8000
 localPort = 8000
 externalPort = 8000
 
+[[ports]]
+localPort = 43247
+externalPort = 80
+
 [agent]
 expertMode = true
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["node", "apps/server/dist/server/index.js"]
+build = ["sh", "-c", "corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile && pnpm run build"]
