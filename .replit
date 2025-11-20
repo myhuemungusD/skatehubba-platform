@@ -33,7 +33,7 @@ expertMode = true
 [deployment]
 deploymentTarget = "autoscale"
 run = ["sh", "-c", "NODE_ENV=production node apps/server/dist/server/index.js"]
-build = ["sh", "-c", "corepack enable && corepack prepare pnpm@8.15.0 --activate && pnpm install --frozen-lockfile && pnpm run build"]
+build = ["sh", "-c", "pnpm install --frozen-lockfile && pnpm run build --filter @skatehubba/server"]
 
 [nix]
 channel = "stable-25_05"

@@ -32,5 +32,8 @@
     "tsup": "^8.5.1",
     "turbo": "^1.12.0",
     "typescript": "~5.3.0"
+  },
+  "optionalDependencies": {
+    "dtrace-provider": "^0.8.8"
   }
 }
