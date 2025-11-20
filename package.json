@@ -88,7 +88,7 @@
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
-    "esbuild": "^0.25.10",
+    "esbuild": "^0.25.12",
     "eslint": "^9.37.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.0",
