@@ -8,13 +8,13 @@ const serverPath = path.join(__dirname, 'index.js');
 const tsxBinary = path.resolve(__dirname, '../../../node_modules/tsx/dist/cli.mjs');
 
 console.log('🔄 Starting SkateHubba fullstack application...');
-console.log('🌐 Unified Server (Frontend + API): http://localhost:5000');
+console.log('🌐 Unified Server (Frontend + API): http://localhost:8000');
 
-// Start unified server on port 5000 with tsx to handle TypeScript
+// Start unified server on port 8000 with tsx to handle TypeScript
 // This server includes both the API and Vite middleware for the frontend
 const apiServer = spawn('node', [tsxBinary, serverPath], {
   stdio: 'pipe',
-  env: { ...process.env, NODE_ENV: 'development', PORT: '5000' }
+  env: { ...process.env, NODE_ENV: 'development', PORT: '8000' }
 });
 
 // No separate Vite server needed - it's integrated into the API server

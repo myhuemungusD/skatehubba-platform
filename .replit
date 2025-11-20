@@ -21,7 +21,11 @@ args = "SkateHubba Status"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "SkateHubba Server"
+args = "SkateHubba API"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SkateHubba Web"
 
 [[workflows.workflow]]
 name = "SkateHubba Status"
@@ -35,17 +39,33 @@ args = "node status-check.js"
 outputType = "console"
 
 [[workflows.workflow]]
-name = "SkateHubba Server"
+name = "SkateHubba API"
 author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd /home/runner/workspace/apps/server && NODE_ENV=development node ../../node_modules/tsx/dist/cli.mjs server/index.ts"
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "SkateHubba Web"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace/apps/web && pnpm run dev"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000

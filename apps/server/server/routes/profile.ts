@@ -45,15 +45,20 @@ router.get("/profile", requireAuth, async (req: AuthRequest, res: Response) => {
     let user = existingUsers[0];
 
     if (!user) {
-      const newUser = {
-        id: uid,
-        email: email ?? null,
-        displayName: name ?? email?.split("@")[0] ?? "Skater",
-        photoURL: picture ?? null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      await db.insert(users).values(newUser);
+      if (!email) {
+        return res.status(400).json({ error: "Email is required to create a profile" });
+      }
+      
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          id: uid,
+          email: email,
+          displayName: name ?? email.split("@")[0] ?? "Skater",
+          photoURL: picture ?? null,
+        })
+        .returning();
+      
       user = newUser;
       console.log(`✨ Auto-created profile for new user: ${uid} (${email})`);
     }

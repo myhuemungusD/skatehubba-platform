@@ -248,7 +248,7 @@ app.post("/api/feedback", async (req, res) => {
 });
 
 // Start server with database and auth initialization
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 async function startServer() {
   // Initialize database first
