@@ -1,12 +1,4 @@
-modules = ["nodejs-20", "python-3.11", "postgresql-16"]
-[agent]
-expertMode = true
-integrations = ["javascript_openai_ai_integrations:1.0.0", "python_openai_ai_integrations:1.0.0", "javascript_mem_db:1.0.0"]
-
-[nix]
-channel = "stable-25_05"
-packages = ["zulu23"]
-
+modules = ["nodejs-22"]
 [workflows]
 runButton = "Project"
 
@@ -17,22 +9,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "SkateHubba Status"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "SkateHubba API"
-
-[[workflows.workflow]]
-name = "SkateHubba Status"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node status-check.js"
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [[workflows.workflow]]
 name = "SkateHubba API"
@@ -47,16 +24,8 @@ waitForPort = 8000
 outputType = "console"
 
 [[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
 localPort = 8000
 externalPort = 8000
 
-[[ports]]
-localPort = 40087
-externalPort = 3000
-
-[deployment]
-deploymentTarget = "cloudrun"
+[agent]
+expertMode = true
