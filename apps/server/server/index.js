@@ -264,6 +264,15 @@ async function startServer() {
     }
   }
   
+  // Mount protected profile route
+  try {
+    const profileRouter = await import('./routes/profile.ts');
+    app.use('/api', profileRouter.default);
+    console.log("👤 Profile routes initialized");
+  } catch (profileRouteError) {
+    console.warn("⚠️  Profile route setup failed:", profileRouteError.message);
+  }
+  
   // Start Express HTTP server (pure API - no client assets)
   app.listen(PORT, () => {
     console.log(`🚀 SkateHubba API Server running on port ${PORT}`);
