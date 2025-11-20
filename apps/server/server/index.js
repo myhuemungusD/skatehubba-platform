@@ -264,28 +264,17 @@ async function startServer() {
     }
   }
   
-  // Create HTTP server
-  const { createServer } = await import('http');
-  const server = createServer(app);
-  
-  // Setup Vite middleware in development mode
-  if (process.env.NODE_ENV === 'development') {
-    const { setupVite } = await import('./vite.ts');
-    await setupVite(app, server);
-    console.log('⚡ Vite dev server integrated');
-  } else {
-    // In production, serve static files
-    const { serveStatic } = await import('./vite.ts');
-    serveStatic(app);
-    console.log('📦 Serving static files from dist/client');
-  }
-  
-  server.listen(PORT, () => {
-    console.log(`🚀 SkateHubba running on port ${PORT}`);
+  // Start Express HTTP server (pure API - no client assets)
+  app.listen(PORT, () => {
+    console.log(`🚀 SkateHubba API Server running on port ${PORT}`);
+    console.log(`🎯 Mode: ${process.env.NODE_ENV || 'development'}`);
     console.log(`📧 Email signup endpoint: POST /api/subscribe`);
     console.log(`📝 Feedback endpoint: POST /api/feedback`);
     console.log(`🔥 Firebase Auth: ACTIVE`);
     console.log(`💾 Database integration: ${storage ? 'ACTIVE' : 'BASIC MODE'}`);
+    console.log(`\n💡 Client apps run separately:`);
+    console.log(`   - Landing page: apps/landing (port 3000)`);
+    console.log(`   - Web app: apps/web (port 5000)`);
   });
 }
 
