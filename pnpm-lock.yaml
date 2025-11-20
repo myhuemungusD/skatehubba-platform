@@ -134,6 +134,12 @@ importers:
       '@react-native-firebase/firestore':
         specifier: ^23.5.0
         version: 23.5.0(@react-native-firebase/app@23.5.0)(react-native@0.74.7)
+      '@react-native-firebase/functions':
+        specifier: ^23.5.0
+        version: 23.5.0(@react-native-firebase/app@23.5.0)
+      '@react-native-firebase/storage':
+        specifier: ^23.5.0
+        version: 23.5.0(@react-native-firebase/app@23.5.0)
       '@react-native-google-signin/google-signin':
         specifier: ^16.0.0
         version: 16.0.0(expo@51.0.39)(react-native@0.74.7)(react@18.3.1)
@@ -161,6 +167,9 @@ importers:
       expo:
         specifier: ~51.0.0
         version: 51.0.39(@babel/core@7.28.5)(react-native@0.74.7)(react@18.3.1)
+      expo-av:
+        specifier: ^16.0.7
+        version: 16.0.7(expo@51.0.39)(react-native@0.74.7)(react@18.3.1)
       expo-build-properties:
         specifier: ^1.0.9
         version: 1.0.9(expo@51.0.39)
@@ -201,7 +210,7 @@ importers:
         specifier: ^6.0.0
         version: 6.17.0(react-native@0.74.7)(react@18.3.1)
       react-native-vision-camera:
-        specifier: ^4.0.0
+        specifier: ^4.7.3
         version: 4.7.3(react-native-reanimated@3.10.1)(react-native@0.74.7)(react@18.3.1)
       zustand:
         specifier: ^4.5.7
@@ -5820,6 +5829,22 @@ packages:
       - react-native
     dev: false
 
+  /@react-native-firebase/functions@23.5.0(@react-native-firebase/app@23.5.0):
+    resolution: {integrity: sha512-aHdn6IBYkEyJ8k8syYolvYrOzzkPJDfIlH0FiF5LtNyU6XOlc5GxflLWa0MllYB9RUpVpisLv8XAWQee3y3Jsg==}
+    peerDependencies:
+      '@react-native-firebase/app': 23.5.0
+    dependencies:
+      '@react-native-firebase/app': 23.5.0(@react-native-async-storage/async-storage@1.23.1)(expo@51.0.39)(react-native@0.74.7)(react@18.3.1)
+    dev: false
+
+  /@react-native-firebase/storage@23.5.0(@react-native-firebase/app@23.5.0):
+    resolution: {integrity: sha512-ShWZaV1AHD7apKvnilzYKBZBX5jq5jfhQfN4tO+abIS76GEtU91y5z/Kv92IJjqIT9cbKg4dFD5DTRSxy1IFxw==}
+    peerDependencies:
+      '@react-native-firebase/app': 23.5.0
+    dependencies:
+      '@react-native-firebase/app': 23.5.0(@react-native-async-storage/async-storage@1.23.1)(expo@51.0.39)(react-native@0.74.7)(react@18.3.1)
+    dev: false
+
   /@react-native-google-signin/google-signin@16.0.0(expo@51.0.39)(react-native@0.74.7)(react@18.3.1):
     resolution: {integrity: sha512-jVuzPo8odREekFc0b4RK3YsqCvedtLIM2P6NSszFr9cYyhKrUNikffPapL6LmkL9qkb8K6pDeb5CXg4qALOc0g==}
     peerDependencies:
@@ -9776,6 +9801,22 @@ packages:
       md5-file: 3.2.3
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /expo-av@16.0.7(expo@51.0.39)(react-native@0.74.7)(react@18.3.1):
+    resolution: {integrity: sha512-QReef6/RYuZ4GekTcZZw5zY26pcPOmHqK6LMgFlPhnsT0ga97HJrgMc63pvIiojDP+q4oIv24g+QPD8ljZu4XQ==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+      react-native: '*'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native-web:
+        optional: true
+    dependencies:
+      expo: 51.0.39(@babel/core@7.28.5)(react-native@0.74.7)(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.74.7(@babel/core@7.28.5)(@types/react@18.2.79)(react@18.3.1)
     dev: false
 
   /expo-build-properties@1.0.9(expo@51.0.39):

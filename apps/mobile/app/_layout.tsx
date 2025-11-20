@@ -63,6 +63,7 @@ export default function RootLayout() {
           <Stack.Screen name="sign-in" options={{ headerShown: false }} />
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="closet/index" options={{ headerShown: false }} />
+          <Stack.Screen name="challenge/new" options={{ headerShown: false }} />
         </Stack>
       </AuthGate>
     </QueryClientProvider>

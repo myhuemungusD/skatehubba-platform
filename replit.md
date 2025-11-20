@@ -31,9 +31,9 @@ The project employs a monorepo structure with pnpm workspaces and Turborepo for 
 
 **Feature Specifications:**
 - **Core Features**: Landing page, full authentication, interactive map with spot management, S.K.A.T.E. game challenges, leaderboards, in-app shop, user closets, and interactive tutorials.
-- **Challenge System**: Secure, server-validated challenge adjudication with anti-self-vote mechanisms, deadlines, and rewards (Hubba Bucks).
+- **Challenge System**: 15-second one-take video challenges with server-side validation (FFmpeg), H.264 720p transcoding, Firebase Storage upload, and push notifications. Cloud Functions enforce exact duration and transcode for consistency.
 - **Spot Management**: Users can check-in at spots, add new spots, and receive rewards.
-- **Closet/Avatar System** (Mobile): Full avatar customization with equipment categories (tops, bottoms, deck parts, stickers), real-time 3D rotation animations, and Firebase Firestore persistence. Users can equip items from their inventory and showcase their personalized avatar.
+- **Closet/Avatar System** (Mobile): Full avatar customization with equipment categories (tops, bottoms, deck parts, stickers), real-time 3D rotation animations, and Firebase Firestore persistence. Features 22 authentic skate products from real brands (Thrasher, Baker, Independent, Spitfire, etc.).
 - **AI Integration**: Heshur Chat, a Gemini AI-powered skate mentor proxy.
 
 ### External Dependencies
