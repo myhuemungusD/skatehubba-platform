@@ -13,7 +13,7 @@ args = "SkateHubba API"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "SkateHubba Admin"
+args = "SkateHubba Web"
 
 [[workflows.workflow]]
 name = "SkateHubba API"
@@ -28,12 +28,12 @@ args = "node apps/server/dist/server/index.js"
 waitForPort = 8000
 
 [[workflows.workflow]]
-name = "SkateHubba Admin"
+name = "SkateHubba Web"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd apps/admin && pnpm dev"
+args = "cd /home/runner/workspace/apps/web && pnpm dev --host 0.0.0.0"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -45,10 +45,6 @@ externalPort = 3000
 
 [[ports]]
 localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 8001
 externalPort = 80
 
 [agent]
