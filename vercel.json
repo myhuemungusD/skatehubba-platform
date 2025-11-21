@@ -1,30 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm install && pnpm --filter @skatehubba/web build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "vite",
+  "outputDirectory": "apps/web/dist",
   "headers": [
     {
-      "source": "/_next/static/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/static/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/images/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, stale-while-revalidate=86400"
         }
       ]
     },
@@ -36,24 +22,6 @@
           "value": "no-store"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/admin",
-      "destination": "/admin"
-    },
-    {
-      "source": "/admin/:path*",
-      "destination": "/admin/:path*"
-    },
-    {
-      "source": "/app",
-      "destination": "/app"
-    },
-    {
-      "source": "/app/:path*",
-      "destination": "/app/:path*"
     }
   ]
 }
