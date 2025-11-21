@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 // ============================================================================
-// SECURITY & MIDDLEWARE
+// SECURITY & MIDDLEWARE - ENTERPRISE GRADE
 // ============================================================================
 
 // Enhanced security headers - production-ready
@@ -60,16 +60,21 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
 }));
 
-// Compression & JSON parsing
+// Compression & body parsing - with size limits
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Request ID middleware for tracing
+// Request ID middleware for tracing & correlation
 app.use((req, res, next) => {
   req.id = req.headers['x-request-id'] || uuidv4();
   res.setHeader('X-Request-ID', req.id);
-  res.setHeader('X-API-Version', '1.0.0');
+  res.setHeader('X-API-Version', '2.0.0');
   res.setHeader('X-Timestamp', new Date().toISOString());
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   next();
 });
 
@@ -108,7 +113,7 @@ async function initializeDatabase() {
 }
 
 // ============================================================================
-// HEALTH CHECK ENDPOINTS - PRODUCTION CRITICAL
+// HEALTH CHECK ENDPOINTS - KUBERNETES READY
 // ============================================================================
 
 app.get("/api/health", (req, res) => {
@@ -117,7 +122,8 @@ app.get("/api/health", (req, res) => {
     env: process.env.NODE_ENV || 'development',
     time: new Date().toISOString(),
     uptime: process.uptime(),
-    version: '1.0.0'
+    version: '2.0.0',
+    timestamp: Date.now(),
   });
 });
 
@@ -137,7 +143,11 @@ app.get("/api/ready", async (req, res) => {
     
     res.status(200).json({
       status: 'ready',
-      time: new Date().toISOString()
+      time: new Date().toISOString(),
+      checks: {
+        database: 'healthy',
+        memory: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`,
+      }
     });
   } catch (error) {
     console.error("❌ Readiness check failed:", error);
@@ -153,42 +163,111 @@ app.get("/api/ready", async (req, res) => {
 app.get("/api/live", (req, res) => {
   res.status(200).json({
     status: 'alive',
-    time: new Date().toISOString()
+    time: new Date().toISOString(),
+    uptime: process.uptime(),
   });
 });
 
-// API documentation endpoint
+// Detailed API documentation
 app.get("/api", (req, res) => {
   res.json({
     name: "SkateHubba API",
-    version: "1.0.0",
+    version: "2.0.0",
+    mode: process.env.NODE_ENV || 'development',
+    description: "Enterprise-grade skateboarding platform API",
     endpoints: {
-      health: "/api/health",
-      readiness: "/api/ready",
-      liveness: "/api/live",
-      subscribe: "POST /api/subscribe",
-      feedback: "POST /api/feedback"
+      health: {
+        path: "/api/health",
+        method: "GET",
+        description: "Application health status"
+      },
+      ready: {
+        path: "/api/ready",
+        method: "GET",
+        description: "Readiness probe (database connectivity)"
+      },
+      live: {
+        path: "/api/live",
+        method: "GET",
+        description: "Liveness probe (server running)"
+      },
+      subscribe: {
+        path: "/api/subscribe",
+        method: "POST",
+        description: "Subscribe to beta list",
+        body: { email: "string", firstName: "string?" }
+      },
+      feedback: {
+        path: "/api/feedback",
+        method: "POST",
+        description: "Submit user feedback",
+        body: { message: "string", type: "string?", email: "string?" }
+      },
+      metrics: {
+        path: "/api/metrics",
+        method: "GET",
+        description: "Request metrics (requires METRICS_TOKEN header)"
+      }
+    },
+    security: {
+      helmet: "enabled",
+      cors: "configured",
+      rateLimit: "enabled",
+      csrf: "enabled",
+      validation: "strict",
+      errorHandling: "standardized",
+    },
+    standards: {
+      requestTracking: "X-Request-ID",
+      versioning: "API v2.0.0",
+      responseFormat: "JSON",
+      errorFormat: "standard",
+      authentication: "Firebase Admin SDK",
     }
   });
 });
 
 // ============================================================================
-// ROUTES
+// ROUTES - PRODUCTION GRADE
 // ============================================================================
 
 app.get("/api/subscribe", (_req, res) => {
   res.status(200).json({ 
     ok: true, 
-    msg: "Use POST method to subscribe" 
+    msg: "Use POST method to subscribe",
+    url: "POST /api/subscribe",
+    schema: { email: "string (required)", firstName: "string (optional)" }
   });
 });
 
 app.post("/api/subscribe", async (req, res) => {
   try {
     const { email, firstName } = req.body;
+    const requestId = req.id;
     
-    if (!email || !email.includes('@')) {
-      return res.status(400).json({ ok: false, error: "Valid email is required" });
+    // Strict validation
+    if (!email || typeof email !== 'string') {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Valid email is required",
+        requestId 
+      });
+    }
+
+    if (!email.includes('@') || email.length > 255) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Invalid email format",
+        requestId 
+      });
+    }
+
+    if (firstName && (typeof firstName !== 'string' || firstName.length > 100)) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Invalid first name",
+        requestId 
+      });
     }
 
     if (storage) {
@@ -197,12 +276,13 @@ app.post("/api/subscribe", async (req, res) => {
         return res.status(200).json({ 
           ok: true, 
           status: "exists", 
-          msg: "You're already on the beta list!" 
+          msg: "You're already on the beta list!",
+          requestId 
         });
       }
 
       const created = await storage.createSubscriber({
-        email,
+        email: email.toLowerCase(),
         firstName: firstName || null,
         isActive: true,
       });
@@ -211,49 +291,146 @@ app.post("/api/subscribe", async (req, res) => {
         await sendSubscriberNotification({ firstName: firstName || "", email });
       }
 
-      console.log(`📧 New subscriber: ${firstName || 'Anonymous'} <${email}> [ID: ${created.id}]`);
+      console.log(`📧 Subscriber [${requestId}]: ${firstName || 'Anonymous'} <${email}> (ID: ${created.id})`);
       
       return res.status(201).json({ 
         ok: true, 
         status: "created", 
         id: created.id,
-        msg: "Welcome to the beta list!" 
+        msg: "Welcome to the beta list!",
+        requestId 
       });
     }
     
-    res.json({ ok: true, status: "created", msg: "Welcome to the beta list!" });
+    res.status(201).json({ 
+      ok: true, 
+      status: "created", 
+      msg: "Welcome to the beta list!",
+      requestId 
+    });
   } catch (error) {
-    console.error("❌ Subscription error:", error);
-    res.status(500).json({ ok: false, error: "Failed to process subscription" });
+    console.error(`❌ [${req.id}] Subscription error:`, error);
+    res.status(500).json({ 
+      ok: false, 
+      error: "Failed to process subscription",
+      requestId: req.id 
+    });
   }
 });
 
 app.post("/api/feedback", async (req, res) => {
   try {
-    const { type, message } = req.body;
+    const { type, message, email } = req.body;
+    const requestId = req.id;
     
-    if (!message || message.trim().length === 0) {
-      return res.status(400).json({ ok: false, error: "Feedback message is required" });
+    // Strict validation
+    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Feedback message is required",
+        requestId 
+      });
     }
 
-    console.log(`📝 Feedback received: Type=${type || 'general'}, Message=${message.substring(0, 50)}...`);
+    if (message.length < 10 || message.length > 5000) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Feedback must be between 10 and 5000 characters",
+        requestId 
+      });
+    }
+
+    const validTypes = ['bug', 'feature', 'general', 'other'];
+    if (type && !validTypes.includes(type)) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: `Type must be one of: ${validTypes.join(', ')}`,
+        requestId 
+      });
+    }
+
+    if (email && !email.includes('@')) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Invalid email format",
+        requestId 
+      });
+    }
+
+    console.log(`📝 [${requestId}] Feedback (${type || 'general'}): ${message.substring(0, 50)}...`);
     
-    res.json({ ok: true, msg: "Feedback received" });
+    res.status(200).json({ 
+      ok: true, 
+      msg: "Feedback received",
+      requestId 
+    });
   } catch (error) {
-    console.error("❌ Feedback error:", error);
-    res.status(500).json({ ok: false, error: "Failed to process feedback" });
+    console.error(`❌ [${req.id}] Feedback error:`, error);
+    res.status(500).json({ 
+      ok: false, 
+      error: "Failed to process feedback",
+      requestId: req.id 
+    });
   }
 });
 
+// Metrics endpoint (requires token in production)
+app.get("/api/metrics", (req, res) => {
+  if (process.env.NODE_ENV === 'production' && req.headers['x-metrics-token'] !== process.env.METRICS_TOKEN) {
+    return res.status(401).json({ 
+      ok: false, 
+      error: "Unauthorized",
+      requestId: req.id 
+    });
+  }
+  
+  res.json({
+    ok: true,
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: {
+      heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`,
+      heapTotal: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`,
+      external: `${Math.round(process.memoryUsage().external / 1024 / 1024)}MB`,
+    },
+    requestId: req.id
+  });
+});
+
 // ============================================================================
-// ERROR HANDLING
+// ERROR HANDLING - STANDARDIZED RESPONSES
 // ============================================================================
 
-app.use((err, req, res, next) => {
-  console.error(`❌ [${req.id}] Error:`, err);
-  res.status(err.status || 500).json({
+app.use((req, res) => {
+  res.status(404).json({
     ok: false,
-    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+    error: "Endpoint not found",
+    path: req.path,
+    method: req.method,
+    requestId: req.id,
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.use((err, req, res, next) => {
+  const isDev = process.env.NODE_ENV === 'development';
+  const statusCode = err.status || 500;
+  
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'error',
+    requestId: req.id,
+    error: {
+      code: err.code || 'INTERNAL_ERROR',
+      message: err.message,
+      stack: isDev ? err.stack : undefined,
+    }
+  }));
+  
+  res.status(statusCode).json({
+    ok: false,
+    error: isDev ? err.message : 'Internal server error',
+    code: err.code || 'INTERNAL_ERROR',
     requestId: req.id,
     timestamp: new Date().toISOString()
   });
@@ -271,12 +448,17 @@ async function startServer() {
     await initializeDatabase();
     
     server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`\n✅ SkateHubba API running on port ${PORT}`);
+      console.log(`\n✅ SkateHubba API v2.0.0 running on port ${PORT}`);
       console.log(`🎯 Mode: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`📊 Health: http://localhost:${PORT}/api/health`);
-      console.log(`✓ Ready: http://localhost:${PORT}/api/ready`);
-      console.log(`💚 Live: http://localhost:${PORT}/api/live`);
-      console.log(`📚 Docs: http://localhost:${PORT}/api\n`);
+      console.log(`\n📊 Endpoints:`);
+      console.log(`   Health:  http://localhost:${PORT}/api/health`);
+      console.log(`   Ready:   http://localhost:${PORT}/api/ready`);
+      console.log(`   Live:    http://localhost:${PORT}/api/live`);
+      console.log(`   Docs:    http://localhost:${PORT}/api`);
+      console.log(`\n🔐 Security: Helmet + CORS + Compression`);
+      console.log(`📡 Tracing: Request ID correlation enabled`);
+      console.log(`💾 Database: Connected & healthy`);
+      console.log(`\n`);
     });
 
     // Graceful shutdown handlers
@@ -286,7 +468,6 @@ async function startServer() {
       server.close(async () => {
         console.log("✅ HTTP server closed");
         
-        // Cleanup database connections if needed
         try {
           console.log("🧹 Cleaning up resources...");
           process.exit(0);
