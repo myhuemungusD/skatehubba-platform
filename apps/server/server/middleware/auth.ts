@@ -1,18 +1,16 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { admin } from "../admin";
 
-export interface AuthRequest extends Request {
-  id?: string;
+export interface AuthRequest extends Express.Request {
   user?: {
     uid: string;
     email?: string;
     name?: string;
     picture?: string;
   };
-  requestId?: string;
 }
 
-export async function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
+export async function requireAuth(req: any, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ 
@@ -40,7 +38,7 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
   }
 }
 
-export async function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
+export async function requireAdmin(req: any, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ 

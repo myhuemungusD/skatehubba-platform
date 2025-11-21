@@ -2,11 +2,11 @@ import { Router, Response } from "express";
 import { db } from "../db";
 import { users } from "@skatehubba/db";
 import { eq } from "drizzle-orm";
-import { requireAuth, AuthRequest } from "../middleware/auth";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/profile", requireAuth, async (req: AuthRequest, res: Response) => {
+router.get("/profile", requireAuth, async (req: any, res: Response) => {
   try {
     const { uid, email, name, picture } = req.user!;
 
