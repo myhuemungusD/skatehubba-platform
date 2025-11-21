@@ -1,41 +1,10 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { admin } from "../admin";
+import { Router, Response } from "express";
 import { db } from "../db";
-import { users } from "@skatehubba/db/schema";
+import { users } from "@skatehubba/db";
 import { eq } from "drizzle-orm";
+import { requireAuth, AuthRequest } from "../middleware/auth";
 
 const router = Router();
-
-interface AuthRequest extends Request {
-  user?: {
-    uid: string;
-    email?: string;
-    name?: string;
-    picture?: string;
-  };
-}
-
-async function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "No token provided" });
-  }
-
-  const idToken = authHeader.split("Bearer ")[1];
-
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.user = {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-      name: decodedToken.name,
-      picture: decodedToken.picture,
-    };
-    next();
-  } catch (error) {
-    return res.status(401).json({ error: "Invalid or expired token" });
-  }
-}
 
 router.get("/profile", requireAuth, async (req: AuthRequest, res: Response) => {
   try {

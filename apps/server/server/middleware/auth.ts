@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { admin } from "../admin";
 
 export interface AuthRequest extends Request {
+  id?: string;
   user?: {
     uid: string;
     email?: string;
