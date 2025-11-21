@@ -2,9 +2,13 @@ import { neon, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from "@skatehubba/db";
 import { env } from './config/env';
+import { eq } from 'drizzle-orm';
 
 const sql = neon(env.DATABASE_URL);
 export const db = drizzle(sql, { schema });
+
+// Export drizzle utilities
+export { eq, and, or, sql } from 'drizzle-orm';
 
 export async function initializeDatabase() {
   try {
@@ -12,13 +16,13 @@ export async function initializeDatabase() {
 
     // Test database connection first
     await db.select().from(schema.tutorialSteps).limit(1);
-    console.log("Database connection successful");
+    console.log("✅ Database connection successful");
 
     // Check if tutorial steps exist
     const existingSteps = await db.select().from(schema.tutorialSteps).limit(1);
 
     if (existingSteps.length === 0) {
-      console.log("Seeding tutorial steps...");
+      console.log("📚 Seeding tutorial steps...");
       const defaultSteps = [
         {
           title: "Welcome to SkateHubba",
@@ -54,14 +58,25 @@ export async function initializeDatabase() {
       for (const step of defaultSteps) {
         await db.insert(schema.tutorialSteps).values(step);
       }
-      console.log("Tutorial steps seeded successfully");
+      console.log("✅ Tutorial steps seeded successfully");
     } else {
-      console.log("Tutorial steps already initialized");
+      console.log("✅ Tutorial steps already initialized");
     }
   } catch (error) {
-    console.error("Database initialization failed:", error);
+    console.error("❌ Database initialization failed:", error);
     if (env.NODE_ENV !== 'production') {
       throw error;
     }
+  }
+}
+
+// Health check for readiness probes
+export async function checkDatabaseHealth(): Promise<boolean> {
+  try {
+    await db.select().from(schema.tutorialSteps).limit(1);
+    return true;
+  } catch (error) {
+    console.error("❌ Database health check failed:", error);
+    return false;
   }
 }
