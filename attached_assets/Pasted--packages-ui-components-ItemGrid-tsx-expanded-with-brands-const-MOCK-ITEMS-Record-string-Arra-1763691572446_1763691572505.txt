@@ -1,0 +1,25 @@
+// packages/ui/components/ItemGrid.tsx (expanded with brands)
+const MOCK_ITEMS: Record<string, Array<{ id: string; name: string; price: number; image: any; brand?: string; category?: string }>> = {
+  top: [
+    // Existing Thrasher/Baker...
+    { id: 'pd-dollin-tee', name: 'DOLLIN PD TEE', price: 650, image: require('@/assets/items/pd-dollin-tee.png'), brand: 'PD x Dustin Dollin', category: 'top' },
+    { id: 'hiy-cashmere-crew', name: 'HIY CASHMERE CREW', price: 950, image: require('@/assets/items/hiy-cashmere-crew.png'), brand: 'Hours is Yours', category: 'top' },
+    { id: 'happy-hour-stencil-shirt', name: 'HAPPY HOUR STENCIL SHIRT', price: 550, image: require('@/assets/items/happy-hour-stencil.png'), brand: 'Happy Hour Shades', category: 'top' },
+  ],
+  bottom: [
+    // Existing...
+    { id: 'pd-chaos-cargo', name: 'PD CHAOS CARGO', price: 850, image: require('@/assets/items/pd-chaos-cargo.png'), brand: 'PD x Dustin Dollin', category: 'bottom' },
+    { id: 'hiy-herman-denim', name: 'HIY HERMAN DENIM', price: 900, image: require('@/assets/items/hiy-herman-denim.png'), brand: 'Hours is Yours', category: 'bottom' },
+  ],
+  shoes: [  // New category for HIY + collabs
+    { id: 'hiy-cohiba-sl30', name: 'COHIBA SL30 SKATE LOAFER', price: 1100, image: require('@/assets/items/hiy-cohiba-sl30.png'), brand: 'Hours is Yours', category: 'shoes' },
+    { id: 'hiy-callio-s77', name: 'CALLIO S77 BIJOU BLUE', price: 1200, image: require('@/assets/items/hiy-callio-s77.png'), brand: 'HIY x Heroin', category: 'shoes' },
+    { id: 'pd-dollin-kicks', name: 'DOLLIN PD KICKS', price: 800, image: require('@/assets/items/pd-dollin-kicks.png'), brand: 'PD x Dustin Dollin', category: 'shoes' },
+  ],
+  accessories: [  // New for shades
+    { id: 'happy-hour-polar', name: 'HAPPY HOUR POLAR SUNGLASSES', price: 450, image: require('@/assets/items/happy-hour-polar.png'), brand: 'Happy Hour Shades', category: 'accessories', colors: ['Black', 'Tortoise', 'Green Tint'] },
+    { id: 'happy-hour-aviator', name: 'HAPPY HOUR AVIATOR SHADES', price: 500, image: require('@/assets/items/happy-hour-aviator.png'), brand: 'Happy Hour Shades', category: 'accessories', colors: ['Gold Frame', 'Mirror Lens'] },
+    { id: 'pd-dollin-chain', name: 'DOLLIN PD CHAIN', price: 300, image: require('@/assets/items/pd-dollin-chain.png'), brand: 'PD x Dustin Dollin', category: 'accessories' },
+  ],
+  // Existing deck/trucks/etc...
+};
