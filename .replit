@@ -31,13 +31,13 @@ waitForPort = 8000
 name = "SkateHubba Web"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd /home/runner/workspace/apps/web && pnpm dev --host 0.0.0.0"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace && pnpm --filter @skatehubba/web dev"
+waitForPort = 5000
 
 [[ports]]
 localPort = 3000
