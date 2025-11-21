@@ -1,50 +1,65 @@
 import { ScrollView, Pressable, Text, StyleSheet } from 'react-native';
-import { SKATE } from '@skatehubba/ui';
+import { useState } from 'react';
+import { SKATE } from '@/theme';
 
-export function CategoryTabs({ 
-  categories, 
-  activeCategory, 
-  onSelect 
-}: { 
-  categories: string[]; 
-  activeCategory: string;
-  onSelect: (cat: string) => void 
-}) {
+interface CategoryTabsProps {
+  categories: string[];
+  onSelect: (category: string) => void;
+  activeCategory?: string;
+}
+
+export function CategoryTabs({ categories, onSelect, activeCategory }: CategoryTabsProps) {
+  const [selected, setSelected] = useState(activeCategory || categories[0]);
+
+  const handleSelect = (cat: string) => {
+    setSelected(cat);
+    onSelect(cat.toLowerCase());
+  };
+
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.container}>
-      {categories.map((cat) => {
-        const isActive = cat === activeCategory;
-        return (
-          <Pressable key={cat} style={[styles.tab, isActive && styles.activeTab]} onPress={() => onSelect(cat)}>
-            <Text style={[styles.tabText, isActive && styles.activeText]}>{cat}</Text>
-          </Pressable>
-        );
-      })}
+    <ScrollView 
+      horizontal 
+      showsHorizontalScrollIndicator={false} 
+      style={styles.container}
+      contentContainerStyle={styles.content}
+    >
+      {categories.map((cat) => (
+        <Pressable 
+          key={cat} 
+          style={[styles.tab, selected === cat && styles.activeTab]} 
+          onPress={() => handleSelect(cat)}
+        >
+          <Text style={[styles.tabText, selected === cat && styles.activeText]}>{cat}</Text>
+        </Pressable>
+      ))}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 20, marginBottom: 16 },
+  container: { paddingHorizontal: 12 },
+  content: { paddingVertical: 8 },
   tab: {
     backgroundColor: SKATE.colors.grime,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    marginRight: 12,
-    borderRadius: 8,
-    borderWidth: 3,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    marginRight: 8,
+    borderRadius: 6,
+    borderWidth: 2,
     borderColor: '#000',
   },
   activeTab: {
-    backgroundColor: SKATE.colors.blood,
-    borderColor: SKATE.colors.gold,
+    backgroundColor: SKATE.colors.gold,
+    borderColor: SKATE.colors.neon,
   },
   tabText: {
     color: SKATE.colors.gold,
     fontFamily: 'BakerScript',
-    fontSize: 24,
+    fontSize: 20,
+    fontWeight: '700',
   },
   activeText: {
-    color: SKATE.colors.neon,
+    color: '#000',
+    fontWeight: '900',
   },
 });

@@ -1,83 +1,80 @@
-import { FlatList, Image, Pressable, Text, StyleSheet, View } from 'react-native';
-import { SKATE } from '@skatehubba/ui';
+import { FlatList, Image, Pressable, Text, View, StyleSheet } from 'react-native';
+import { SKATE } from '@/theme';
 
-// Product catalog with authentic skate brands and real pricing
-const PRODUCT_CATALOG: Record<string, Array<{ id: string; name: string; price: number; image: any; brand?: string }>> = {
+// Expanded catalog with real skateboarding brands: PD (Dustin Dollin), Hours is Yours, Happy Hour Shades
+const PRODUCT_CATALOG = {
   top: [
-    { id: 'thrasher-black', name: 'THRASHER HOODIE', price: 800, image: require('@/assets/items/thrasher-hoodie-black.png'), brand: 'Thrasher' },
-    { id: 'thrasher-purple', name: 'THRASHER HOODIE', price: 800, image: require('@/assets/items/thrasher-hoodie-purple.png'), brand: 'Thrasher' },
-    { id: 'hours-hoodie', name: 'HOURS CREW', price: 950, image: require('@/assets/items/hours-crew-neck.png'), brand: 'Hours is Yours' },
-    { id: 'pd-tee', name: 'PISS DRUNK TEE', price: 600, image: require('@/assets/items/pd-tee.png'), brand: 'PD' },
-    { id: 'shake-junt-flannel', name: 'SHAKE JUNT FLANNEL', price: 700, image: require('@/assets/items/shake-junt-flannel.png'), brand: 'Shake Junt' },
+    { id: 'thrasher-black', name: 'THRASHER TEE', price: 450, image: require('@/assets/items/thrasher-hoodie-black.png'), brand: 'Thrasher', category: 'top' },
+    { id: 'thrasher-purple', name: 'THRASHER HOODIE', price: 800, image: require('@/assets/items/thrasher-hoodie-purple.png'), brand: 'Thrasher', category: 'top' },
+    { id: 'pd-dollin-tee', name: 'DOLLIN PD TEE', price: 650, image: require('@/assets/items/pd-dollin-tee.png'), brand: 'PD x Dustin Dollin', category: 'top' },
+    { id: 'hiy-cashmere-crew', name: 'HIY CASHMERE CREW', price: 950, image: require('@/assets/items/hiy-cashmere-crew.png'), brand: 'Hours is Yours', category: 'top' },
+    { id: 'happy-hour-stencil-shirt', name: 'HAPPY HOUR STENCIL SHIRT', price: 550, image: require('@/assets/items/happy-hour-stencil.png'), brand: 'Happy Hour Shades', category: 'top' },
   ],
   bottom: [
-    { id: 'pd-cargo', name: 'PD CARGO PANTS', price: 850, image: require('@/assets/items/pd-cargo.png'), brand: 'PD' },
-    { id: 'hours-denim', name: 'HOURS JEANS', price: 900, image: require('@/assets/items/hours-denim.png'), brand: 'Hours is Yours' },
-    { id: 'baker-pants', name: 'BAKER CARGO', price: 750, image: require('@/assets/items/baker-cargo.png'), brand: 'Baker' },
+    { id: 'Baker-black-jeans', name: 'BAKER DENIM', price: 720, image: require('@/assets/items/baker-jeans.png'), brand: 'Baker Brand', category: 'bottom' },
+    { id: 'thrasher-shorts', name: 'THRASHER SHORTS', price: 380, image: require('@/assets/items/thrasher-shorts.png'), brand: 'Thrasher', category: 'bottom' },
+    { id: 'pd-chaos-cargo', name: 'PD CHAOS CARGO', price: 850, image: require('@/assets/items/pd-chaos-cargo.png'), brand: 'PD x Dustin Dollin', category: 'bottom' },
+    { id: 'hiy-herman-denim', name: 'HIY HERMAN DENIM', price: 900, image: require('@/assets/items/hiy-herman-denim.png'), brand: 'Hours is Yours', category: 'bottom' },
   ],
   deck: [
-    { id: 'pd-dollin-deck', name: 'DOLLIN PD DECK', price: 650, image: require('@/assets/items/pd-dollin-deck.png'), brand: 'PD' },
-    { id: 'hours-herman-deck', name: 'HERMAN HIY DECK', price: 700, image: require('@/assets/items/hours-herman-deck.png'), brand: 'Hours is Yours' },
-    { id: 'shake-junt-deck', name: 'SHAKE JUNT DECK', price: 600, image: require('@/assets/items/shake-junt-deck.png'), brand: 'Shake Junt' },
-    { id: 'baker-skull-deck', name: 'BAKER SKULL', price: 620, image: require('@/assets/items/baker-skull-deck.png'), brand: 'Baker' },
+    { id: 'baker-pro-deck', name: 'BAKER PRO DECK', price: 650, image: require('@/assets/items/baker-pro-deck.png'), brand: 'Baker Brand', category: 'deck' },
+    { id: 'thrasher-mag-deck', name: 'THRASHER MAG DECK', price: 580, image: require('@/assets/items/thrasher-mag-deck.png'), brand: 'Thrasher', category: 'deck' },
+    { id: 'pd-dollin-deck', name: 'DOLLIN PD DECK', price: 700, image: require('@/assets/items/pd-dollin-deck.png'), brand: 'PD x Dustin Dollin', category: 'deck' },
   ],
   trucks: [
-    { id: 'independent', name: 'INDEPENDENT 139', price: 550, image: require('@/assets/items/independent-trucks.png'), brand: 'Independent' },
-    { id: 'thunder', name: 'THUNDER 147', price: 580, image: require('@/assets/items/thunder-trucks.png'), brand: 'Thunder' },
+    { id: 'thunder-lights', name: 'THUNDER LIGHTS', price: 560, image: require('@/assets/items/thunder-lights.png'), brand: 'Thunder', category: 'trucks' },
+    { id: 'independent-std', name: 'INDEPENDENT STD', price: 620, image: require('@/assets/items/independent-std.png'), brand: 'Independent', category: 'trucks' },
+    { id: 'royal-trucks', name: 'ROYAL TRUCKS', price: 540, image: require('@/assets/items/royal-trucks.png'), brand: 'Royal', category: 'trucks' },
   ],
   wheels: [
-    { id: 'spitfire', name: 'SPITFIRE 52MM', price: 400, image: require('@/assets/items/spitfire-wheels.png'), brand: 'Spitfire' },
-    { id: 'bones', name: 'BONES STF 53MM', price: 420, image: require('@/assets/items/bones-wheels.png'), brand: 'Bones' },
+    { id: 'spitfire-wheels', name: 'SPITFIRE CLASSICS', price: 480, image: require('@/assets/items/spitfire-wheels.png'), brand: 'Spitfire', category: 'wheels' },
+    { id: 'bones-wheels', name: 'BONES STF V2', price: 500, image: require('@/assets/items/bones-wheels.png'), brand: 'Bones', category: 'wheels' },
+    { id: 'ricta-clouds', name: 'RICTA CLOUDS', price: 520, image: require('@/assets/items/ricta-clouds.png'), brand: 'Ricta', category: 'wheels' },
   ],
-  bearings: [
-    { id: 'bones-reds', name: 'BONES REDS', price: 300, image: require('@/assets/items/bones-reds.png'), brand: 'Bones' },
-    { id: 'bronson', name: 'BRONSON G3', price: 350, image: require('@/assets/items/bronson-bearings.png'), brand: 'Bronson' },
+  shoes: [
+    { id: 'hiy-cohiba-sl30', name: 'COHIBA SL30 LOAFER', price: 1100, image: require('@/assets/items/hiy-cohiba-sl30.png'), brand: 'Hours is Yours', category: 'shoes' },
+    { id: 'hiy-callio-s77', name: 'CALLIO S77 BLUE', price: 1200, image: require('@/assets/items/hiy-callio-s77.png'), brand: 'HIY x Heroin', category: 'shoes' },
+    { id: 'pd-dollin-kicks', name: 'DOLLIN PD KICKS', price: 800, image: require('@/assets/items/pd-dollin-kicks.png'), brand: 'PD x Dustin Dollin', category: 'shoes' },
   ],
-  hardware: [
-    { id: 'shake-junt-hardware', name: 'SHAKE JUNT BOLTS', price: 50, image: require('@/assets/items/shake-junt-hardware.png'), brand: 'Shake Junt' },
-  ],
-  stickers: [
-    { id: 'pd-sticker', name: 'PD LOGO STICKER', price: 20, image: require('@/assets/items/pd-sticker.png'), brand: 'PD' },
-    { id: 'hours-sticker', name: 'HIY CLOCK STICKER', price: 25, image: require('@/assets/items/hours-sticker.png'), brand: 'Hours is Yours' },
-    { id: 'shake-junt-sticker', name: 'SHAKE JUNT HAND STICKER', price: 15, image: require('@/assets/items/shake-junt-sticker.png'), brand: 'Shake Junt' },
+  accessories: [
+    { id: 'happy-hour-polar', name: 'HAPPY HOUR POLAR', price: 450, image: require('@/assets/items/happy-hour-polar.png'), brand: 'Happy Hour Shades', category: 'accessories', colors: ['Black', 'Tortoise', 'Green'] },
+    { id: 'happy-hour-aviator', name: 'HAPPY HOUR AVIATOR', price: 500, image: require('@/assets/items/happy-hour-aviator.png'), brand: 'Happy Hour Shades', category: 'accessories', colors: ['Gold', 'Mirror'] },
+    { id: 'pd-dollin-chain', name: 'DOLLIN CHAIN', price: 300, image: require('@/assets/items/pd-dollin-chain.png'), brand: 'PD x Dustin Dollin', category: 'accessories' },
+    { id: 'baker-sticker-pack', name: 'BAKER STICKER PACK', price: 100, image: require('@/assets/items/baker-stickers.png'), brand: 'Baker Brand', category: 'accessories' },
   ],
 };
 
-export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }: {
+interface ItemGridProps {
   category: string;
   ownedItems: string[];
   equippedId?: string;
   onEquip: (id: string) => void;
   disabled?: boolean;
-}) {
-  const items = PRODUCT_CATALOG[category] || [];
+}
+
+export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }: ItemGridProps) {
+  const items = PRODUCT_CATALOG[category as keyof typeof PRODUCT_CATALOG] || [];
 
   return (
     <FlatList
       data={items}
       numColumns={3}
       keyExtractor={(i) => i.id}
-      contentContainerStyle={{ padding: 20 }}
+      contentContainerStyle={styles.container}
       renderItem={({ item }) => {
         const isOwned = ownedItems.includes(item.id);
         const isEquipped = equippedId === item.id;
 
         return (
           <Pressable
-            style={[
-              styles.item, 
-              !isOwned && styles.locked, 
-              isEquipped && styles.equippedItem
-            ]}
+            style={[styles.item, !isOwned && styles.locked]}
             disabled={disabled || !isOwned}
-            onPress={() => onEquip(item.id)}
+            onPress={() => isOwned && onEquip(item.id)}
           >
-            <View style={styles.imageContainer}>
-              <Image source={item.image} style={styles.image} resizeMode="contain" />
-              {item.brand && <Text style={styles.brand}>{item.brand}</Text>}
-            </View>
-            <Text style={styles.name}>{item.name}</Text>
-            {isEquipped && <Text style={styles.equipped}>EQUIPPED</Text>}
+            <Image source={item.image} style={styles.image} resizeMode="contain" />
+            <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
+            <Text style={styles.brand} numberOfLines={1}>{item.brand}</Text>
+            {isEquipped && <Text style={styles.equipped}>✓ EQUIPPED</Text>}
             {!isOwned && <Text style={styles.price}>{item.price} ₿</Text>}
           </Pressable>
         );
@@ -87,51 +84,21 @@ export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }
 }
 
 const styles = StyleSheet.create({
+  container: { padding: 12 },
   item: {
     flex: 1,
-    margin: 8,
+    margin: 6,
     backgroundColor: '#1c1c1c',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: 8,
+    padding: 8,
     alignItems: 'center',
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: '#000',
-    minHeight: 140,
   },
-  locked: { opacity: 0.4 },
-  equippedItem: {
-    borderColor: SKATE.colors.neon,
-    backgroundColor: 'rgba(57, 255, 20, 0.1)',
-  },
-  imageContainer: {
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  image: { width: 80, height: 80 },
-  brand: { 
-    color: SKATE.colors.blood, 
-    fontFamily: 'BakerScript', 
-    fontSize: 10, 
-    marginTop: 4,
-    textTransform: 'uppercase',
-  },
-  name: { 
-    color: SKATE.colors.gold, 
-    fontFamily: 'BakerScript', 
-    fontSize: 12, 
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  equipped: { 
-    color: SKATE.colors.neon, 
-    fontSize: 10, 
-    marginTop: 4, 
-    fontWeight: 'bold',
-  },
-  price: { 
-    color: SKATE.colors.blood, 
-    fontWeight: 'bold', 
-    marginTop: 4,
-    fontSize: 12,
-  },
+  locked: { opacity: 0.5 },
+  image: { width: 70, height: 70 },
+  name: { color: SKATE.colors.gold, fontFamily: 'BakerScript', marginTop: 6, fontSize: 12, fontWeight: '700' },
+  brand: { color: SKATE.colors.neon, fontSize: 9, marginTop: 2, fontFamily: 'monospace' },
+  equipped: { color: SKATE.colors.neon, fontSize: 10, marginTop: 4, fontWeight: 'bold' },
+  price: { color: SKATE.colors.blood, fontWeight: 'bold', marginTop: 4, fontSize: 11 },
 });
