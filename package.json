@@ -2,10 +2,10 @@
   "name": "skatehubba-monorepo",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@9.12.0",
+  "packageManager": "pnpm@8.15.9",
   "engines": {
     "node": ">=20.10.0",
-    "pnpm": ">=9.0.0"
+    "pnpm": ">=8.15.9"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
@@ -41,7 +41,9 @@
   },
   "pnpm": {
     "overrides": {
-      "dtrace-provider": "npm:@empty/package@latest"
+      "dtrace-provider": "npm:@empty/package@latest",
+      "detox@* > dtrace-provider": "npm:@empty/package@latest",
+      "react-native-maps@* > react-native-gesture-handler@* > dtrace-provider": "npm:@empty/package@latest"
     },
     "peerDependencyRules": {
       "ignoreMissing": [
@@ -65,22 +67,3 @@
   "turbo": {
     "pipeline": {
       "build": {
-        "dependsOn": ["^build"],
-        "outputs": [".next/**", "dist/**", "build/**"]
-      },
-      "lint": {
-        "outputs": []
-      },
-      "typecheck": {
-        "outputs": []
-      },
-      "test": {
-        "outputs": []
-      },
-      "dev": {
-        "cache": false,
-        "persistent": true
-      }
-    }
-  }
-}
