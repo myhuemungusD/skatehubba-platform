@@ -33,7 +33,15 @@
     "turbo": "^1.12.0",
     "typescript": "~5.3.0"
   },
-  "optionalDependencies": {
-    "dtrace-provider": "^0.8.8"
+  "pnpm": {
+    "overrides": {
+      "dtrace-provider": false
+    }
+  },
+  "overrides": {
+    "dtrace-provider": false,
+    "detox": {
+      "dtrace-provider": false
+    }
   }
 }

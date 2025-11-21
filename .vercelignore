@@ -1,0 +1,9 @@
+apps/mobile/
+apps/ar/
+packages/mobile/
+node_modules/
+.git/
+.env*
+*.log
+.turbo/
+.DS_Store
