@@ -5,7 +5,7 @@ import {
 } from "@skatehubba/db";
 import { CreateSubscriber } from "./storage/types.ts";
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import * as schema from "@skatehubba/db";
 import bcryptjs from 'bcryptjs';
 
@@ -19,35 +19,21 @@ export const comparePassword = async (password: string, hash: string): Promise<b
 };
 
 export interface IStorage {
-  // User methods for Replit Auth
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserOnboardingStatus(userId: string, completed: boolean, currentStep?: number): Promise<User | undefined>;
   getSpot(id: string): Promise<any>;
-
-  // Tutorial steps methods
   getAllTutorialSteps(): Promise<TutorialStep[]>;
   getTutorialStep(id: number): Promise<TutorialStep | undefined>;
   createTutorialStep(step: InsertTutorialStep): Promise<TutorialStep>;
-
-  // User progress methods
   getUserProgress(userId: string): Promise<UserProgress[]>;
   getUserStepProgress(userId: string, stepId: number): Promise<UserProgress | undefined>;
   createUserProgress(progress: InsertUserProgress): Promise<UserProgress>;
   updateUserProgress(userId: string, stepId: number, updates: UpdateUserProgress): Promise<UserProgress | undefined>;
-
-  // Subscriber methods
   createSubscriber(data: CreateSubscriber): Promise<Subscriber>;
   getSubscribers(): Promise<Subscriber[]>;
   getSubscriber(email: string): Promise<Subscriber | undefined>;
-
-  // Donation methods
-  createDonation(donation: {
-    firstName: string;
-    amount: number;
-    paymentIntentId: string;
-    status: string;
-  }): Promise<any>;
+  createDonation(donation: { firstName: string; amount: number; paymentIntentId: string; status: string }): Promise<any>;
   updateDonationStatus(paymentIntentId: string, status: string): Promise<any>;
   getRecentDonors(limit?: number): Promise<{ firstName: string; createdAt: Date }[]>;
 }
@@ -72,9 +58,7 @@ export class DatabaseStorage implements IStorage {
           title: "Welcome to SkateHubba",
           description: "Learn the basics of navigating the skate community",
           type: "intro",
-          content: {
-            videoUrl: "https://example.com/intro-video"
-          },
+          content: { videoUrl: "https://example.com/intro-video" },
           order: 1
         },
         {
@@ -83,16 +67,8 @@ export class DatabaseStorage implements IStorage {
           type: "interactive",
           content: {
             interactiveElements: [
-              {
-                type: "tap",
-                target: "skate-board",
-                instruction: "Tap the skateboard to pick it up"
-              },
-              {
-                type: "swipe",
-                target: "trick-menu",
-                instruction: "Swipe to browse tricks"
-              }
+              { type: "tap", target: "skate-board", instruction: "Tap the skateboard to pick it up" },
+              { type: "swipe", target: "trick-menu", instruction: "Swipe to browse tricks" }
             ]
           },
           order: 2
@@ -102,10 +78,7 @@ export class DatabaseStorage implements IStorage {
           description: "Complete your first community challenge",
           type: "challenge",
           content: {
-            challengeData: {
-              action: "post_trick",
-              expectedResult: "Share a trick with the community"
-            }
+            challengeData: { action: "post_trick", expectedResult: "Share a trick with the community" }
           },
           order: 3
         }
@@ -117,11 +90,10 @@ export class DatabaseStorage implements IStorage {
 
       console.log('✅ Successfully initialized tutorial steps');
     } catch (error) {
-      console.error('❌ Database initialization failed - continuing without default tutorial steps:', error);
+      console.error('❌ Database initialization failed:', error);
     }
   }
 
-  // User methods for Replit Auth
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
@@ -143,13 +115,11 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
-  // Dummy implementation for getSpot
   async getSpot(id: string): Promise<any> {
-    // This would query a spots table if it exists
+    // Spots table not yet implemented - return placeholder
     return null;
   }
 
-  // Tutorial steps methods
   async getAllTutorialSteps(): Promise<TutorialStep[]> {
     return db.select().from(tutorialSteps);
   }
@@ -164,7 +134,6 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
-  // User progress methods
   async getUserProgress(userId: string): Promise<UserProgress[]> {
     return db.select().from(userProgress).where(eq(userProgress.userId, userId));
   }
@@ -188,7 +157,6 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
-  // Subscriber methods
   async createSubscriber(data: CreateSubscriber): Promise<Subscriber> {
     const [result] = await db.insert(subscribers).values(data).returning();
     return result;
@@ -203,19 +171,15 @@ export class DatabaseStorage implements IStorage {
     return subscriber;
   }
 
-  // Donation methods
   async createDonation(donation: any): Promise<any> {
-    // Implement when donations table is added
-    return null;
+    return null; // Donations table not implemented yet
   }
 
   async updateDonationStatus(paymentIntentId: string, status: string): Promise<any> {
-    // Implement when donations table is added
     return null;
   }
 
   async getRecentDonors(limit: number = 5): Promise<{ firstName: string; createdAt: Date }[]> {
-    // Implement when donations table is added
     return [];
   }
 }

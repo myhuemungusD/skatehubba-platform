@@ -1,18 +1,18 @@
-import { neon, neonConfig } from '@neondatabase/serverless';
+import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from "@skatehubba/db";
+import { eq, and, or, sql } from 'drizzle-orm';
 import { env } from './config/env';
-import { eq } from 'drizzle-orm';
 
-const sql = neon(env.DATABASE_URL);
-export const db = drizzle(sql, { schema });
+const sqlClient = neon(env.DATABASE_URL);
+export const db = drizzle(sqlClient, { schema });
 
-// Export drizzle utilities
-export { eq, and, or, sql } from 'drizzle-orm';
+// Export drizzle utilities for use in other modules
+export { eq, and, or, sql };
 
 export async function initializeDatabase() {
   try {
-    console.log("Initializing database...");
+    console.log("🗄️  Initializing database...");
 
     // Test database connection first
     await db.select().from(schema.tutorialSteps).limit(1);
