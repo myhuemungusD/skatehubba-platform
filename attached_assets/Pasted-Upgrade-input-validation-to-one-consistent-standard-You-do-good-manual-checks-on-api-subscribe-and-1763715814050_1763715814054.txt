@@ -1,0 +1,265 @@
+Upgrade input validation to one consistent standard
+
+You do good manual checks on /api/subscribe and /api/feedback.
+
+index
+
+ 
+
+index
+
+You also have:
+
+Zod-based validateRequest middleware in routes.ts.
+
+routes
+
+express-validator in deps.
+
+package
+
+Right now it’s a mix. For “pro level” you want one pattern:
+
+Pick one:
+
+Zod everywhere (my recommendation, since you already use Drizzle + Zod)
+
+Or express-validator everywhere
+
+Then:
+
+For each route, define a schema:
+
+const SubscribeSchema = z.object({
+  email: z.string().email().max(255),
+  firstName: z.string().min(1).max(100).optional(),
+});
+
+
+Use your validateRequest(SubscribeSchema) middleware to populate req.validatedBody so you can stop hand-checking types and lengths.
+
+routes
+
+For anything that gets stored or logged (names, free-text feedback), run it through sanitizeString first.
+
+routes
+
+That gives you:
+
+Input schema
+
+Output schema (from Drizzle types)
+
+Little room for injection or junk.
+
+2.4. Tighten secrets and environment handling
+
+From the earlier notes, you already know to load Firebase Admin from env JSON, not a file.
+
+Pasted-Your-server-is-a-TypeScr…
+
+With the current design:
+
+You have things like PRODUCTION_URL, REPLIT_DOMAINS, METRICS_TOKEN, etc. used in CORS and metrics.
+
+index
+
+ 
+
+index
+
+What to standardize:
+
+A single env.ts in apps/server/server/config/env.ts that:
+
+Whitelists required env vars
+
+Fails fast if something critical is missing (e.g., DATABASE_URL, FIREBASE_ADMIN_JSON, METRICS_TOKEN in prod)
+
+Avoid optional security in prod. Example:
+
+If METRICS_TOKEN is missing in production, metrics route should refuse to serve, not silently allow.
+
+Don’t ever log secrets, tokens, or full emails in unredacted logs.
+
+2.5. Logging & observability: actually use Pino
+
+You already depend on pino, pino-http, and pino-pretty.
+
+package
+
+
+But index.js still uses console.log/console.error for most logs.
+
+index
+
+ 
+
+index
+
+For “exceed standards”, you want:
+
+Request logging middleware:
+
+import pino from "pino";
+import pinoHttp from "pino-http";
+
+const logger = pino({
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  redact: ["req.headers.authorization", "req.headers.cookie"],
+});
+
+app.use(
+  pinoHttp({
+    logger,
+    genReqId: (req) => req.id || uuidv4(),
+  })
+);
+
+
+Replace console.* with req.log or logger:
+
+req.log.info({ ... }, "Feedback received")
+
+logger.error({ err, requestId: req.id }, "Subscription error")
+
+Standardize error JSON already done in your error handler, but feed it from pino so logs are machine-parsable.
+
+index
+
+This gets you ready for:
+
+Log aggregation (Datadog, Grafana Loki, Elastic, etc.)
+
+Correlation by requestId in dashboards.
+
+2.6. WebSockets & real-time (SKATE games) – design it now, don’t bolt it on later
+
+You have ws in deps, and notes in the earlier file about using http.createServer(app) and new WebSocket.Server({ server }).
+
+Pasted-Your-server-is-a-TypeScr…
+
+ 
+
+Pasted-Your-server-is-a-TypeScr…
+
+But the current index.js does:
+
+server = app.listen(PORT, '0.0.0.0', () => { ... });
+
+
+index
+
+No WebSocket wiring yet.
+
+For a future-proof SKATE game system:
+
+Switch to explicit HTTP server:
+
+import http from "http";
+import WebSocket from "ws";
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+wss.on("connection", (socket, req) => {
+  // authenticate via token, then join lobby/room
+});
+
+
+Enforce auth at WebSocket level:
+
+Require a Firebase ID token or session token in the query or a first message
+
+Close unauth connections immediately
+
+Think about rate limiting there too (don’t let someone spam messages and kill the instance).
+
+If you design this clean once, SKATE lobbies, challenge updates, and spectators all flow from one real-time layer instead of hacks.
+
+2.7. Build pipeline & TypeScript/ESM correctness
+
+build-server.mjs bundles server/index.js with esbuild to dist/server/index.js.
+
+build-server
+
+In index.js you are doing dynamic imports of TypeScript files:
+
+const dbModule = await import('./db.ts');
+const storageModule = await import('./storage.ts');
+const emailModule = await import('./email.ts');
+
+
+index
+
+In a pure JS bundle, this can break, because at runtime:
+
+There is no db.ts — only db.js
+
+Or they’re external and not compiled alongside
+
+To avoid weird runtime errors in production:
+
+Make the entry point TypeScript (server/index.ts) and let esbuild handle .ts imports, or
+
+Change these imports to match built files ('./db.js' etc.) and ensure those files exist in dist/server/ when deployed.
+
+This is more “reliability” than “security,” but a strong backend must be boring and predictable in prod.
+
+3. Quick checklist for you
+
+If you want a “foreman punch list” style, here it is:
+
+Security / Auth
+
+ Add global express-rate-limit + stricter per-route limits
+
+ Decide cookie vs. Bearer token; either wire real CSRF or remove the claim
+
+ Extract shared requireAuth / requireAdmin middleware and use them everywhere
+
+Validation & Sanitization
+
+ Pick Zod as the single validation layer
+
+ Replace manual field checks in /api/subscribe and /api/feedback with schemas
+
+ Use sanitizeString before logging or storing user input
+
+Secrets / Env
+
+ Central env.ts that validates all required env vars
+
+ Enforce that metrics, admin, and DB env are present in prod
+
+ Confirm no service account JSON lives in the repo
+
+Logging / Observability
+
+ Wire pino + pino-http as the request logger
+
+ Replace console.log/error with structured logs
+
+ Keep using req.id as the trace key everywhere
+
+WebSockets
+
+ Switch to http.createServer(app) + ws off that server
+
+ Design auth for SKATE lobbies and spectators now
+
+Build / Runtime
+
+ Fix dynamic imports (db.ts, storage.ts, email.ts) to align with compiled output
+
+ Keep Node 22 target and esbuild config synced with Replit/production node versions
+
+If you want, next step I can:
+
+Write a patched index.js that includes:
+
+global rate limiter
+
+pino-http logging
+
+cleaned security doc section
