@@ -33,7 +33,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd apps/admin && ../../node_modules/.bin/next dev -p 5000 -H 0.0.0.0"
+args = "cd apps/admin && pnpm dev"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -46,10 +46,6 @@ externalPort = 3000
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 8000
-externalPort = 8000
 
 [[ports]]
 localPort = 8001
