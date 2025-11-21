@@ -41,9 +41,7 @@
   },
   "pnpm": {
     "overrides": {
-      "dtrace-provider": "npm:@empty/package@latest",
-      "detox>dtrace-provider": "npm:@empty/package@latest",
-      "react-native-maps>react-native-gesture-handler>dtrace-provider": "npm:@empty/package@latest"
+      "dtrace-provider": "npm:@empty/package@latest"
     },
     "peerDependencyRules": {
       "ignoreMissing": [
