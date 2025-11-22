@@ -1,25 +1,35 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+import { getFunctions } from "firebase/functions";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyD0T3cZOj4RgXZy5NnVGxBiP4aSKJhDxRs",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "sk8hub-d7806.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "sk8hub-d7806",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "sk8hub-d7806.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "529644823234",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:529644823234:web:d8c4e89c1b2f3f4e5a6b7c",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-export const auth = getAuth(app);
+// Singleton pattern to avoid initializing twice in Next.js
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+const functions = getFunctions(app);
 
-// Initialize App Check only on the client-side
+// Initialize App Check (Client-Side Only)
 if (typeof window !== "undefined") {
-  // Use the Site Key you got from the Firebase Console "App Check" > "Web" section
-  // It's NOT the same as your API Key.
+  // self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; // Uncomment for local dev testing if needed
+  
   initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider("YOUR_RECAPTCHA_SITE_KEY"),
+    // 🟢 YOUR KEY IS HERE 🟢
+    provider: new ReCaptchaV3Provider("6Lfl8-krAAAAALbkfVVyE0x8Ke2d0U9QnSecBgVK"),
     isTokenAutoRefreshEnabled: true,
   });
 }
+
+export { app, db, auth, storage, functions }
