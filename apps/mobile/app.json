@@ -9,9 +9,13 @@
     "userInterfaceStyle": "dark",
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "usesAppleSignIn": true,
       "supportsTablet": true,
       "bundleIdentifier": "com.skatehubba.app",
       "googleServicesFile": "./GoogleService-Info.plist",
+      "entitlements": {
+        "com.apple.developer.devicecheck.appattest-environment": "production"
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "Record one-shot skate tricks.",
         "NSLocationWhenInUseUsageDescription": "Check in to spots.",

@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyD0T3cZOj4RgXZy5NnVGxBiP4aSKJhDxRs",
@@ -12,3 +13,13 @@ const firebaseConfig = {
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 export const auth = getAuth(app);
+
+// Initialize App Check only on the client-side
+if (typeof window !== "undefined") {
+  // Use the Site Key you got from the Firebase Console "App Check" > "Web" section
+  // It's NOT the same as your API Key.
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider("YOUR_RECAPTCHA_SITE_KEY"),
+    isTokenAutoRefreshEnabled: true,
+  });
+}
