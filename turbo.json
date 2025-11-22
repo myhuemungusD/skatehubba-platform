@@ -1,4 +1,4 @@
-{}
+{
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "globalEnv": ["NODE_ENV", "DATABASE_URL", "NEXT_PUBLIC_API_URL"],
@@ -6,7 +6,7 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "build/**"],
-      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json"]
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json", "tsconfig.json"]
     },
     "@skatehubba/db#build": {
       "outputs": ["dist/**"]

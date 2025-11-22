@@ -4,8 +4,8 @@
     "development": { "developmentClient": true, "distribution": "internal" },
     "preview": { "distribution": "internal" },
     "production": {
-      "android": { "buildType": "aab" },
-      "ios": { "buildType": "archive" }
+      "android": { "buildType": "app-bundle" },
+      "ios": { "resourceClass": "m-medium" }
     }
   },
   "submit": {

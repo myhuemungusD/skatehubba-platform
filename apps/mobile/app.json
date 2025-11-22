@@ -4,10 +4,15 @@
     "slug": "skatehubba",
     "scheme": "skatehubba",
     "version": "1.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "usesAppleSignIn": true,
       "supportsTablet": true,
@@ -23,34 +28,52 @@
       }
     },
     "android": {
-      "package": "com.skathubba.app",
+      "package": "com.skatehubba.app",
       "googleServicesFile": "./android/app/google-services.json",
       "intentFilters": [
         {
           "action": "VIEW",
           "autoVerify": true,
-          "data": [{ "scheme": "skatehubba" }],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "data": [
+            {
+              "scheme": "skatehubba"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
+      ],
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
-      "expo-location", 
+      "expo-location",
       "expo-camera",
       "expo-dev-client",
       [
         "expo-build-properties",
-        { 
-          "android": { 
-            "compileSdkVersion": 34, 
-            "targetSdkVersion": 34 
-          } 
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34
+          }
         }
       ],
       "@react-native-google-signin/google-signin/app.plugin.js"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "682cb6d2-cf8f-407c-a7f1-1069c45156dd"
+      }
     }
   }
 }
