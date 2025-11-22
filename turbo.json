@@ -1,10 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
-  "pipeline": {
+  "globalEnv": ["NODE_ENV", "DATABASE_URL", "NEXT_PUBLIC_API_URL"],
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "build/**"]
+      "outputs": ["dist/**", ".next/**", "build/**"],
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json"]
     },
     "@skatehubba/db#build": {
       "outputs": ["dist/**"]
@@ -14,9 +16,11 @@
       "persistent": true
     },
     "lint": {
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json", ".eslintrc.js"],
       "outputs": []
     },
     "typecheck": {
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json", "tsconfig.json"],
       "outputs": []
     },
     "test": {

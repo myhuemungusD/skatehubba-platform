@@ -2,7 +2,13 @@
   "name": "skatehubba-monorepo",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@8.15.9",
+  "description": "Monorepo root for Skatehubba platform",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myhuemungusD/skatehubbaweb010.git"
+  },
+  "packageManager": "pnpm@9.1.0",
   "engines": {
     "node": ">=20.10.0"
   },
@@ -22,6 +28,7 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "clean": "turbo clean && rm -rf node_modules **/node_modules **/.next **/dist **/.turbo"
   },
   "dependencies": {
@@ -63,32 +70,5 @@
       "prepare",
       "prepack"
     ]
-  },
-  "turbo": {
-    "pipeline": {
-      "build": {
-        "dependsOn": [
-          "^build"
-        ],
-        "outputs": [
-          ".next/**",
-          "dist/**",
-          "build/**"
-        ]
-      },
-      "lint": {
-        "outputs": []
-      },
-      "typecheck": {
-        "outputs": []
-      },
-      "test": {
-        "outputs": []
-      },
-      "dev": {
-        "cache": false,
-        "persistent": true
-      }
-    }
   }
 }
