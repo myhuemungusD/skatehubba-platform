@@ -36,6 +36,37 @@ export type Spot = z.infer<typeof SpotSchema>;
 export type Challenge = z.infer<typeof ChallengeSchema>;
 export type CheckIn = z.infer<typeof CheckInSchema>;
 
+export type SkateLetter = 'S' | 'K' | 'A' | 'T' | 'E';
+export type TurnType = 'setTrick' | 'attemptMatch' | 'judgeAttempt';
+
+export interface SkateGame {
+  id: string;
+  challengerId: string;
+  opponentId: string | null;
+  status: 'pending' | 'active' | 'completed' | 'forfeit';
+  letters: {
+    challenger: string;
+    opponent: string;
+  };
+  currentTurnId: string;
+  currentTurnType: TurnType;
+  currentTrickVideoUrl: string | null;
+  pendingAttemptVideoUrl?: string | null;
+  rounds: {
+    setBy: string;
+    trickVideoUrl: string;
+    attempts: {
+      uid: string;
+      videoUrl: string;
+      result: 'landed' | 'bailed' | 'pending';
+      judgedAt?: string;
+    }[];
+  }[];
+  winnerId?: string | null;
+  createdAt: string; // API returns ISO string
+  updatedAt: string;
+}
+
 export interface User {
   uid: string;
   email: string;

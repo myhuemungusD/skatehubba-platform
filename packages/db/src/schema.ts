@@ -12,6 +12,10 @@ export const users = pgTable('users', {
   profileImageUrl: varchar("profile_image_url"),
   onboardingCompleted: boolean("onboarding_completed").default(false),
   currentTutorialStep: integer("current_tutorial_step").default(0),
+  stats: jsonb('stats').$type<{
+    skateWins: number;
+    skateLosses: number;
+  }>().default({ skateWins: 0, skateLosses: 0 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
