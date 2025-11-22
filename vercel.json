@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && pnpm install --no-frozen-lockfile && pnpm --filter @skatehubba/web build",
-  "installCommand": "pnpm install --ignore-scripts",
+  "buildCommand": "turbo build --filter=@skatehubba/web",
+  "installCommand": "pnpm install",
   "framework": "vite",
   "outputDirectory": "apps/web/dist",
   "headers": [
