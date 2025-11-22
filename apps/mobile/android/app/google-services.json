@@ -14,61 +14,14 @@
       },
       "oauth_client": [
         {
-          "client_id": "665573979824-6ntr58d7ue2vtrit3ob6ukn9u6kcmmju.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBvxRdM9YufW01yATOKmpUmp2zJJxaogH4"
-        },
-        {
-          "current_key": "AIzaSyDD62pVO8fY2Amlea-KfOH2hVrRoYQAtIA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "665573979824-6ntr58d7ue2vtrit3ob6ukn9u6kcmmju.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "665573979824-hmmbb9o722r57457n42n5a7kg0eo1t6t.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.skatehubba.app"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:665573979824:android:5eab00edc09ceb9fee2d75",
-        "android_client_info": {
-          "package_name": "com.skathubba.app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "665573979824-ksonb09598qlk5nqbahe34k9ijao2ee0.apps.googleusercontent.com",
+          "client_id": "665573979824-213mgr5jh6c9aogsgao69skg2c3fos7m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.skathubba.app",
+            "package_name": "com.skatehubba.app",
             "certificate_hash": "edb6a66ae024ae26c0644e1828cf909b637a00d7"
           }
         },
         {
-          "client_id": "665573979824-s07l2eaihebvuktpl979bqqe29e4n4f5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.skathubba.app",
-            "certificate_hash": "89c5c8a6b39081d749ab3233f2e96bc4a6a23012"
-          }
-        },
-        {
           "client_id": "665573979824-6ntr58d7ue2vtrit3ob6ukn9u6kcmmju.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -76,9 +29,6 @@
       "api_key": [
         {
           "current_key": "AIzaSyBvxRdM9YufW01yATOKmpUmp2zJJxaogH4"
-        },
-        {
-          "current_key": "AIzaSyDD62pVO8fY2Amlea-KfOH2hVrRoYQAtIA"
         }
       ],
       "services": {
