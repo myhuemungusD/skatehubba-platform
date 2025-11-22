@@ -9,6 +9,7 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "postinstall": "git diff --quiet pnpm-lock.yaml || echo '\n⚠️  WARNING: pnpm-lock.yaml has uncommitted changes!\n   Run: git add pnpm-lock.yaml && git commit -m \"chore: update lockfile\"\n'",
     "dev": "turbo dev --parallel",
     "dev:server": "turbo dev --filter @skatehubba/server",
     "dev:web": "turbo dev --filter @skatehubba/web",
