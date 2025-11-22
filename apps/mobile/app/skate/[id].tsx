@@ -7,9 +7,10 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { VideoRecorder } from '../../components/skate/VideoRecorder';
 import { SKATE } from '../../theme';
-// ⚠️ Import your engine
+// ⚠️ Import your engine logic
+// Check your path! If @skatehubba/utils isn't aliased, use the relative path below
 import { submitTurnResult, joinSkateChallenge } from '@skatehubba/utils'; 
-import { reportContent, blockUser } from '../../lib/moderation';
+// import { submitTurnResult, joinSkateChallenge } from '../../../../packages/utils/src/api-sdk/skate';
 
 export default function SkateGameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,7 +19,8 @@ export default function SkateGameScreen() {
   const queryClient = useQueryClient();
   const [gameData, setGameData] = useState<any>(null);
 
-  // 1. Real-time Subscription (The "Pro" way for Games)
+  // 1. Real-time Game Subscription
+  // This ensures the screen updates INSTANTLY when the other player moves.
   useEffect(() => {
     if (!id) return;
     const unsub = onSnapshot(doc(db, 'skate_games', id), (doc) => {
@@ -29,10 +31,11 @@ export default function SkateGameScreen() {
 
   const game = gameData;
 
-  // 2. Mutations for Actions
+  // 2. Mutation: Submit a Turn (Land/Bail)
   const submitTurn = useMutation({
     mutationFn: async ({ result, url }: { result: 'landed' | 'bailed', url?: string }) => {
       if (!game || !user) return;
+      // 🧠 The SDK Engine handles all the math (letters, turn switching)
       await submitTurnResult(game, user.uid, result, url);
     },
     onSuccess: () => {
@@ -42,6 +45,7 @@ export default function SkateGameScreen() {
     onError: (err: any) => Alert.alert("Error", err.message)
   });
 
+  // 3. Mutation: Join a Game
   const joinGame = useMutation({
     mutationFn: async () => {
       if (!user) return;
@@ -50,62 +54,9 @@ export default function SkateGameScreen() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['skate', id] })
   });
 
-  const handleReport = () => {
-    Alert.alert(
-      "Report or Block",
-      "Select an action for this content or user.",
-      [
-        {
-          text: "Report Content",
-          onPress: () => {
-            Alert.alert("Report Reason", "Why are you reporting this?", [
-              { text: "Inappropriate Video", onPress: () => submitReport("inappropriate_video") },
-              { text: "Spam / Scam", onPress: () => submitReport("spam") },
-              { text: "Cancel", style: "cancel" }
-            ]);
-          }
-        },
-        {
-          text: "Block User",
-          style: "destructive",
-          onPress: () => {
-            Alert.alert("Block User", "Are you sure? You won't see their content again.", [
-              { text: "Block", style: "destructive", onPress: confirmBlock },
-              { text: "Cancel", style: "cancel" }
-            ]);
-          }
-        },
-        { text: "Cancel", style: "cancel" }
-      ]
-    );
-  };
-
-  const submitReport = async (reason: string) => {
-    if (!user || !game) return;
-    const opponentUid = isChallenger ? game.opponentUid : game.challengerUid;
-    try {
-      await reportContent(user.uid, id as string, 'skate_game', reason, opponentUid);
-      Alert.alert("Report Sent", "Thank you for helping keep SkateHubba safe.");
-    } catch (e) {
-      Alert.alert("Error", "Could not send report.");
-    }
-  };
-
-  const confirmBlock = async () => {
-    if (!user || !game) return;
-    const opponentUid = isChallenger ? game.opponentUid : game.challengerUid;
-    try {
-      await blockUser(user.uid, opponentUid);
-      Alert.alert("User Blocked", "You have blocked this user.");
-      router.replace('/map');
-    } catch (e) {
-      Alert.alert("Error", "Could not block user.");
-    }
-  };
-
   if (!game) return <ActivityIndicator style={{ flex: 1, backgroundColor: SKATE.colors.ink }} />;
 
-  // Helper State
+  // --- HELPER VARIABLES ---
   const isChallenger = user?.uid === game.challengerUid;
   const isOpponent = user?.uid === game.opponentUid;
   const isSpectator = !isChallenger && !isOpponent;
@@ -114,21 +65,11 @@ export default function SkateGameScreen() {
   const myLetters = isChallenger ? game.letters.challenger : game.letters.opponent;
   const oppLetters = isChallenger ? game.letters.opponent : game.letters.challenger;
 
-  // --- RENDER ---
   return (
     <View style={{ flex: 1, backgroundColor: SKATE.colors.ink }}>
       
-      {/* HEADER / SCOREBOARD */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, alignItems: 'center' }}>
-         <TouchableOpacity onPress={() => router.back()}>
-           <Text style={{ color: SKATE.colors.paper }}>Back</Text>
-         </TouchableOpacity>
-         <TouchableOpacity onPress={handleReport}>
-           <Text style={{ color: SKATE.colors.blood, fontWeight: 'bold' }}>REPORT</Text>
-         </TouchableOpacity>
-      </View>
-
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', padding: 24, marginTop: 10 }}>
+      {/* --- SCOREBOARD --- */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', padding: 24, marginTop: 40 }}>
         <View style={{ alignItems: 'center' }}>
           <Text style={{ color: '#fff', fontSize: 24, fontFamily: 'monospace' }}>
             {isSpectator ? game.letters.challenger : myLetters || '—'}
@@ -144,66 +85,73 @@ export default function SkateGameScreen() {
         </View>
       </View>
 
-      {/* GAME VIDEO AREA */}
+      {/* --- VIDEO PLAYER AREA --- */}
       <View style={{ height: 400, backgroundColor: '#000', justifyContent: 'center' }}>
          {game.currentTrickVideoUrl ? (
-            // <VideoPlayer url={game.currentTrickVideoUrl} />
-            <Text style={{color: 'white', textAlign: 'center'}}>Playing: Current Trick</Text>
+            // In real app: <VideoPlayer url={game.currentTrickVideoUrl} />
+            <Text style={{color: 'white', textAlign: 'center'}}>▶️ Playing: Current Trick to Match</Text>
          ) : (
-            <Text style={{color: '#666', textAlign: 'center'}}>Waiting for trick...</Text>
+            <Text style={{color: '#666', textAlign: 'center'}}>Waiting for trick to be set...</Text>
          )}
       </View>
 
-      {/* ACTION ZONE */}
+      {/* --- ACTION ZONE (Context Aware) --- */}
       <View style={{ padding: 20 }}>
         
-        {/* SCENARIO 1: OPEN GAME */}
+        {/* 1. SPECTATOR: Accept Battle */}
         {game.status === 'pending' && isSpectator && (
           <Button 
-            title="ACCEPT BATTLE" 
+            title="ACCEPT BATTLE (JOIN)" 
             color={SKATE.colors.neon} 
             onPress={() => joinGame.mutate()} 
           />
         )}
 
-        {/* SCENARIO 2: MY TURN TO MATCH */}
+        {/* 2. PLAYER: Match a Trick */}
         {game.status === 'active' && isMyTurn && game.currentTurnType === 'attemptMatch' && (
           <>
-            <Text style={{color: SKATE.colors.neon, textAlign: 'center', marginBottom: 10}}>
+            <Text style={{color: SKATE.colors.neon, textAlign: 'center', marginBottom: 10, fontSize: 18, fontWeight: 'bold'}}>
               YOUR TURN TO MATCH
             </Text>
             <VideoRecorder
               maxDurationSec={15}
               onRecordingComplete={(uri) => {
-                // Mock upload
-                const mockUrl = "https://example.com/match.mp4";
+                // Mock upload for testing
+                const mockUrl = "https://example.com/match_video.mp4";
                 submitTurn.mutate({ result: 'landed', url: mockUrl });
               }}
             />
+            <Button title="I Bailed (Take Letter)" color={SKATE.colors.blood} onPress={() => submitTurn.mutate({ result: 'bailed' })} />
           </>
         )}
 
-        {/* SCENARIO 3: JUDGING (Did I land it?) */}
-        {/* Note: In strict street rules, if you set a trick, you must land it first. */}
+        {/* 3. PLAYER: Set a Trick */}
         {isMyTurn && game.currentTurnType === 'setTrick' && (
            <>
-            <Text style={{color: '#fff', textAlign: 'center', marginBottom: 10}}>
-              SET A TRICK (Step 1: Record & Land)
+            <Text style={{color: '#fff', textAlign: 'center', marginBottom: 10, fontSize: 18, fontWeight: 'bold'}}>
+              SET A TRICK
             </Text>
             <VideoRecorder
               maxDurationSec={15}
               onRecordingComplete={(uri) => {
-                // In the 'set' phase, uploading implies you landed it locally
-                const mockUrl = "https://example.com/set.mp4";
+                const mockUrl = "https://example.com/set_video.mp4";
                 submitTurn.mutate({ result: 'landed', url: mockUrl });
               }}
             />
            </>
         )}
 
-        {/* GAME OVER */}
+        {/* 4. WAITING STATE */}
+        {!isMyTurn && game.status === 'active' && (
+            <Text style={{color: '#666', textAlign: 'center', marginTop: 10}}>
+              Waiting for opponent...
+            </Text>
+        )}
+
+        {/* 5. GAME OVER */}
         {game.status === 'completed' && (
           <Text style={{ color: SKATE.colors.gold, fontSize: 32, textAlign: 'center', marginTop: 20 }}>
+            GAME OVER{'\n'}
             WINNER: {game.winnerUid === user?.uid ? 'YOU' : 'OPPONENT'}
           </Text>
         )}

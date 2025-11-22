@@ -17,6 +17,7 @@
       "usesAppleSignIn": true,
       "supportsTablet": true,
       "bundleIdentifier": "com.skatehubba.app",
+      "appleTeamId": "2NDS3XJM79",
       "googleServicesFile": "./GoogleService-Info.plist",
       "entitlements": {
         "com.apple.developer.devicecheck.appattest-environment": "production"
