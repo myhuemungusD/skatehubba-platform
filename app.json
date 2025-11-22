@@ -9,7 +9,10 @@
       "package": "com.jayham710.skatehubbamonorepo"
     },
     "ios": {
-      "bundleIdentifier": "com.skatehubba.app"
+      "bundleIdentifier": "com.skatehubba.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     }
   }
 }
