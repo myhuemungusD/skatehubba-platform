@@ -63,5 +63,33 @@ service cloud.firestore {
         request.resource.data.type in ['top', 'bottom', 'deck', 'hardware'] &&
         request.resource.data.brand is string;
     }
+
+    // infra/firebase/rules.skate.ts
+    match /skate_games/{gameId} {
+      allow read: if authed();
+      allow create: if authed() 
+        && request.resource.data.challengerUid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.letters.challenger == ''
+        && request.resource.data.letters.opponent == ''
+        && request.resource.data.currentTurnType == 'setTrick';
+      
+      allow update: if authed()
+        && (
+          // Setting first trick
+          (request.resource.data.currentTurnType == 'setTrick'
+           && request.resource.data.currentTrickVideoUrl != null
+           && resource.data.currentTurnType == 'setTrick')
+          
+          // Attempting to match
+          || (request.resource.data.currentTurnType == 'attemptMatch'
+              && request.resource.data.pendingAttemptVideoUrl != null
+              && request.auth.uid == resource.data.opponentUid)
+              
+          // Self-judging (honor system)
+          || (request.resource.data.diff( resource.data ).affectedKeys().hasOnly(['letters', 'currentTurnUid', 'currentTurnType', 'winnerUid', 'status'])
+              && request.auth.uid in [resource.data.challengerUid, resource.data.opponentUid])
+        );
+    }
   }
 }
