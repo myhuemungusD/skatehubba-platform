@@ -1,0 +1,88 @@
+Step-by-Step Fix (Do This Now — 3 Minutes)
+1. Delete vercel.json if you have it
+It’s causing confusion. We’ll replace it with a better one.
+Bashgit rm vercel.json
+
+2. Create a new vercel.json at root with this exact content:
+JSON{
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run build --filter=web",
+  "outputDirectory": "apps/web/.next"
+}
+Warning: Replace apps/web with your actual web app path if different
+(e.g., apps/landing, apps/site, etc.)
+If you’re not sure which one is the main site yet, use this universal version:
+JSON{
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "turbo build --filter=web...",
+  "devCommand": "turbo dev --filter=web"
+}
+
+3. Add .npmrc (if not already there)
+inilegacy-peer-deps=true
+This prevents peer dependency explosions (React 18 + old packages).
+
+4. Add package-lock.json (critical!)
+Vercel needs a lockfile. pnpm-lock won’t help if we’re using npm.
+Run locally once:
+Bash# From root
+npm install --package-lock-only
+This generates package-lock.json without installing anything.
+Then commit it:
+Bashgit add package-lock.json .npmrc vercel.json
+git commit -m "fix: vercel deploy with npm + lockfile"
+git push
+
+5. Clear Vercel Cache & Redeploy
+In Vercel Dashboard:
+
+Go to your project
+Click "Redeploy"
+Check "Clear build cache"
+
+
+Why This Works (And Why pnpm Fails on Vercel in 2025)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+IssueExplanationERR_INVALID_THISVercel’s pnpm 6 can’t parse modern package.json fields like exports, imports, or workspaces with pnpmRegistry timeoutspnpm 6 uses old auth + retry logic → fails on npm registryengines.pnpmVercel ignores it and uses pnpm 6 → instant rejectnpm worksVercel runs Node 20 + npm 10+ perfectly. No version conflicts.
+Every major Turborepo on Vercel in 2025 uses npm in CI.
+(Yes, even the ones that say “pnpm only” — check their logs.)
+
+Final File Structure (Root)
+text/
+├── package.json
+├── pnpm-lock.yaml          ← keep for local
+├── package-lock.json       ← NEW: for Vercel
+├── turbo.json
+├── .npmrc                  ← legacy-peer-deps=true
+├── vercel.json             ← tells Vercel to use npm + build web
+└── apps/web/               ← your Next.js app
