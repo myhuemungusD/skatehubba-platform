@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "1c01f45b-a395-4af4-9e2e-5c74e2e2bc08"
+      }
+    },
+    "android": {
+      "package": "com.jayham710.skatehubbamonorepo"
+    }
+  }
+}
