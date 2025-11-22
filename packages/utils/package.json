@@ -1,4 +1,3 @@
-
 {
   "name": "@skatehubba/utils",
   "version": "0.0.0",
@@ -9,7 +8,8 @@
     "build": "echo 'No build needed for TS source packages'"
   },
   "dependencies": {
-    "@skatehubba/types": "workspace:*"
+    "@skatehubba/types": "workspace:*",
+    "firebase": "^10.14.1"
   },
   "devDependencies": {
     "typescript": "~5.3.0"
