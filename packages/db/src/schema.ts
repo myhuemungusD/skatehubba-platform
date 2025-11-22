@@ -10,6 +10,7 @@ export const users = pgTable('users', {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  city: text('city'),
   onboardingCompleted: boolean("onboarding_completed").default(false),
   currentTutorialStep: integer("current_tutorial_step").default(0),
   stats: jsonb('stats').$type<{
