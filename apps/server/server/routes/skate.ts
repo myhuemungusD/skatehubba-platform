@@ -1,5 +1,5 @@
 import express from 'express';
-import { db, eq, and } from '../db';
+import { db, eq, and, sql } from '../db';
 import { skateGames, users } from '@skatehubba/db';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -181,6 +181,29 @@ router.post('/:id/turn', async (req, res) => {
         if ((currentLetters + nextLetter).length >= 5) {
           updates.status = 'completed';
           updates.winnerId = userId; // The judge (setter) wins
+          
+          // Update stats
+          // Winner gets a win
+          await db.execute(sql`
+            UPDATE users 
+            SET stats = jsonb_set(
+              COALESCE(stats, '{"skateWins": 0, "skateLosses": 0}'::jsonb), 
+              '{skateWins}', 
+              (COALESCE(stats->>'skateWins', '0')::int + 1)::text::jsonb
+            )
+            WHERE id = ${userId}
+          `);
+
+          // Loser gets a loss
+          await db.execute(sql`
+            UPDATE users 
+            SET stats = jsonb_set(
+              COALESCE(stats, '{"skateWins": 0, "skateLosses": 0}'::jsonb), 
+              '{skateLosses}', 
+              (COALESCE(stats->>'skateLosses', '0')::int + 1)::text::jsonb
+            )
+            WHERE id = ${attempterId}
+          `);
         }
       }
       updates.rounds = rounds;
@@ -209,6 +232,27 @@ router.post('/:id/turn', async (req, res) => {
   } catch (error) {
     console.error('Error processing turn:', error);
     res.status(500).json({ error: 'Failed to process turn' });
+  }
+});
+
+// Get leaderboard
+router.get('/leaderboard', async (req, res) => {
+  try {
+    // Query users sorted by stats->>'skateWins' descending
+    // Note: JSONB querying syntax depends on dialect, but Drizzle has helpers or raw SQL
+    const leaderboard = await db.select({
+      id: users.id,
+      displayName: users.displayName,
+      stats: users.stats
+    })
+    .from(users)
+    .orderBy(sql`${users.stats}->>'skateWins' DESC`)
+    .limit(50);
+
+    res.json(leaderboard);
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    res.status(500).json({ error: 'Failed to fetch leaderboard' });
   }
 });
 

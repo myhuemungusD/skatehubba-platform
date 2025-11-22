@@ -75,6 +75,7 @@ export class SkateHubbaClient {
       join: (id: string) => this.post<SkateGame>(`/skate/games/${id}/join`, {}),
       turn: (id: string, data: { action: 'attempt' | 'judge' | 'set'; videoUrl?: string; judgment?: 'landed' | 'bailed' }) =>
         this.post<SkateGame>(`/skate/games/${id}/turn`, data),
+      leaderboard: () => this.get<User[]>('/skate/games/leaderboard'),
     };
   }
 
