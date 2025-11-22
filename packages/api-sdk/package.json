@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@skatehubba/types": "workspace:*",
+    "@skatehubba/db": "workspace:*",
+    "zod": "^3.22.4",
     "axios": "^1.6.0"
   },
   "devDependencies": {

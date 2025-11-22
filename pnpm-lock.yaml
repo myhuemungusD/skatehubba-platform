@@ -438,12 +438,18 @@ importers:
 
   packages/api-sdk:
     dependencies:
+      '@skatehubba/db':
+        specifier: workspace:*
+        version: link:../db
       '@skatehubba/types':
         specifier: workspace:*
         version: link:../types
       axios:
         specifier: ^1.6.0
         version: 1.13.2
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
     devDependencies:
       typescript:
         specifier: ~5.3.0
