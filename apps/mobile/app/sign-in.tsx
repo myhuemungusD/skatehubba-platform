@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, TouchableOpacity, Text, Alert, StyleSheet, Image } from 'react-native';
+import { View, TouchableOpacity, Text, Alert, StyleSheet, Image, Linking } from 'react-native';
 import { useAuthStore } from '../lib/auth';
 import { useRouter } from 'expo-router';
 import { SKATE } from '../theme';
@@ -24,6 +24,15 @@ export default function SignIn() {
     }
   };
 
+  const openPolicy = (type: 'terms' | 'privacy') => {
+    const url = type === 'terms' 
+      ? 'https://skatehubba.com/terms' 
+      : 'https://skatehubba.com/privacy';
+    Linking.openURL(url).catch(() => {
+      Alert.alert('Error', 'Could not open link');
+    });
+  };
+
   if (user) return null;
 
   return (
@@ -45,9 +54,16 @@ export default function SignIn() {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.privacyText}>
-          By signing in, you agree to our Terms of Service and Privacy Policy
-        </Text>
+        <View style={styles.policyContainer}>
+          <Text style={styles.privacyText}>By signing in, you agree to our </Text>
+          <TouchableOpacity onPress={() => openPolicy('terms')}>
+            <Text style={[styles.privacyText, styles.linkText]}>Terms of Service</Text>
+          </TouchableOpacity>
+          <Text style={styles.privacyText}> and </Text>
+          <TouchableOpacity onPress={() => openPolicy('privacy')}>
+            <Text style={[styles.privacyText, styles.linkText]}>Privacy Policy</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -102,11 +118,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  policyContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
   privacyText: {
     color: SKATE.colors.paper,
     fontSize: 12,
     textAlign: 'center',
     opacity: 0.6,
-    paddingHorizontal: 20,
+  },
+  linkText: {
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
   },
 });
