@@ -10,7 +10,8 @@ import type {
   Spot, 
   Challenge, 
   CheckIn, 
-  User 
+  User,
+  SkateGame
 } from '@skatehubba/types';
 
 export class SkateHubbaClient {
@@ -63,6 +64,17 @@ export class SkateHubbaClient {
     return {
       create: (data: Omit<CheckIn, 'id' | 'ts'>) => 
         this.post<CheckIn>('/checkins', data),
+    };
+  }
+
+  get skate() {
+    return {
+      create: (data: { trickVideoUrl: string; opponentHandle?: string }) =>
+        this.post<SkateGame>('/skate/games', data),
+      get: (id: string) => this.get<SkateGame>(`/skate/games/${id}`),
+      join: (id: string) => this.post<SkateGame>(`/skate/games/${id}/join`, {}),
+      turn: (id: string, data: { action: 'attempt' | 'judge' | 'set'; videoUrl?: string; judgment?: 'landed' | 'bailed' }) =>
+        this.post<SkateGame>(`/skate/games/${id}/turn`, data),
     };
   }
 

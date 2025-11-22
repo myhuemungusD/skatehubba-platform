@@ -143,6 +143,34 @@ export const feedback = pgTable("feedback", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const skateGames = pgTable('skate_games', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  challengerId: uuid('challenger_id').notNull().references(() => users.id),
+  opponentId: uuid('opponent_id').references(() => users.id),
+  status: text('status').notNull().default('pending'), // pending, active, completed, forfeit
+  letters: jsonb('letters').notNull().$type<{
+    challenger: string;
+    opponent: string;
+  }>().default({ challenger: '', opponent: '' }),
+  currentTurnId: uuid('current_turn_id').notNull().references(() => users.id),
+  currentTurnType: text('current_turn_type').notNull(), // setTrick, attemptMatch, judgeAttempt
+  currentTrickVideoUrl: text('current_trick_video_url'),
+  pendingAttemptVideoUrl: text('pending_attempt_video_url'),
+  rounds: jsonb('rounds').notNull().$type<Array<{
+    setBy: string;
+    trickVideoUrl: string;
+    attempts: Array<{
+      uid: string;
+      videoUrl: string;
+      result: 'landed' | 'bailed' | 'pending';
+      judgedAt?: string;
+    }>;
+  }>>().default([]),
+  winnerId: uuid('winner_id').references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 export const insertTutorialStepSchema = createInsertSchema(tutorialSteps).omit({
   id: true,
 });
@@ -171,6 +199,12 @@ export const insertFeedbackSchema = createInsertSchema(feedback).omit({
   status: true,
 });
 
+export const insertSkateGameSchema = createInsertSchema(skateGames).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type User = typeof users.$inferSelect;
 export type UpsertUser = typeof users.$inferInsert;
 export type Spot = typeof spots.$inferSelect;
@@ -194,3 +228,5 @@ export type AuthSession = typeof authSessions.$inferSelect;
 export type InsertAuthSession = typeof authSessions.$inferInsert;
 export type Feedback = typeof feedback.$inferSelect;
 export type InsertFeedback = typeof insertFeedbackSchema._type;
+export type SkateGame = typeof skateGames.$inferSelect;
+export type InsertSkateGame = typeof insertSkateGameSchema._type;
