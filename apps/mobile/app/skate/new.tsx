@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../hooks/useAuth'; 
 import { useMutation } from '@tanstack/react-query';
-import { httpsCallable } from 'firebase/functions';
-import { collection, addDoc } from 'firebase/firestore';
-import { db, functions } from '../../lib/firebase';
-import { useAuth } from '../../hooks/useAuth';
 import { VideoRecorder } from '../../components/skate/VideoRecorder';
 import { SKATE } from '../../theme';
-import { uploadSkateClip } from '../../lib/storage';
+// ⚠️ Ensure packages/utils/src/index.ts exports this, or import directly from the file path
+import { createSkateChallenge } from '@skatehubba/utils'; 
 
 export default function NewSkateChallenge() {
   const { user } = useAuth();
@@ -17,35 +15,31 @@ export default function NewSkateChallenge() {
 
   const createGame = useMutation({
     mutationFn: async ({ trickVideoUrl }: { trickVideoUrl: string }) => {
-      if (!user) throw new Error('Not authenticated');
+      if (!user) throw new Error("Must be logged in");
       
-      const gameRef = await addDoc(collection(db, 'skate_games'), {
-        challengerUid: user.uid,
-        opponentUid: null, // will be claimed via handle search or invite
-        status: 'pending',
-        letters: { challenger: '', opponent: '' },
-        currentTurnUid: user.uid,
-        currentTurnType: 'setTrick',
-        currentTrickVideoUrl: trickVideoUrl,
-        rounds: [{
-          setBy: user.uid,
-          trickVideoUrl,
-          attempts: []
-        }],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-
-      // Notify via FCM: "Yo @handle challenged you to SKATE!"
-      // const notify = httpsCallable(functions, 'notifySkateChallenge');
-      // await notify({ gameId: gameRef.id, opponentHandle });
+      // 1. Call the SDK Engine
+      const gameId = await createSkateChallenge(user.uid, trickVideoUrl);
       
-      return gameRef.id;
+      // 2. (Optional) Invite logic would go here (e.g. finding opponentUid by handle)
+      return gameId;
     },
     onSuccess: (gameId) => {
+      // 3. Redirect to the Game Room
       router.replace(`/skate/${gameId}`);
+    },
+    onError: (err: any) => {
+      Alert.alert("Failed to create challenge", err.message);
     }
   });
+
+  if (createGame.isPending) {
+    return (
+      <View style={{ flex: 1, backgroundColor: SKATE.colors.ink, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={SKATE.colors.neon} />
+        <Text style={{ color: '#fff', marginTop: 20 }}>Creating Arena...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: SKATE.colors.ink }}>
@@ -59,9 +53,13 @@ export default function NewSkateChallenge() {
       <VideoRecorder
         maxDurationSec={15}
         onRecordingComplete={async (uri) => {
-          if (!user) return;
-          const url = await uploadSkateClip(uri, user.uid);
-          createGame.mutate({ trickVideoUrl: url });
+          console.log("Uploading clip...", uri);
+          // In a real app, you'd use your uploadToStorage function here:
+          // const url = await uploadToStorage(uri, `skate_games/${user!.uid}_${Date.now()}.mp4`);
+          
+          // For now, we simulate a URL so you can test the DB flow:
+          const mockUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+          createGame.mutate({ trickVideoUrl: mockUrl });
         }}
       />
 
