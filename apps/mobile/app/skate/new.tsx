@@ -1,52 +1,68 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useMutation } from '@tanstack/react-query';
+import { httpsCallable } from 'firebase/functions';
+import { collection, addDoc } from 'firebase/firestore';
+import { db, functions } from '../../lib/firebase';
+import { useAuth } from '../../hooks/useAuth';
 import { VideoRecorder } from '../../components/skate/VideoRecorder';
 import { SKATE } from '../../theme';
-import { getClient } from '../../lib/client';
 import { uploadSkateClip } from '../../lib/storage';
 
 export default function NewSkateChallenge() {
+  const { user } = useAuth();
   const router = useRouter();
   const [opponentHandle, setOpponentHandle] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleRecordingComplete = async (uri: string) => {
-    try {
-      setIsSubmitting(true);
-      // In a real app, get user ID from auth context
-      const userId = 'mock-user-id'; 
+  const createGame = useMutation({
+    mutationFn: async ({ trickVideoUrl }: { trickVideoUrl: string }) => {
+      if (!user) throw new Error('Not authenticated');
       
-      const url = await uploadSkateClip(uri, userId);
-      const client = await getClient();
-      
-      const game = await client.skate.create({
-        trickVideoUrl: url,
-        opponentHandle: opponentHandle || undefined
+      const gameRef = await addDoc(collection(db, 'skate_games'), {
+        challengerUid: user.uid,
+        opponentUid: null, // will be claimed via handle search or invite
+        status: 'pending',
+        letters: { challenger: '', opponent: '' },
+        currentTurnUid: user.uid,
+        currentTurnType: 'setTrick',
+        currentTrickVideoUrl: trickVideoUrl,
+        rounds: [{
+          setBy: user.uid,
+          trickVideoUrl,
+          attempts: []
+        }],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
 
-      router.replace(`/skate/${game.id}`);
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to create challenge');
-    } finally {
-      setIsSubmitting(false);
+      // Notify via FCM: "Yo @handle challenged you to SKATE!"
+      // const notify = httpsCallable(functions, 'notifySkateChallenge');
+      // await notify({ gameId: gameRef.id, opponentHandle });
+      
+      return gameRef.id;
+    },
+    onSuccess: (gameId) => {
+      router.replace(`/skate/${gameId}`);
     }
-  };
+  });
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
+    <View style={{ flex: 1, backgroundColor: SKATE.colors.ink }}>
+      <Text style={{ color: SKATE.colors.neon, fontSize: 32, fontWeight: '900', textAlign: 'center', marginTop: 60 }}>
         SET THE FIRST TRICK
       </Text>
-      <Text style={styles.subtitle}>
+      <Text style={{ color: '#fff', textAlign: 'center', marginHorizontal: 32, marginTop: 16 }}>
         One take. 15 seconds. No edits. Just like curbside.
       </Text>
 
       <VideoRecorder
         maxDurationSec={15}
-        onRecordingComplete={handleRecordingComplete}
-        label={isSubmitting ? "Creating Game..." : "Record Trick"}
+        onRecordingComplete={async (uri) => {
+          if (!user) return;
+          const url = await uploadSkateClip(uri, user.uid);
+          createGame.mutate({ trickVideoUrl: url });
+        }}
       />
 
       <TextInput
@@ -54,37 +70,9 @@ export default function NewSkateChallenge() {
         placeholderTextColor="#666"
         value={opponentHandle}
         onChangeText={setOpponentHandle}
-        style={styles.input}
+        style={{ backgroundColor: SKATE.colors.grime, color: SKATE.colors.neon, margin: 32, padding: 16, borderRadius: 12 }}
       />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000', // SKATE.colors.ink fallback
-    padding: 20,
-  },
-  title: {
-    color: '#0f0', // SKATE.colors.neon fallback
-    fontSize: 32,
-    fontWeight: '900',
-    textAlign: 'center',
-    marginTop: 60,
-  },
-  subtitle: {
-    color: '#fff',
-    textAlign: 'center',
-    marginHorizontal: 32,
-    marginTop: 16,
-    marginBottom: 32,
-  },
-  input: {
-    backgroundColor: '#222', // SKATE.colors.grime fallback
-    color: '#0f0',
-    margin: 32,
-    padding: 16,
-    borderRadius: 12,
-  }
-});

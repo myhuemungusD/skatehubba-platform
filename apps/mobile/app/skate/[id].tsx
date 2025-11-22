@@ -1,172 +1,90 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, Button, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import { useAuth } from '../../hooks/useAuth';
 import { VideoPlayer } from '../../components/skate/VideoPlayer';
 import { VideoRecorder } from '../../components/skate/VideoRecorder';
 import { SKATE } from '../../theme';
-import { getClient } from '../../lib/client';
 import { uploadSkateClip } from '../../lib/storage';
-import type { SkateGame } from '@skatehubba/types';
+import type { SkateGame } from '@skatehubba/utils';
 
 export default function SkateGameScreen() {
   const { id } = useLocalSearchParams();
-  const [game, setGame] = useState<SkateGame | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState('mock-user-id'); // Replace with auth
-
-  const fetchGame = async () => {
-    try {
-      const client = await getClient();
-      const data = await client.skate.get(id as string);
-      setGame(data);
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to load game');
-    } finally {
-      setLoading(false);
+  const { user } = useAuth();
+  
+  const { data: game } = useQuery({
+    queryKey: ['skate', id],
+    queryFn: async () => {
+      const snap = await getDoc(doc(db, 'skate_games', id as string));
+      return snap.data() as SkateGame;
     }
-  };
+  });
 
-  useEffect(() => {
-    fetchGame();
-  }, [id]);
+  if (!game) return <ActivityIndicator style={{flex: 1, backgroundColor: SKATE.colors.ink}} />;
 
-  if (loading || !game) return <ActivityIndicator style={{ flex: 1, backgroundColor: '#000' }} />;
-
-  const isMyTurn = game.currentTurnId === userId;
-  const isChallenger = game.challengerId === userId;
+  const isMyTurn = game.currentTurnUid === user?.uid;
+  const isChallenger = game.challengerUid === user?.uid;
   const myLetters = isChallenger ? game.letters.challenger : game.letters.opponent;
   const oppLetters = isChallenger ? game.letters.opponent : game.letters.challenger;
 
-  const handleAttempt = async (uri: string) => {
-    try {
-      const url = await uploadSkateClip(uri, userId);
-      const client = await getClient();
-      await client.skate.turn(game.id, {
-        action: 'attempt',
-        videoUrl: url
-      });
-      fetchGame();
-    } catch (error) {
-      Alert.alert('Error', 'Failed to submit attempt');
-    }
-  };
-
-  const handleJudge = async (judgment: 'landed' | 'bailed') => {
-    try {
-      const client = await getClient();
-      await client.skate.turn(game.id, {
-        action: 'judge',
-        judgment
-      });
-      fetchGame();
-    } catch (error) {
-      Alert.alert('Error', 'Failed to submit judgment');
-    }
+  const judgeAttempt = async (gameId: string, result: 'landed' | 'bailed') => {
+     // Logic to update game state based on judgment
+     // This would typically involve updating the rounds, letters, and turn
+     // For now, just a placeholder update to show interaction
+     console.log(`Judging ${result}`);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.scoreBlock}>
-          <Text style={styles.letters}>{myLetters || '—'}</Text>
-          <Text style={styles.label}>YOU</Text>
+    <View style={{ flex: 1, backgroundColor: SKATE.colors.ink }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', padding: 24 }}>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ color: '#fff', fontSize: 24 }}>{myLetters || '—'}</Text>
+          <Text style={{ color: SKATE.colors.neon }}>YOU</Text>
         </View>
-        <Text style={styles.vs}>SKATE</Text>
-        <View style={styles.scoreBlock}>
-          <Text style={styles.letters}>{oppLetters || '—'}</Text>
-          <Text style={styles.label}>OPP</Text>
+        <Text style={{ color: SKATE.colors.gold, fontSize: 48, fontWeight: '900' }}>SKATE</Text>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ color: '#fff', fontSize: 24 }}>{oppLetters || '—'}</Text>
+          <Text style={{ color: '#fff' }}>OPP</Text>
         </View>
       </View>
 
       {game.currentTrickVideoUrl && (
-        <VideoPlayer url={game.currentTrickVideoUrl} style={{ height: 300, marginBottom: 20 }} />
+        <VideoPlayer url={game.currentTrickVideoUrl} style={{ height: 400 }} />
       )}
 
       {isMyTurn && game.currentTurnType === 'attemptMatch' && (
         <VideoRecorder
           label="MATCH IT — ONE TAKE"
-          onRecordingComplete={handleAttempt}
+          onRecordingComplete={async (uri) => {
+            if (!user) return;
+            const url = await uploadSkateClip(uri, user.uid);
+            await updateDoc(doc(db, 'skate_games', id as string), {
+              pendingAttemptVideoUrl: url,
+              currentTurnType: 'judgeAttempt'
+            });
+          }}
         />
       )}
 
       {isMyTurn && game.currentTurnType === 'judgeAttempt' && game.pendingAttemptVideoUrl && (
         <View>
-          <Text style={styles.instruction}>Judge the attempt:</Text>
-          <VideoPlayer url={game.pendingAttemptVideoUrl} style={{ height: 300, marginBottom: 20 }} />
-          <View style={styles.judgeButtons}>
-            <Button title="LANDED 🔥" color="#0f0" onPress={() => handleJudge('landed')} />
-            <View style={{ width: 20 }} />
-            <Button title="BAILED 💀" color="#f00" onPress={() => handleJudge('bailed')} />
+          <VideoPlayer url={game.pendingAttemptVideoUrl} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 24 }}>
+            <Button title="LANDED 🔥" color={SKATE.colors.neon} onPress={() => judgeAttempt(id as string, 'landed')} />
+            <Button title="BAILED 💀" color={SKATE.colors.blood} onPress={() => judgeAttempt(id as string, 'bailed')} />
           </View>
         </View>
       )}
 
-      {!isMyTurn && (
-        <Text style={styles.waiting}>Waiting for opponent...</Text>
-      )}
-
       {game.status === 'completed' && (
-        <Text style={styles.winner}>
-          {game.winnerId === userId ? 'YOU WON SKATE!' : 'YOU LOST SKATE...'}
+        <Text style={{ color: SKATE.colors.gold, fontSize: 42, textAlign: 'center' }}>
+          {game.winnerUid === user?.uid ? 'YOU WON SKATE!' : 'YOU LOST SKATE...'}
         </Text>
       )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 24,
-    alignItems: 'center',
-  },
-  scoreBlock: {
-    alignItems: 'center',
-  },
-  letters: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    letterSpacing: 4,
-  },
-  label: {
-    color: '#0f0',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  vs: {
-    color: '#ffd700', // Gold
-    fontSize: 48,
-    fontWeight: '900',
-  },
-  judgeButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 24,
-  },
-  instruction: {
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  waiting: {
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 40,
-    fontSize: 18,
-  },
-  winner: {
-    color: '#ffd700',
-    fontSize: 42,
-    textAlign: 'center',
-    marginTop: 40,
-    fontWeight: 'bold',
-  }
-});

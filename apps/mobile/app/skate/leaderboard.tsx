@@ -1,86 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { View, Text, FlatList } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { SKATE } from '../../theme';
-import { getClient } from '../../lib/client';
-import type { User } from '@skatehubba/types';
+
+interface User {
+  id: string;
+  handle: string;
+  stats?: {
+    skateWins?: number;
+    skateLosses?: number;
+  };
+}
 
 export default function SkateLeaderboard() {
-  const [leaderboard, setLeaderboard] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const client = await getClient();
-        const data = await client.skate.leaderboard();
-        setLeaderboard(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLeaderboard();
-  }, []);
-
-  if (loading) return <ActivityIndicator style={{ flex: 1, backgroundColor: '#000' }} />;
+  const { data: leaderboard } = useQuery({
+    queryKey: ['skate-leaderboard'],
+    queryFn: async () => {
+      const snap = await getDocs(query(
+        collection(db, 'users'),
+        orderBy('stats.skateWins', 'desc'),
+        limit(50)
+      ));
+      return snap.docs.map(d => ({ id: d.id, ...d.data() })) as User[];
+    }
+  });
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>GLOBAL RANKING</Text>
-      <FlatList
-        data={leaderboard}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <View style={[styles.row, index === 0 && styles.goldRow]}>
-            <Text style={styles.rank}>#{index + 1}</Text>
-            <Text style={styles.name}>@{item.displayName || 'Anonymous'}</Text>
-            <Text style={styles.stats}>
-              {(item.stats as any)?.skateWins || 0}W - {(item.stats as any)?.skateLosses || 0}L
-            </Text>
-          </View>
-        )}
-      />
-    </View>
+    <FlatList
+      style={{ backgroundColor: SKATE.colors.ink, flex: 1 }}
+      data={leaderboard}
+      renderItem={({ item, index }) => (
+        <View style={{ flexDirection: 'row', padding: 16, backgroundColor: index === 0 ? SKATE.colors.gold : SKATE.colors.grime }}>
+          <Text style={{ color: SKATE.colors.ink, fontWeight: '900' }}>#{index + 1}</Text>
+          <Text style={{ marginLeft: 16, color: '#fff' }}>@{item.handle}</Text>
+          <Text style={{ marginLeft: 'auto', color: SKATE.colors.neon }}>
+            {item.stats?.skateWins || 0}W - {item.stats?.skateLosses || 0}L
+          </Text>
+        </View>
+      )}
+    />
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  title: {
-    color: '#ffd700',
-    fontSize: 24,
-    fontWeight: '900',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    padding: 16,
-    backgroundColor: '#222',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-    alignItems: 'center',
-  },
-  goldRow: {
-    backgroundColor: '#ffd700',
-  },
-  rank: {
-    color: '#fff', // Will be overridden by goldRow logic if needed, but simple for now
-    fontWeight: '900',
-    width: 40,
-  },
-  name: {
-    marginLeft: 16,
-    color: '#fff',
-    flex: 1,
-    fontWeight: 'bold',
-  },
-  stats: {
-    color: '#0f0',
-    fontWeight: 'bold',
-  }
-});
