@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main, skatehubbaV2]
+  pull_request:
+    branches: [main, skatehubbaV2]
+
+jobs:
+  quality:
+    name: Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Biome Elite Check
+        run: npx @biomejs/biome check . --apply --no-errors-on-unmatched
+        continue-on-error: false
+
+      - name: Typecheck
+        run: pnpm turbo typecheck
+
+      - name: Test
+        run: pnpm turbo test
