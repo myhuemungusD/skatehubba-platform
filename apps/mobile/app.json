@@ -62,6 +62,7 @@
     "plugins": [
       "expo-location",
       "expo-camera",
+      "react-native-vision-camera",
       "expo-dev-client",
       [
         "expo-build-properties",
