@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert, Dimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCreateChallenge } from '@skatehubba/utils';
 import { Camera, CameraType } from 'expo-camera';
 import { Video } from 'expo-av';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { storage, db } from '@/lib/firebase';
+import { serverTimestamp } from 'firebase/firestore';
+import { storage } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { SKATE } from '@skatehubba/ui';
 
@@ -16,7 +16,6 @@ const RECORD_DURATION = 15; // seconds, hard cap per spec
 export default function NewChallengeScreen() {
   const { opponentHandle } = useLocalSearchParams<{ opponentHandle: string }>();
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { user } = useAuth();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -24,6 +23,8 @@ export default function NewChallengeScreen() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [timeLeft, setTimeLeft] = useState(RECORD_DURATION);
   const cameraRef = useRef<Camera>(null);
+  
+  const createChallengeMutation = useCreateChallenge();
 
   // Request camera permission on mount
   useEffect(() => {
@@ -35,71 +36,6 @@ export default function NewChallengeScreen() {
       }
     })();
   }, []);
-
-  const createChallengeMutation = useMutation({
-    mutationFn: async (videoUrl: string) => {
-      if (!user?.uid || !opponentHandle) throw new Error('Missing user or opponent');
-
-      const challengeData = {
-        createdBy: user.uid,
-        opponent: opponentHandle,
-        status: 'pending',
-        rules: { oneTake: true, durationSec: RECORD_DURATION },
-        clipA: { url: videoUrl, uploadedAt: serverTimestamp() },
-        createdAt: serverTimestamp(),
-      };
-
-      const docRef = await addDoc(collection(db, 'challenges'), challengeData);
-      return docRef.id;
-    },
-    onMutate: () => setUploadProgress(0),
-    onSuccess: (challengeId) => {
-      queryClient.invalidateQueries({ queryKey: ['challenges', user?.uid] });
-      Alert.alert('Challenge Sent!', `Your one-take is live. ${opponentHandle} has 24h to reply.`);
-      router.back();
-    },
-    onError: (err) => Alert.alert('Upload Failed', err.message),
-  });
-
-  const startRecording = async () => {
-    if (cameraRef.current && !isRecording) {
-      setIsRecording(true);
-      setTimeLeft(RECORD_DURATION);
-
-      // Start countdown timer
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            stopRecording();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      try {
-        const video = await cameraRef.current.recordAsync({
-          maxDuration: RECORD_DURATION,
-          quality: '720p',
-          mute: false,
-        });
-        setRecordedUri(video.uri);
-        setIsRecording(false);
-      } catch (error: any) {
-        Alert.alert('Recording Error', error.message);
-        setIsRecording(false);
-        clearInterval(timer);
-      }
-    }
-  };
-
-  const stopRecording = () => {
-    if (cameraRef.current && isRecording) {
-      cameraRef.current.stopRecording();
-      setIsRecording(false);
-    }
-  };
 
   const handleUpload = async () => {
     if (!recordedUri || !user?.uid) return;
@@ -121,9 +57,18 @@ export default function NewChallengeScreen() {
       
       setUploadProgress(90);
       
-      await createChallengeMutation.mutateAsync(downloadURL);
+      await createChallengeMutation.mutateAsync({
+        createdBy: user.uid,
+        // opponent: opponentHandle, // TODO: Add opponent to Challenge type in utils
+        // status: 'pending',
+        rules: { oneTake: true, durationSec: RECORD_DURATION },
+        clipA: downloadURL,
+        // createdAt: serverTimestamp(),
+      });
       
       setUploadProgress(100);
+      Alert.alert('Challenge Sent!', `Your one-take is live. ${opponentHandle} has 24h to reply.`);
+      router.back();
     } catch (error: any) {
       Alert.alert('Upload Error', error.message);
       setUploadProgress(0);

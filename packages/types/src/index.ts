@@ -72,4 +72,27 @@ export interface User {
   email: string;
   displayName?: string;
   photoURL?: string;
+  handle: string;
+  stance: 'regular' | 'goofy';
+  sponsors: string[];
+  stats: {
+    wins: number;
+    losses: number;
+  };
+  board: {
+    deck: string;
+    trucks?: string;
+    wheels?: string;
+  };
+  avatarUrl?: string;
 }
+
+export interface Item {
+  id: string;
+  type: 'deck' | 'top' | 'bottom' | 'shoes';
+  name: string;
+  equipped: boolean;
+  price?: number;
+  imageUrl?: string;
+}
+
