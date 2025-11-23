@@ -4,7 +4,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, useWallet } from '@skatehubba/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { SKATE } from '@skatehubba/ui';
 import { AvatarRenderer } from '@/components/AvatarRenderer';
@@ -27,6 +27,8 @@ export default function ClosetScreen() {
   const uid = paramUid || user?.uid;
   const isOwnCloset = !paramUid || paramUid === user?.uid;
   const [activeCategory, setActiveCategory] = useState<Category>('top');
+
+  const { data: wallet } = useWallet(uid || '');
 
   const rotateY = useSharedValue(0);
 
@@ -80,6 +82,11 @@ export default function ClosetScreen() {
           <Text style={styles.backText}>← BACK</Text>
         </Pressable>
         <Text style={styles.title}>BACKPACK</Text>
+        {isOwnCloset && (
+          <View style={styles.wallet}>
+            <Text style={styles.bucks}>{wallet ?? 0} HB</Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.avatarContainer}>
@@ -132,6 +139,17 @@ const styles = StyleSheet.create({
     textShadowColor: '#000',
     textShadowOffset: { width: 4, height: 4 },
     textShadowRadius: 0,
+  },
+  wallet: {
+    backgroundColor: '#000',
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: SKATE.colors.neon,
+  },
+  bucks: {
+    color: SKATE.colors.neon,
+    fontWeight: 'bold',
   },
   avatarContainer: {
     flex: 1,

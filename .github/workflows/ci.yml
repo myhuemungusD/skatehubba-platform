@@ -32,3 +32,10 @@ jobs:
 
       - name: Test
         run: pnpm turbo test
+
+      - name: E2E Build & Test (Detox)
+        run: |
+          # pnpm detox build --configuration ios.sim.release
+          # pnpm detox test --configuration ios.sim.release
+          echo "Detox tests skipped in CI for now (requires macOS runner)"
+
