@@ -19,6 +19,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.skatehubba.app",
       "appleTeamId": "2NDS3XJM79",
+      "associatedDomains": [
+        "applinks:skatehubba.com",
+        "webcredentials:skatehubba.com"
+      ],
       "googleServicesFile": "./GoogleService-Info.plist",
       "entitlements": {
         "com.apple.developer.devicecheck.appattest-environment": "production"
