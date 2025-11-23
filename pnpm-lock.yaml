@@ -219,6 +219,9 @@ importers:
       react-native-video:
         specifier: ^6.0.0
         version: 6.18.0(react-native@0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
+      react-native-vision-camera:
+        specifier: ^4.7.3
+        version: 4.7.3(react-native-reanimated@3.10.1(@babel/core@7.28.5)(react-native@0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1))(react-native@0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
       react-native-web:
         specifier: ^0.21.2
         version: 0.21.2(react-dom@19.2.0(react@18.3.1))(react@18.3.1)
@@ -8252,6 +8255,22 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  react-native-vision-camera@4.7.3:
+    resolution: {integrity: sha512-g1/neOyjSqn1kaAa2FxI/qp5KzNvPcF0bnQw6NntfbxH6tm0+8WFZszlgb5OV+iYlB6lFUztCbDtyz5IpL47OA==}
+    peerDependencies:
+      '@shopify/react-native-skia': '*'
+      react: '*'
+      react-native: '*'
+      react-native-reanimated: '*'
+      react-native-worklets-core: '*'
+    peerDependenciesMeta:
+      '@shopify/react-native-skia':
+        optional: true
+      react-native-reanimated:
+        optional: true
+      react-native-worklets-core:
+        optional: true
 
   react-native-web@0.21.2:
     resolution: {integrity: sha512-SO2t9/17zM4iEnFvlu2DA9jqNbzNhoUP+AItkoCOyFmDMOhUnBBznBDCYN92fGdfAkfQlWzPoez6+zLxFNsZEg==}
@@ -19651,6 +19670,13 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-native: 0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1)
+
+  react-native-vision-camera@4.7.3(react-native-reanimated@3.10.1(@babel/core@7.28.5)(react-native@0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1))(react-native@0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1)
+    optionalDependencies:
+      react-native-reanimated: 3.10.1(@babel/core@7.28.5)(react-native@0.74.7(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
 
   react-native-web@0.21.2(react-dom@19.2.0(react@18.3.1))(react@18.3.1):
     dependencies:
