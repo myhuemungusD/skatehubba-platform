@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "2NDS3XJM79.com.skatehubba.app",
+        "paths": [ "/skate/*", "/auth/*", "/invite/*" ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [ "2NDS3XJM79.com.skatehubba.app" ]
+  }
+}

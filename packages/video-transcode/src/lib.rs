@@ -9,6 +9,6 @@ pub extern "C" fn transcode_15s(
   // Current: Uses existing FFmpegKit as fallback
   // Target: <1.8s 720p H.264 hardware-accelerated transcode on A15+/Snapdragon 8
   // Signature locked for iOS/Android NDK integration – no breaking changes
-  eprintln!("Rust transcode stub – falling back to FFmpegKit");
-  0 // success
+  eprintln!("Rust stub accessed - demanding fallback");
+  -1 // error: signal to TS to use FFmpegKit
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 // Mock types for now
 type Capsule = {
@@ -28,6 +29,13 @@ export const CapsuleDrop = ({ userHasNft }: { userHasNft: boolean }) => {
   const isAvailable = new Date() >= PD_CAPSULE.dropsAt;
   const price = userHasNft ? 0 : PD_CAPSULE.fallbackPrice;
 
+  const handlePress = async () => {
+    if (isAvailable) {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      // Proceed with purchase logic
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{PD_CAPSULE.name}</Text>
@@ -43,7 +51,7 @@ export const CapsuleDrop = ({ userHasNft }: { userHasNft: boolean }) => {
         {!isAvailable ? (
           <Text style={styles.lockedText}>Drops on {PD_CAPSULE.dropsAt.toLocaleDateString()}</Text>
         ) : (
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handlePress}>
             <Text style={styles.buttonText}>
               {price === 0 ? 'Claim Free (NFT Holder)' : `Buy for ${price} HB`}
             </Text>
