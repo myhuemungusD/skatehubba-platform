@@ -4,11 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { doc, getDoc } from 'firebase/firestore';
 import { useLocalSearchParams } from 'expo-router';
 import { db } from '@skatehubba/utils';
-import { SKATE } from '@skatehubba/ui';
+import { SKATE, ARPreview, Button } from '@skatehubba/ui';
 import type { User } from '@skatehubba/types';
+import { Modal, Pressable } from 'react-native';
+import { useState } from 'react';
 
 export default function Profile() {
   const { handle } = useLocalSearchParams<{ handle: string }>();
+  const [showAR, setShowAR] = useState(false);
   
   const { data: user, isLoading } = useQuery<User>({
     queryKey: ['profile', handle],
@@ -61,6 +64,20 @@ export default function Profile() {
         <Text style={styles.title}>Board Setup</Text>
         <Text style={styles.item}>Deck: {user?.board?.deck || 'Unknown'}</Text>
       </View>
+
+      <View style={styles.section}>
+        <Text style={styles.title}>Trophy Case</Text>
+        <Button label="View 3D Ollie" onPress={() => setShowAR(true)} />
+      </View>
+
+      <Modal visible={showAR} animationType="slide" onRequestClose={() => setShowAR(false)}>
+        <View style={{ flex: 1, backgroundColor: '#000' }}>
+            <Pressable onPress={() => setShowAR(false)} style={{ position: 'absolute', top: 50, right: 20, zIndex: 10 }}>
+                <Text style={{ color: '#fff', fontSize: 20, fontWeight: 'bold' }}>CLOSE X</Text>
+            </Pressable>
+            <ARPreview trickId="ollie" />
+        </View>
+      </Modal>
     </ScrollView>
   );
 }

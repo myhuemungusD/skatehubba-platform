@@ -9,6 +9,7 @@ import { serverTimestamp } from 'firebase/firestore';
 import { storage } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { SKATE } from '@skatehubba/ui';
+import { useTrickDetector } from '../../src/utils/mlEdge';
 
 const { width, height } = Dimensions.get('window');
 const RECORD_DURATION = 15; // seconds, hard cap per spec
@@ -24,6 +25,9 @@ export default function NewChallengeScreen() {
   const [timeLeft, setTimeLeft] = useState(RECORD_DURATION);
   const cameraRef = useRef<Camera>(null);
   
+  // ML Trick Detection
+  const { detectedTrick } = useTrickDetector();
+
   const createChallengeMutation = useCreateChallenge();
 
   // Request camera permission on mount
@@ -105,6 +109,14 @@ export default function NewChallengeScreen() {
         </Pressable>
         <Text style={styles.title}>ONE-TAKE CHALLENGE</Text>
         <Text style={styles.subtitle}>vs {opponentHandle}</Text>
+        
+        {/* ML Overlay */}
+        {detectedTrick && (
+            <View style={styles.mlBadge}>
+                <Text style={styles.mlText}>✨ TRICK DETECTED: {detectedTrick.toUpperCase()}</Text>
+            </View>
+        )}
+
         {isRecording && (
           <View style={styles.timerContainer}>
             <Text style={styles.timerText}>{timeLeft}s</Text>
@@ -253,6 +265,20 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
   sendText: { color: '#000', fontFamily: 'BakerScript', fontSize: 24, fontWeight: '900' },
+  mlBadge: {
+    backgroundColor: SKATE.colors.neon,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginTop: 10,
+    borderWidth: 2,
+    borderColor: '#000',
+  },
+  mlText: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
   progressContainer: { 
     position: 'absolute', 
     bottom: 100, 

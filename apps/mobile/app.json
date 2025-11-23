@@ -65,6 +65,20 @@
       "react-native-vision-camera",
       "expo-dev-client",
       [
+        "@reactvision/react-viro",
+        {
+          "android": {
+            "xrEnabled": false
+          }
+        }
+      ],
+      [
+        "react-native-fast-tflite",
+        {
+          "enableAndroidGpuLibraries": true
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {

@@ -7,6 +7,10 @@ import { SKATE } from '../theme';
 import * as Linking from 'expo-linking';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/app-check';
+import { initAnalytics } from '../src/utils/analytics';
+
+// Initialize Observability
+initAnalytics();
 
 const queryClient = new QueryClient();
 
@@ -38,7 +42,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading || hasNavigated) return;
 
-    const currentSegment = segments[0] ?? '';
+    const currentSegment = (segments[0] as string) ?? '';
     const inAuthRoute = currentSegment === 'sign-in' || currentSegment === 'index' || currentSegment === '';
     const inProtectedRoute = currentSegment === 'map' || currentSegment === '(tabs)';
 

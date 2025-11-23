@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { ViroARSceneNavigator, ViroARScene, Viro3DObject, ViroAmbientLight } from '@viro-community/react-viro';
+import { ViroARSceneNavigator, ViroARScene, Viro3DObject, ViroAmbientLight } from '@reactvision/react-viro';
 import { useTrick } from '@skatehubba/utils';
 import { Button, SKATE } from '@skatehubba/ui';
 import * as Haptics from 'expo-haptics';
