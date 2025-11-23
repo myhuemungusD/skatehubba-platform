@@ -1,4 +1,5 @@
 package com.skatehubba.app
+import com.viromedia.bridge.ReactViroPackage
 
 import android.app.Application
 import android.content.res.Configuration
@@ -23,6 +24,9 @@ class MainApplication : Application(), ReactApplication {
           override fun getPackages(): List<ReactPackage> {
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(new MyReactNativePackage());
+            add(ReactViroPackage(ReactViroPackage.ViroPlatform.AR))
+            add(ReactViroPackage(ReactViroPackage.ViroPlatform.GVR))
+
             return PackageList(this).packages
           }
 

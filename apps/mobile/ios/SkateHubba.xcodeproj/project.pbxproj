@@ -14,8 +14,8 @@
 		96905EF65AED1B983A6B3ABC /* libPods-SkateHubba.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-SkateHubba.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		70BA778A92694C3A9D91066C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D39AE738C9D34012ADAA612A /* GoogleService-Info.plist */; };
-		0F37D3579CE7468BBCEE3172 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A92DE4858409F8379AB66 /* noop-file.swift */; };
+		911A5EBEA126457BA6C0FED7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA145F9C251D4E728961402E /* GoogleService-Info.plist */; };
+		B1B033F98F024042B05F4DCF /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6299DD97B49C5B477CA45 /* noop-file.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,9 +32,9 @@
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-SkateHubba/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		D39AE738C9D34012ADAA612A /* GoogleService-Info.plist */ = {isa = PBXFileReference; name = "GoogleService-Info.plist"; path = "SkateHubba/GoogleService-Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
-		373A92DE4858409F8379AB66 /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "SkateHubba/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		EF34594E06594FD49BA27DF0 /* SkateHubba-Bridging-Header.h */ = {isa = PBXFileReference; name = "SkateHubba-Bridging-Header.h"; path = "SkateHubba/SkateHubba-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		FA145F9C251D4E728961402E /* GoogleService-Info.plist */ = {isa = PBXFileReference; name = "GoogleService-Info.plist"; path = "SkateHubba/GoogleService-Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
+		BDB6299DD97B49C5B477CA45 /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "SkateHubba/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		1954A73A2A38466D8B426922 /* SkateHubba-Bridging-Header.h */ = {isa = PBXFileReference; name = "SkateHubba-Bridging-Header.h"; path = "SkateHubba/SkateHubba-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,9 +59,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				D39AE738C9D34012ADAA612A /* GoogleService-Info.plist */,
-				373A92DE4858409F8379AB66 /* noop-file.swift */,
-				EF34594E06594FD49BA27DF0 /* SkateHubba-Bridging-Header.h */,
+				FA145F9C251D4E728961402E /* GoogleService-Info.plist */,
+				BDB6299DD97B49C5B477CA45 /* noop-file.swift */,
+				1954A73A2A38466D8B426922 /* SkateHubba-Bridging-Header.h */,
 			);
 			name = SkateHubba;
 			sourceTree = "<group>";
@@ -201,8 +201,8 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				70BA778A92694C3A9D91066C /* GoogleService-Info.plist in Resources */,
-				C461B55514854E988F89F7D3 /* SkateHubba-Bridging-Header.h in Resources */,
+				911A5EBEA126457BA6C0FED7 /* GoogleService-Info.plist in Resources */,
+				92160B5755234E08958C9112 /* SkateHubba-Bridging-Header.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,7 +278,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				0F37D3579CE7468BBCEE3172 /* noop-file.swift in Sources */,
+				B1B033F98F024042B05F4DCF /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
