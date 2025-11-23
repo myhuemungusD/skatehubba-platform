@@ -18,6 +18,7 @@
       "usesAppleSignIn": true,
       "supportsTablet": true,
       "bundleIdentifier": "com.skatehubba.app",
+      "buildNumber": "1.0.0",
       "appleTeamId": "2NDS3XJM79",
       "associatedDomains": [
         "applinks:skatehubba.com",
