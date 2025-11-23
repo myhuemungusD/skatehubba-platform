@@ -12,6 +12,7 @@
     "firebase": "^10.14.1"
   },
   "devDependencies": {
+    "fast-check": "^4.3.0",
     "typescript": "~5.3.0"
   }
 }
