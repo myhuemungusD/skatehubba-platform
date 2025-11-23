@@ -36,7 +36,7 @@
     },
     "android": {
       "package": "com.skatehubba.app",
-      "googleServicesFile": "./android/app/google-services.json",
+      "googleServicesFile": "./google-services.json",
       "intentFilters": [
         {
           "action": "VIEW",
@@ -92,6 +92,7 @@
     "experiments": {
       "typedRoutes": true
     },
+    "newArchEnabled": true,
     "extra": {
       "eas": {
         "projectId": "682cb6d2-cf8f-407c-a7f1-1069c45156dd"
