@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "^6.1.2",
+    "@honeycombio/opentelemetry-react-native": "^0.7.2",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-firebase/app": "^23.5.0",
     "@react-native-firebase/app-check": "^23.5.0",
@@ -25,6 +26,7 @@
     "@skatehubba/ui": "workspace:*",
     "@skatehubba/utils": "workspace:*",
     "@tanstack/react-query": "^5.0.0",
+    "@viro-community/react-viro": "^2.41.1",
     "expo": "~51.0.0",
     "expo-av": "^16.0.7",
     "expo-build-properties": "^1.0.9",
@@ -39,6 +41,7 @@
     "react": "^18.2.0",
     "react-dom": "^19.2.0",
     "react-native": "~0.74.0",
+    "react-native-fast-tflite": "^1.6.1",
     "react-native-passkey": "^3.3.2",
     "react-native-reanimated": "~3.10.0",
     "react-native-video": "^6.0.0",
