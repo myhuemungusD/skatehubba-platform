@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../hooks/useAuth'; 
+import { useAuth } from '@/hooks/useAuth'; 
 import { useMutation } from '@tanstack/react-query';
-import { VideoRecorder } from '../../components/skate/VideoRecorder';
-import { SKATE } from '../../theme';
+import { VideoRecorder } from '@/components/skate/VideoRecorder';
+import { SKATE } from '@/theme';
 // ⚠️ Ensure packages/utils/src/index.ts exports this, or import directly from the file path
 import { createSkateChallenge } from '@skatehubba/utils'; 
+// import { createSkateChallenge } from '../../../../packages/utils/src/api-sdk/skate'; // Use this relative path if aliases aren't set up
 
 export default function NewSkateChallenge() {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ export default function NewSkateChallenge() {
     }
   });
 
-  if (createGame.isPending) {
+  if (createGame.isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: SKATE.colors.ink, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={SKATE.colors.neon} />
