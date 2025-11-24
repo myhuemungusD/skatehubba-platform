@@ -1,5 +1,5 @@
 import { collection, doc, setDoc, writeBatch } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../lib/firebase';
 import { SkateSpot, UserProfile } from '../types/schema';
 
 // --- 1. THE DATA TO UPLOAD ---
