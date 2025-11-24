@@ -29,13 +29,17 @@
     "typecheck": "turbo typecheck",
     "test": "turbo test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean": "turbo clean && rm -rf node_modules **/node_modules **/.next **/dist **/.turbo"
+    "clean": "turbo clean && rm -rf node_modules **/node_modules **/.next **/dist **/.turbo",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "openai": "^6.8.1",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "expo": "~51.0.28",
+    "react-native": "0.74.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.7",
