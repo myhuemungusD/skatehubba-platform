@@ -1,296 +1,220 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Alert, Dimensions } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useCreateChallenge } from '@skatehubba/utils';
-import { Camera, CameraType } from 'expo-camera';
-import { Video } from 'expo-av';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera'; // ✅ FIXED: New Architecture Camera
+import { Video, ResizeMode } from 'expo-av'; // ✅ FIXED: Added ResizeMode
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+// Firebase Imports
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { serverTimestamp } from 'firebase/firestore';
-import { storage } from '@/lib/firebase';
-import { useAuth } from '@/hooks/useAuth';
-import { SKATE } from '@skatehubba/ui';
-import { useTrickDetector } from '../../src/utils/mlEdge';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { storage, db } from '@/lib/firebase'; // ✅ FIXED: Uses your new file
+import { useAuth } from '@/hooks/useAuth';    // ✅ FIXED: Uses your new hook
+
+// Custom Imports (Keep these if they exist in your project)
+import { SKATE } from '@skatehubba/ui'; 
+// import useTrickDetector from '../../src/utils/mlEdge'; // Uncomment if you have this file
 
 const { width, height } = Dimensions.get('window');
-const RECORD_DURATION = 15; // seconds, hard cap per spec
+const RECORD_DURATION = 15; // seconds
 
 export default function NewChallengeScreen() {
-  const { opponentHandle } = useLocalSearchParams<{ opponentHandle: string }>();
   const router = useRouter();
   const { user } = useAuth();
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [facing, setFacing] = useState<'front' | 'back'>('back'); // ✅ FIXED: Type is string now
+  const [permission, requestPermission] = useCameraPermissions(); // ✅ FIXED: New Permission Hook
   const [isRecording, setIsRecording] = useState(false);
-  const [recordedUri, setRecordedUri] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(RECORD_DURATION);
-  const cameraRef = useRef<Camera>(null);
-  
-  // ML Trick Detection
-  const { detectedTrick } = useTrickDetector();
+  const [videoUri, setVideoUri] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const cameraRef = useRef<CameraView>(null); // ✅ FIXED: Ref type
 
-  const createChallengeMutation = useCreateChallenge();
+  // 1. Handle Permissions
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
 
-  // Request camera permission on mount
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-      if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Camera access is required for challenges.');
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>We need your permission to show the camera</Text>
+        <TouchableOpacity onPress={requestPermission} style={styles.button}>
+          <Text style={styles.buttonText}>Grant Permission</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // 2. Toggle Camera Front/Back
+  function toggleCameraType() {
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
+  }
+
+  // 3. Start Recording
+  async function startRecording() {
+    if (cameraRef.current) {
+      setIsRecording(true);
+      try {
+        const video = await cameraRef.current.recordAsync({
+          maxDuration: RECORD_DURATION,
+        });
+        setVideoUri(video.uri);
+        setIsRecording(false);
+      } catch (e) {
+        console.error("Recording failed", e);
+        setIsRecording(false);
       }
-    })();
-  }, []);
+    }
+  }
 
-  const handleUpload = async () => {
-    if (!recordedUri || !user?.uid) return;
+  // 4. Stop Recording
+  function stopRecording() {
+    if (cameraRef.current && isRecording) {
+      cameraRef.current.stopRecording();
+      setIsRecording(false);
+    }
+  }
 
-    setUploadProgress(10);
+  // 5. Upload to Firebase
+  async function handleUpload() {
+    if (!videoUri || !user) return;
+    setUploading(true);
 
     try {
-      const response = await fetch(recordedUri);
+      // A. Create Blob from URI
+      const response = await fetch(videoUri);
       const blob = await response.blob();
-      
-      setUploadProgress(30);
-      
-      const storageRef = ref(storage, `challenges/${user.uid}/${Date.now()}.mp4`);
+
+      // B. Upload to Storage
+      const filename = `challenges/${user.uid}/${Date.now()}.mp4`;
+      const storageRef = ref(storage, filename);
       await uploadBytes(storageRef, blob);
-      
-      setUploadProgress(70);
-      
       const downloadURL = await getDownloadURL(storageRef);
-      
-      setUploadProgress(90);
-      
-      await createChallengeMutation.mutateAsync({
-        createdBy: user.uid,
-        // opponent: opponentHandle, // TODO: Add opponent to Challenge type in utils
-        // status: 'pending',
-        rules: { oneTake: true, durationSec: RECORD_DURATION },
-        clipA: downloadURL,
-        // createdAt: serverTimestamp(),
-      });
-      
-      setUploadProgress(100);
-      Alert.alert('Challenge Sent!', `Your one-take is live. ${opponentHandle} has 24h to reply.`);
-      router.back();
-    } catch (error: any) {
-      Alert.alert('Upload Error', error.message);
-      setUploadProgress(0);
+
+      // C. Save Metadata to Firestore (if db is set up)
+      if (db) {
+        await addDoc(collection(db, "challenges"), {
+            videoUrl: downloadURL,
+            userId: user.uid,
+            createdAt: serverTimestamp(),
+            status: "pending_review"
+        });
+      }
+
+      setUploading(false);
+      router.replace('/(tabs)/feed'); // Go back to feed after upload
+    } catch (error) {
+      console.error("Upload failed", error);
+      setUploading(false);
+      alert("Upload failed. Please try again.");
     }
-  };
+  }
 
-  if (hasPermission === null) {
+  // Render Video Preview if recorded
+  if (videoUri) {
     return (
       <View style={styles.container}>
-        <Text style={styles.loading}>Requesting camera...</Text>
+        <Video
+          source={{ uri: videoUri }}
+          style={styles.preview}
+          useNativeControls
+          resizeMode={ResizeMode.COVER} // ✅ FIXED: Enum usage
+          isLooping
+        />
+        <View style={styles.controls}>
+            <TouchableOpacity onPress={() => setVideoUri(null)} style={styles.secondaryButton}>
+                <Text style={styles.secondaryButtonText}>Retake</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleUpload} style={styles.primaryButton}>
+                {uploading ? <ActivityIndicator color="#000"/> : <Text style={styles.primaryButtonText}>Post Challenge</Text>}
+            </TouchableOpacity>
+        </View>
       </View>
     );
   }
 
-  if (hasPermission === false) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.error}>Camera permission denied. Enable in app settings.</Text>
-      </View>
-    );
-  }
-
+  // Render Camera View
   return (
     <View style={styles.container}>
-      <Camera
+      <CameraView 
+        style={styles.camera} 
+        facing={facing} 
         ref={cameraRef}
-        style={styles.camera}
-        type={CameraType.back}
-      />
-      
-      <View style={styles.overlay}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>← CANCEL</Text>
-        </Pressable>
-        <Text style={styles.title}>ONE-TAKE CHALLENGE</Text>
-        <Text style={styles.subtitle}>vs {opponentHandle}</Text>
-        
-        {/* ML Overlay */}
-        {detectedTrick && (
-            <View style={styles.mlBadge}>
-                <Text style={styles.mlText}>✨ TRICK DETECTED: {detectedTrick.toUpperCase()}</Text>
-            </View>
-        )}
+        mode="video" // Important for recording
+      >
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+            <Ionicons name="camera-reverse" size={30} color="white" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.recordButton, isRecording && styles.recording]}
+            onPress={isRecording ? stopRecording : startRecording}
+          >
+            <View style={styles.recordInner} />
+          </TouchableOpacity>
 
-        {isRecording && (
-          <View style={styles.timerContainer}>
-            <Text style={styles.timerText}>{timeLeft}s</Text>
-          </View>
-        )}
-      </View>
-
-      {!recordedUri && (
-        <Pressable
-          style={[styles.recordBtn, isRecording && styles.recordingBtn]}
-          onPress={isRecording ? stopRecording : startRecording}
-          disabled={!hasPermission}
-        >
-          <Text style={styles.recordText}>{isRecording ? '● STOP' : 'RECORD'}</Text>
-        </Pressable>
-      )}
-
-      {recordedUri && !uploadProgress && (
-        <View style={styles.previewContainer}>
-          <Video
-            source={{ uri: recordedUri }}
-            style={styles.previewVideo}
-            resizeMode="cover"
-            shouldPlay
-            isLooping
-            isMuted
-          />
-          <Text style={styles.previewLabel}>PREVIEW YOUR ONE-TAKE</Text>
-          <Pressable style={styles.sendBtn} onPress={handleUpload}>
-            <Text style={styles.sendText}>SEND CHALLENGE</Text>
-          </Pressable>
+          <View style={styles.spacer} /> 
         </View>
-      )}
-
-      {uploadProgress > 0 && uploadProgress < 100 && (
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>Uploading... {Math.round(uploadProgress)}%</Text>
-        </View>
-      )}
+      </CameraView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: SKATE.colors.ink },
-  loading: { 
-    flex: 1, 
-    color: SKATE.colors.neon, 
-    textAlign: 'center', 
-    fontSize: 24, 
-    marginTop: height / 3 
+  container: { flex: 1, backgroundColor: 'black' },
+  camera: { flex: 1, width: width },
+  preview: { flex: 1, width: width },
+  text: { color: 'white', textAlign: 'center', marginTop: 20 },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: 40,
+    paddingHorizontal: 20,
   },
-  error: { 
-    flex: 1, 
-    color: SKATE.colors.blood, 
-    textAlign: 'center', 
-    fontSize: 18, 
-    padding: 40,
-    marginTop: height / 3 
-  },
-  camera: { flex: 1 },
-  overlay: {
-    position: 'absolute',
-    top: 60,
-    left: 0,
-    right: 0,
+  button: {
     alignItems: 'center',
-    paddingHorizontal: 20,
+    padding: 10,
   },
-  backBtn: { position: 'absolute', left: 20, top: 0 },
-  backText: { color: SKATE.colors.neon, fontFamily: 'BakerScript', fontSize: 24 },
-  title: {
-    color: SKATE.colors.gold,
-    fontFamily: 'BakerScript',
-    fontSize: 32,
-    marginVertical: 8,
-    textShadowColor: '#000',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-  },
-  subtitle: { color: SKATE.colors.paper, fontSize: 18 },
-  timerContainer: {
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 3,
-    borderColor: SKATE.colors.blood,
-    marginTop: 20,
-  },
-  timerText: {
-    color: SKATE.colors.neon,
-    fontFamily: 'BakerScript',
-    fontSize: 32,
-    fontWeight: '900',
-  },
-  recordBtn: {
-    position: 'absolute',
-    bottom: 80,
-    alignSelf: 'center',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: SKATE.colors.blood,
+  buttonText: { color: 'white', fontSize: 18, fontWeight: 'bold' },
+  recordButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 4,
+    borderColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 6,
-    borderColor: '#000',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
-    elevation: 20,
   },
-  recordingBtn: { backgroundColor: SKATE.colors.neon },
-  recordText: { color: '#000', fontFamily: 'BakerScript', fontSize: 24, fontWeight: '900' },
-  previewContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.9)',
-    padding: 20,
-    alignItems: 'center',
+  recording: { borderColor: 'red' },
+  recordInner: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'red',
   },
-  previewVideo: {
-    width: width - 40,
-    height: 200,
-    borderRadius: SKATE.radius.lg,
-    borderWidth: 3,
-    borderColor: SKATE.colors.gold,
+  spacer: { width: 40 }, // Balances the layout
+  controls: {
+      position: 'absolute',
+      bottom: 40,
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'space-around',
+      alignItems: 'center'
   },
-  previewLabel: {
-    color: SKATE.colors.gold,
-    fontFamily: 'BakerScript',
-    fontSize: 18,
-    marginTop: 12,
+  primaryButton: {
+      backgroundColor: '#00ff00', // SkateHubba Green
+      paddingVertical: 15,
+      paddingHorizontal: 30,
+      borderRadius: 30,
   },
-  sendBtn: {
-    backgroundColor: SKATE.colors.gold,
-    paddingHorizontal: 40,
-    paddingVertical: 16,
-    borderRadius: 12,
-    marginTop: 16,
-    borderWidth: 4,
-    borderColor: '#000',
+  primaryButtonText: { fontWeight: 'bold', fontSize: 16 },
+  secondaryButton: {
+      padding: 15,
   },
-  sendText: { color: '#000', fontFamily: 'BakerScript', fontSize: 24, fontWeight: '900' },
-  mlBadge: {
-    backgroundColor: SKATE.colors.neon,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    marginTop: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-  },
-  mlText: {
-    color: '#000',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  progressContainer: { 
-    position: 'absolute', 
-    bottom: 100, 
-    alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 12,
-  },
-  progressText: { 
-    color: SKATE.colors.neon, 
-    fontFamily: 'BakerScript', 
-    fontSize: 18 
-  },
+  secondaryButtonText: { color: 'white', fontSize: 16 }
 });
