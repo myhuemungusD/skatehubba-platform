@@ -7,11 +7,16 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   ActivityIndicator, 
-  Alert 
+  Alert,
+  SafeAreaView,
+  Dimensions
 } from 'react-native';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase'; 
+import { useAuthStore } from '../../lib/auth';
 
-// 1. THE DATA SHAPE (Match this to your Backend Response)
-// In a real scenario, import this from packages/types
+const { width, height } = Dimensions.get('window');
+
 interface UserProfile {
   username: string;
   level: number;
@@ -19,103 +24,133 @@ interface UserProfile {
     hardware: number;
     bearings: number;
   };
-  avatarUrl: string; // URL to the rendered image of their character
+  avatarUrl: string;
 }
 
+const DEFAULT_PROFILE: UserProfile = {
+  username: "New Skater",
+  level: 1,
+  currency: { hardware: 10, bearings: 5 },
+  avatarUrl: "https://via.placeholder.com/300x600/transparent/png?text=Skater"
+};
+
 export default function AvatarScreen() {
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const { user: authUser, loading: authLoading } = useAuthStore();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 2. CONNECT TO BACKEND
   useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
-    try {
-      // REPLACE with your actual localhost or IP address for testing
-      // e.g. 'http://192.168.1.5:8000/api/me'
-      // const response = await fetch('http://YOUR_API_URL/api/me'); 
-      // const data = await response.json();
-      
-      // MOCKING THE RESPONSE FOR NOW SO YOU CAN SEE THE UI
-      setTimeout(() => {
-        setUser({
-          username: "Hesher",
-          level: 92,
-          currency: { hardware: 24, bearings: 16 },
-          avatarUrl: "https://via.placeholder.com/300x600/transparent/png?text=Avatar+Render" 
-        });
-        setLoading(false);
-      }, 1000); // Fake 1s load time
-    } catch (error) {
-      Alert.alert("Error", "Could not load profile");
+    if (authLoading) return;
+    if (!authUser) {
       setLoading(false);
+      return;
     }
-  };
 
-  if (loading) {
+    const userRef = doc(db, 'users', authUser.uid);
+
+    const unsubscribe = onSnapshot(userRef, async (docSnap) => {
+      if (docSnap.exists()) {
+        setProfile(docSnap.data() as UserProfile);
+      } else {
+        try {
+          // Create profile if it doesn't exist
+          await setDoc(userRef, DEFAULT_PROFILE);
+          // No need to setProfile here, the snapshot will fire again immediately after writing!
+        } catch (err) {
+          console.error("Error creating profile:", err);
+        }
+      }
+      setLoading(false);
+    }, (error) => {
+      console.error("Profile Sync Error:", error);
+      Alert.alert("Connection Issue", "Could not sync profile data.");
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [authUser, authLoading]);
+
+  if (loading || authLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={styles.centeredContainer}>
         <ActivityIndicator size="large" color="#FBBF24" />
+        <Text style={styles.loadingText}>Syncing Garage...</Text>
+      </View>
+    );
+  }
+
+  if (!authUser) {
+    return (
+      <View style={styles.centeredContainer}>
+        <Text style={styles.loadingText}>Please Log In to view your Avatar.</Text>
       </View>
     );
   }
 
   return (
-    // Background Image (The Garage)
     <ImageBackground 
-      source={{ uri: 'https://your-storage.com/garage_bg.jpg' }} // Replace with local asset
+      source={{ uri: 'https://images.unsplash.com/photo-1585920806256-227956696727?q=80&w=1000&auto=format&fit=crop' }} 
       style={styles.container}
       resizeMode="cover"
     >
       <View style={styles.overlay}>
-        
-        {/* CENTER AVATAR */}
-        {user && (
-            <Image 
-                source={{ uri: user.avatarUrl }} // Use the URL from the user object
-                style={styles.avatarImage} 
-                resizeMode="contain" 
-            />
-        )}
+        {/* SafeAreaView keeps content out of the notch/battery area */}
+        <SafeAreaView style={styles.safeArea}>
+          
+          {/* CENTER AVATAR LAYER */}
+          {/* We place this absolutely so it sits behind the UI controls */}
+          {profile && (
+            <View style={styles.avatarContainer}>
+                <Image 
+                    source={{ uri: profile.avatarUrl }} 
+                    style={styles.avatarImage} 
+                    resizeMode="contain" 
+                />
+            </View>
+          )}
 
-        {/* LEFT BUTTONS */}
-        <View style={styles.leftControls}>
-          <RetroButton text="TOP" onPress={() => console.log('Edit Top')} />
-          <View style={{ height: 20 }} />
-          <RetroButton text="BOTTOM" onPress={() => console.log('Edit Bottom')} />
-        </View>
+          {/* UI CONTROLS LAYER */}
+          <View style={styles.controlsContainer}>
+            
+            {/* LEFT COLUMN */}
+            <View style={styles.column}>
+              <RetroButton text="TOP" onPress={() => console.log('Edit Top')} />
+              <View style={styles.spacer} />
+              <RetroButton text="BOTTOM" onPress={() => console.log('Edit Bottom')} />
+            </View>
 
-        {/* RIGHT BUTTONS */}
-        <View style={styles.rightControls}>
-          <RetroButton text="SKATEHUBBA" onPress={() => console.log('Go to Hub')} />
-          <View style={{ height: 20 }} />
-          <RetroButton text="EQUIP" highlight onPress={() => console.log('Equip Item')} />
-        </View>
+            {/* RIGHT COLUMN */}
+            <View style={styles.column}>
+              <RetroButton text="SKATEHUB" onPress={() => console.log('Go to Hub')} />
+              <View style={styles.spacer} />
+              <RetroButton text="EQUIP" highlight onPress={() => console.log('Equip Item')} />
+            </View>
+          </View>
 
-        {/* BOTTOM STATS BAR */}
-        <View style={styles.statsBar}>
+          {/* BOTTOM STATS BAR */}
+          <View style={styles.statsBar}>
             <View style={styles.statItem}>
                 <Text style={styles.statLabel}>HARDWARE:</Text>
-                <Text style={styles.statValue}>× {user?.currency.hardware}</Text>
+                <Text style={styles.statValue}>× {profile?.currency.hardware ?? 0}</Text>
             </View>
             <View style={styles.statItem}>
                 <Text style={styles.statLabel}>BEARINGS:</Text>
-                <Text style={styles.statValue}>× {user?.currency.bearings}</Text>
+                <Text style={styles.statValue}>× {profile?.currency.bearings ?? 0}</Text>
             </View>
-        </View>
+          </View>
 
+        </SafeAreaView>
       </View>
     </ImageBackground>
   );
 }
 
-// -- REUSABLE UI COMPONENT: The "Sticker" Button --
+// -- REUSABLE UI COMPONENT --
 const RetroButton = ({ text, onPress, highlight }: { text: string, onPress: () => void, highlight?: boolean }) => (
   <TouchableOpacity 
-    style={[styles.btnFrame, highlight ? styles.btnHighlight : null]} 
+    style={[styles.btnFrame, highlight && styles.btnHighlight]} 
     onPress={onPress}
+    activeOpacity={0.7}
   >
     <View style={styles.btnInner}>
       <Text style={styles.btnText}>{text}</Text>
@@ -123,30 +158,53 @@ const RetroButton = ({ text, onPress, highlight }: { text: string, onPress: () =
   </TouchableOpacity>
 );
 
-// -- STYLES (Matching your Image) --
+// -- STYLES --
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#111' },
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }, // Slight dark tint
-  loadingContainer: { flex: 1, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' },
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }, 
+  safeArea: { flex: 1 },
   
-  // Avatar
-  avatarImage: {
+  centeredContainer: { 
+    flex: 1, 
+    backgroundColor: '#000', 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  loadingText: { color: '#666', marginTop: 10 },
+
+  // Avatar is absolutely positioned to stay centered regardless of UI
+  avatarContainer: {
     position: 'absolute',
-    width: '80%',
-    height: '70%',
-    top: '15%',
-    alignSelf: 'center',
+    width: '100%',
+    height: '80%',
+    top: '10%',
     zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarImage: {
+    width: width * 0.8, // Responsive width
+    height: '100%',
   },
 
-  // Controls Positioning
-  leftControls: { position: 'absolute', left: 20, top: '40%', zIndex: 10 },
-  rightControls: { position: 'absolute', right: 20, top: '40%', zIndex: 10 },
+  // Container to hold left/right columns
+  controlsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: '40%', // Push buttons down visually
+    zIndex: 10,
+  },
+  column: {
+    flexDirection: 'column',
+  },
+  spacer: { height: 20 },
 
-  // The Retro Button Style
+  // Buttons
   btnFrame: {
     borderWidth: 2,
-    borderColor: '#FBBF24', // That specific yellow/orange
+    borderColor: '#FBBF24', 
     borderRadius: 8,
     backgroundColor: '#000',
     padding: 2,
@@ -157,7 +215,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
   },
   btnHighlight: {
-    borderColor: '#FFF', // Highlight logic if needed
+    borderColor: '#FFF', 
+    shadowColor: '#FFF',
   },
   btnInner: {
     backgroundColor: '#1a1a1a',
@@ -167,38 +226,40 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: '#FFF',
-    fontSize: 18,
-    fontWeight: '900', // Extra Bold
+    fontSize: 16, // Slightly smaller for better fit
+    fontWeight: '900', 
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
 
-  // Bottom Stats
+  // Stats
   statsBar: {
-    position: 'absolute',
-    bottom: 40,
-    right: 20,
+    alignSelf: 'center', // Center the bar horizontally
+    marginBottom: 20,    // Lift off the bottom
     backgroundColor: '#000',
     borderWidth: 2,
     borderColor: '#FBBF24',
     borderRadius: 8,
-    padding: 10,
-    minWidth: 180,
+    padding: 12,
+    width: '90%', // Take up most width
+    maxWidth: 400,
+    zIndex: 20,
+    flexDirection: 'row', // Align items side by side
+    justifyContent: 'space-around'
   },
   statItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
+    alignItems: 'center',
   },
   statLabel: {
     color: '#FBBF24',
     fontSize: 14,
     fontWeight: 'bold',
-    marginRight: 10,
+    marginRight: 8,
   },
   statValue: {
     color: '#FFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   }
 });
