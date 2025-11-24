@@ -21,8 +21,18 @@ const MAP_STYLE = [
   { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#17263c" }] }
 ];
 
+// 1. Define the type (put this above your component)
+type MarkerData = {
+  id: number;
+  title: string;
+  type: string;
+  lat: number;
+  lng: number;
+};
+
 export default function MapScreen() {
-  const [selectedSpot, setSelectedSpot] = useState(null);
+  // 2. Update your useState line inside the component
+  const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
 
   // 3. User Location (Defaulting to LA for demo)
   const initialRegion = {
@@ -50,7 +60,7 @@ export default function MapScreen() {
           <Marker
             key={spot.id}
             coordinate={{ latitude: spot.lat, longitude: spot.lng }}
-            onPress={() => setSelectedSpot(spot)}
+            onPress={() => setSelectedMarker(spot)}
           >
             {/* Custom Marker UI */}
             <View style={styles.markerContainer}>
