@@ -7,6 +7,7 @@ import { SKATE } from '../theme';
 import * as Linking from 'expo-linking';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/app-check';
+import '../firebase'; // Initialize Firebase JS SDK
 import { initAnalytics } from '../src/utils/analytics';
 
 // Initialize Observability
