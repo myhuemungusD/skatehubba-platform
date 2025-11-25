@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, varchar, uuid, index } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, varchar, uuid, index, doublePrecision } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
 
@@ -28,17 +28,27 @@ export const users = pgTable('users', {
   
   // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => sql`CURRENT_TIMESTAMP`), // Added auto-update function
-});
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  emailIdx: index("users_email_idx").on(table.email),
+}));
 
 export const spots = pgTable('spots', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
-  geo: jsonb('geo').notNull(),
+  // New Columns: Dedicated Lat/Lng for faster indexing and queries
+  latitude: doublePrecision('latitude').notNull(),
+  longitude: doublePrecision('longitude').notNull(),
   createdBy: varchar('created_by', { length: 128 }).notNull().references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => {
+  return {
+    // 1. Crucial Index for User Lookups
+    createdBy: index('spots_created_by_idx').on(table.createdBy),
+    
+    // 2. Optimization for Range Queries (e.g., finding spots in a square bounding box)
+    latLngIdx: index('spots_lat_lng_idx').on(table.latitude, table.longitude),
+  }
 });
 
 export const challenges = pgTable('challenges', {
@@ -49,7 +59,9 @@ export const challenges = pgTable('challenges', {
   clipA: text('clip_a').notNull(),
   clipB: text('clip_b'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  createdByIdx: index('challenges_created_by_idx').on(table.createdBy),
+}));
 
 export const checkIns = pgTable('check_ins', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -57,7 +69,9 @@ export const checkIns = pgTable('check_ins', {
   spotId: uuid('spot_id').notNull().references(() => spots.id),
   proofVideoUrl: text('proof_video_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => ({
+  spotIdIdx: index('checkins_spot_id_idx').on(table.spotId),
+}));
 
 export const sessions = pgTable(
   "sessions",
@@ -105,7 +119,9 @@ export const userProgress = pgTable("user_progress", {
     mistakes?: number;
     helpUsed?: boolean;
   }>(),
-});
+}, (table) => ({
+  userIdIdx: index('user_progress_user_id_idx').on(table.userId),
+}));
 
 export const subscribers = pgTable("subscribers", {
   id: serial("id").primaryKey(),
@@ -139,29 +155,24 @@ export const feedback = pgTable("feedback", {
 export const skateGames = pgTable('skate_games', {
   id: uuid('id').primaryKey().defaultRandom(),
   challengerId: varchar('challenger_id', { length: 128 }).notNull().references(() => users.id),
-  opponentId: varchar('opponent_id', { length: 128 }).references(() => users.id),
-  status: text('status').notNull().default('pending'), // pending, active, completed, forfeit
+  opponentId: varchar('opponent_id', { length: 128 }).references(() => users.id, { onDelete: 'set null' }),
+  winnerId: varchar('winner_id', { length: 128 }).references(() => users.id, { onDelete: 'set null' }),
+  status: text('status').notNull().default('pending'),
   letters: jsonb('letters').notNull().$type<{
     challenger: string;
     opponent: string;
   }>().default({ challenger: '', opponent: '' }),
-  currentTurnId: varchar('current_turn_id', { length: 128 }).notNull().references(() => users.id),
-  currentTurnType: text('current_turn_type').notNull(), // setTrick, attemptMatch, judgeAttempt
-  currentTrickVideoUrl: text('current_trick_video_url'),
-  pendingAttemptVideoUrl: text('pending_attempt_video_url'),
-  rounds: jsonb('rounds').notNull().$type<Array<{
-    setBy: string;
-    trickVideoUrl: string;
-    attempts: Array<{
-      uid: string;
-      videoUrl: string;
-      result: 'landed' | 'bailed' | 'pending';
-      judgedAt?: string;
-    }>;
-  }>>().default([]),
-  winnerId: varchar('winner_id', { length: 128 }).references(() => users.id),
+  firestoreGameRef: varchar('firestore_game_ref', { length: 255 }),
+  finalGameData: jsonb('final_game_data').$type<{
+    totalRounds: number;
+    trickHistory: Array<string>;
+  }>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, (table) => {
+  return {
+    statusIdx: index('skate_games_status_idx').on(table.status),
+  }
 });
 
 export const insertTutorialStepSchema = createInsertSchema(tutorialSteps).omit({
