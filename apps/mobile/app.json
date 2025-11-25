@@ -87,7 +87,8 @@
           }
         }
       ],
-      "@react-native-google-signin/google-signin/app.plugin.js"
+      "@react-native-google-signin/google-signin/app.plugin.js",
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
