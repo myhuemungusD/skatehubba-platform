@@ -1,6 +1,10 @@
-import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, varchar, uuid, index, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, varchar, uuid, index, doublePrecision, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
+
+export const challengeStatusEnum = pgEnum('challenge_status', ['pending', 'active', 'completed', 'disputed']);
+export const feedbackStatusEnum = pgEnum('feedback_status', ['new', 'in-progress', 'resolved', 'closed']);
+export const skateGameStatusEnum = pgEnum('skate_game_status', ['pending', 'in-progress', 'completed', 'cancelled']);
 
 export const users = pgTable('users', {
   // 1. PRIMARY KEY: Use the Firebase UID (varchar) as the primary key.
@@ -13,9 +17,9 @@ export const users = pgTable('users', {
   // Basic Profile Fields
   displayName: text('display_name'),
   photoURL: text('photo_url'),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
+  firstName: varchar("first_name", { length: 256 }),
+  lastName: varchar("last_name", { length: 256 }),
+  profileImageUrl: varchar("profile_image_url", { length: 1024 }),
   city: text('city'),
 
   // Onboarding & Stats remain the same
@@ -54,7 +58,7 @@ export const spots = pgTable('spots', {
 export const challenges = pgTable('challenges', {
   id: uuid('id').primaryKey().defaultRandom(),
   createdBy: varchar('created_by', { length: 128 }).notNull().references(() => users.id),
-  status: text('status').notNull(),
+  status: challengeStatusEnum('status').notNull().default('pending'),
   rules: jsonb('rules').notNull(),
   clipA: text('clip_a').notNull(),
   clipB: text('clip_b'),
@@ -108,7 +112,7 @@ export const tutorialSteps = pgTable("tutorial_steps", {
 
 export const userProgress = pgTable("user_progress", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull(),
+  userId: varchar("user_id", { length: 128 }).notNull().references(() => users.id, { onDelete: 'cascade' }),
   stepId: integer("step_id").notNull(),
   completed: boolean("completed").default(false),
   completedAt: timestamp("completed_at"),
@@ -148,7 +152,7 @@ export const feedback = pgTable("feedback", {
   userEmail: varchar("user_email", { length: 255 }),
   type: varchar("type", { length: 50 }).notNull(),
   message: text("message").notNull(),
-  status: varchar("status", { length: 50 }).notNull().default("new"),
+  status: feedbackStatusEnum("status").notNull().default("new"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -157,7 +161,7 @@ export const skateGames = pgTable('skate_games', {
   challengerId: varchar('challenger_id', { length: 128 }).notNull().references(() => users.id),
   opponentId: varchar('opponent_id', { length: 128 }).references(() => users.id, { onDelete: 'set null' }),
   winnerId: varchar('winner_id', { length: 128 }).references(() => users.id, { onDelete: 'set null' }),
-  status: text('status').notNull().default('pending'),
+  status: skateGameStatusEnum('status').notNull().default('pending'),
   letters: jsonb('letters').notNull().$type<{
     challenger: string;
     opponent: string;
