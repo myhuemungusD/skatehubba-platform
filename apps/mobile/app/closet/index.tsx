@@ -1,189 +1,76 @@
-import React, { useState } from 'react';
-import { View, ImageBackground, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, useWallet } from '@skatehubba/utils';
-import { useAuth } from '@/hooks/useAuth';
-import { SKATE } from '@skatehubba/ui';
-import { AvatarRenderer } from '@/components/AvatarRenderer';
-import { EquippedDisplay } from '@/components/EquippedDisplay';
-import { CategoryTabs } from '@/components/CategoryTabs';
-import { ItemGrid } from '@/components/ItemGrid';
+import React from 'react';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
-const { width, height } = Dimensions.get('window');
+// --- TEMP FIX: Use a web image instead of the missing local file ---
+// const BACKGROUND = require('@/assets/closet/shop-interior.jpg');
+const BACKGROUND = { uri: 'https://placehold.co/600x800/1a1a1a/FFF?text=Skate+Shop' };
 
 type Category = 'top' | 'bottom' | 'deck' | 'trucks' | 'wheels' | 'bearings' | 'hardware' | 'stickers';
 
-const BACKGROUND = require('@/assets/closet/shop-interior.jpg');
-
 export default function ClosetScreen() {
-  const { uid: paramUid } = useLocalSearchParams<{ uid?: string }>();
-  const { user } = useAuth();
+  const { uid } = useLocalSearchParams<{ uid: string }>();
   const router = useRouter();
-  const queryClient = useQueryClient();
-  
-  const uid = paramUid || user?.uid;
-  const isOwnCloset = !paramUid || paramUid === user?.uid;
-  const [activeCategory, setActiveCategory] = useState<Category>('top');
-
-  const { data: wallet } = useWallet(uid || '');
-
-  const rotateY = useSharedValue(0);
-
-  const { data: closet } = useQuery({
-    queryKey: ['closet', uid],
-    queryFn: async () => {
-      if (!uid) return { equipped: {}, owned: {} };
-      const snap = await getDoc(doc(db, 'closet', uid));
-      return snap.data() || { equipped: {}, owned: {} };
-    },
-    enabled: !!uid,
-  });
-
-  const { data: equipped } = useQuery({
-    queryKey: ['equipped', uid],
-    queryFn: async () => {
-      if (!uid) return {};
-      const snap = await getDoc(doc(db, 'users', uid, 'public', 'equipment'));
-      return snap.data()?.equipped || {};
-    },
-    enabled: !!uid,
-  });
-
-  const equipMutation = useMutation({
-    mutationFn: async ({ category, itemId }: { category: Category; itemId: string }) => {
-      if (!uid) throw new Error('No user ID');
-      await setDoc(
-        doc(db, 'users', uid, 'public', 'equipment'),
-        {
-          equipped: { ...equipped, [category]: itemId },
-        },
-        { merge: true }
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['equipped', uid] });
-      rotateY.value = withTiming(360, { duration: 600 }, () => {
-        rotateY.value = 0;
-      });
-    },
-  });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateY: `${rotateY.value}deg` }],
-  }));
 
   return (
-    <ImageBackground source={BACKGROUND} style={styles.container} resizeMode="cover">
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>← BACK</Text>
-        </Pressable>
-        <Text style={styles.title}>BACKPACK</Text>
-        {isOwnCloset && (
-          <View style={styles.wallet}>
-            <Text style={styles.bucks}>{wallet ?? 0} HB</Text>
-          </View>
-        )}
-      </View>
+    <ImageBackground source={BACKGROUND} style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={24} color="#FFF" />
+          </TouchableOpacity>
+          <Text style={styles.title}>SKATE SHOP</Text>
+          <View style={{ width: 40 }} /> 
+        </View>
 
-      <View style={styles.avatarContainer}>
-        <Animated.View style={[styles.avatarWrapper, animatedStyle]}>
-          <AvatarRenderer equipped={equipped || {}} size={height * 0.5} />
-        </Animated.View>
-        {isOwnCloset && <EquippedDisplay equipped={equipped || {}} />}
-      </View>
-
-      <View style={styles.shopFloor}>
-        <CategoryTabs
-          categories={['TOP', 'BOTTOM', 'DECK', 'TRUCKS', 'WHEELS', 'BEARINGS', 'HARDWARE', 'STICKERS']}
-          activeCategory={activeCategory.toUpperCase()}
-          onSelect={(cat) => setActiveCategory(cat.toLowerCase() as Category)}
-        />
-
-        <ItemGrid
-          category={activeCategory}
-          ownedItems={closet?.owned?.[activeCategory] || []}
-          equippedId={equipped?.[activeCategory]}
-          onEquip={(itemId) => equipMutation.mutate({ category: activeCategory, itemId })}
-          disabled={!isOwnCloset}
-        />
-
-        {isOwnCloset && (
-          <Pressable style={styles.equipBtn} onPress={() => router.push('/shop')}>
-            <Text style={styles.equipText}>GO TO SHOP</Text>
-          </Pressable>
-        )}
-      </View>
+        <View style={styles.content}>
+          <Ionicons name="construct-outline" size={64} color="#FFF" />
+          <Text style={styles.comingSoon}>Shop & Closet Coming Soon</Text>
+        </View>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: SKATE.colors.ink },
-  header: {
-    flexDirection: 'row',
+  container: { flex: 1, backgroundColor: '#000' },
+  safeArea: { flex: 1 },
+  header: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    padding: 20 
+  },
+  backBtn: { 
+    width: 40, 
+    height: 40, 
+    borderRadius: 20, 
+    backgroundColor: 'rgba(0,0,0,0.5)', 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  title: { 
+    fontSize: 20, 
+    fontWeight: '900', 
+    color: '#FFF', 
+    letterSpacing: 2, 
+    fontStyle: 'italic' 
+  },
+  content: { 
+    flex: 1, 
+    justifyContent: 'center', 
     alignItems: 'center',
-    paddingTop: 50,
-    paddingHorizontal: 20,
-    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    margin: 20,
+    borderRadius: 20
   },
-  backBtn: { padding: 10 },
-  backText: { color: SKATE.colors.neon, fontFamily: 'BakerScript', fontSize: 24 },
-  title: {
-    color: SKATE.colors.gold,
-    fontFamily: 'BakerScript',
-    fontSize: 48,
-    textShadowColor: '#000',
-    textShadowOffset: { width: 4, height: 4 },
-    textShadowRadius: 0,
-  },
-  wallet: {
-    backgroundColor: '#000',
-    padding: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: SKATE.colors.neon,
-  },
-  bucks: {
-    color: SKATE.colors.neon,
+  comingSoon: {
+    color: '#FFF',
+    fontSize: 18,
     fontWeight: 'bold',
-  },
-  avatarContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarWrapper: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
-    elevation: 20,
-  },
-  shopFloor: {
-    height: height * 0.45,
-    backgroundColor: 'rgba(28,28,28,0.96)',
-    borderTopLeftRadius: SKATE.radius.xl,
-    borderTopRightRadius: SKATE.radius.xl,
-    paddingTop: 20,
-  },
-  equipBtn: {
-    backgroundColor: SKATE.colors.gold,
-    marginHorizontal: 40,
-    marginTop: 20,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: '#000',
-  },
-  equipText: {
-    color: '#000',
-    fontFamily: 'BakerScript',
-    fontSize: 36,
-    fontWeight: '900',
-  },
+    marginTop: 20
+  }
 });
