@@ -3,35 +3,47 @@ import { createInsertSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
 
 export const users = pgTable('users', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  // 1. PRIMARY KEY: Use the Firebase UID (varchar) as the primary key.
+  // This is the canonical ID that Firebase issues.
+  id: varchar('id', { length: 128 }).primaryKey(), 
+  
+  // 2. Auth Details (Maintained by Firebase, but stored for server checks)
   email: text('email').notNull().unique(),
+  
+  // Basic Profile Fields
   displayName: text('display_name'),
   photoURL: text('photo_url'),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   city: text('city'),
+
+  // Onboarding & Stats remain the same
   onboardingCompleted: boolean("onboarding_completed").default(false),
   currentTutorialStep: integer("current_tutorial_step").default(0),
   stats: jsonb('stats').$type<{
     skateWins: number;
     skateLosses: number;
   }>().default({ skateWins: 0, skateLosses: 0 }),
+  
+  // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .$onUpdate(() => sql`CURRENT_TIMESTAMP`), // Added auto-update function
 });
 
 export const spots = pgTable('spots', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   geo: jsonb('geo').notNull(),
-  createdBy: uuid('created_by').notNull().references(() => users.id),
+  createdBy: varchar('created_by', { length: 128 }).notNull().references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const challenges = pgTable('challenges', {
   id: uuid('id').primaryKey().defaultRandom(),
-  createdBy: uuid('created_by').notNull().references(() => users.id),
+  createdBy: varchar('created_by', { length: 128 }).notNull().references(() => users.id),
   status: text('status').notNull(),
   rules: jsonb('rules').notNull(),
   clipA: text('clip_a').notNull(),
@@ -41,7 +53,7 @@ export const challenges = pgTable('challenges', {
 
 export const checkIns = pgTable('check_ins', {
   id: uuid('id').primaryKey().defaultRandom(),
-  uid: uuid('uid').notNull().references(() => users.id),
+  uid: varchar('uid', { length: 128 }).notNull().references(() => users.id),
   spotId: uuid('spot_id').notNull().references(() => spots.id),
   proofVideoUrl: text('proof_video_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -112,31 +124,7 @@ export const donations = pgTable("donations", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const customUsers = pgTable("custom_users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  passwordHash: varchar("password_hash", { length: 255 }).notNull(),
-  firstName: varchar("first_name", { length: 100 }),
-  lastName: varchar("last_name", { length: 100 }),
-  firebaseUid: varchar("firebase_uid", { length: 128 }).unique(),
-  isEmailVerified: boolean("is_email_verified").default(false),
-  emailVerificationToken: varchar("email_verification_token", { length: 255 }),
-  emailVerificationExpires: timestamp("email_verification_expires"),
-  resetPasswordToken: varchar("reset_password_token", { length: 255 }),
-  resetPasswordExpires: timestamp("reset_password_expires"),
-  isActive: boolean("is_active").default(true),
-  lastLoginAt: timestamp("last_login_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const authSessions = pgTable("auth_sessions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => customUsers.id, { onDelete: 'cascade' }),
-  token: varchar("token", { length: 255 }).notNull().unique(),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+// customUsers and authSessions tables removed
 
 export const feedback = pgTable("feedback", {
   id: serial("id").primaryKey(),
@@ -150,14 +138,14 @@ export const feedback = pgTable("feedback", {
 
 export const skateGames = pgTable('skate_games', {
   id: uuid('id').primaryKey().defaultRandom(),
-  challengerId: uuid('challenger_id').notNull().references(() => users.id),
-  opponentId: uuid('opponent_id').references(() => users.id),
+  challengerId: varchar('challenger_id', { length: 128 }).notNull().references(() => users.id),
+  opponentId: varchar('opponent_id', { length: 128 }).references(() => users.id),
   status: text('status').notNull().default('pending'), // pending, active, completed, forfeit
   letters: jsonb('letters').notNull().$type<{
     challenger: string;
     opponent: string;
   }>().default({ challenger: '', opponent: '' }),
-  currentTurnId: uuid('current_turn_id').notNull().references(() => users.id),
+  currentTurnId: varchar('current_turn_id', { length: 128 }).notNull().references(() => users.id),
   currentTurnType: text('current_turn_type').notNull(), // setTrick, attemptMatch, judgeAttempt
   currentTrickVideoUrl: text('current_trick_video_url'),
   pendingAttemptVideoUrl: text('pending_attempt_video_url'),
@@ -171,7 +159,7 @@ export const skateGames = pgTable('skate_games', {
       judgedAt?: string;
     }>;
   }>>().default([]),
-  winnerId: uuid('winner_id').references(() => users.id),
+  winnerId: varchar('winner_id', { length: 128 }).references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -227,10 +215,7 @@ export type Subscriber = typeof subscribers.$inferSelect;
 export type InsertSubscriber = typeof insertSubscriberSchema._type;
 export type Donation = typeof donations.$inferSelect;
 export type InsertDonation = typeof insertDonationSchema._type;
-export type CustomUser = typeof customUsers.$inferSelect;
-export type InsertCustomUser = typeof customUsers.$inferInsert;
-export type AuthSession = typeof authSessions.$inferSelect;
-export type InsertAuthSession = typeof authSessions.$inferInsert;
+// CustomUser and AuthSession types removed
 export type Feedback = typeof feedback.$inferSelect;
 export type InsertFeedback = typeof insertFeedbackSchema._type;
 export type SkateGame = typeof skateGames.$inferSelect;
