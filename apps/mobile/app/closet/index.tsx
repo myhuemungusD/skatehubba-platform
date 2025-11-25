@@ -1,16 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 // --- TEMP FIX: Use a web image instead of the missing local file ---
-// const BACKGROUND = require('@/assets/closet/shop-interior.jpg');
 const BACKGROUND = { uri: 'https://placehold.co/600x800/1a1a1a/FFF?text=Skate+Shop' };
 
-type Category = 'top' | 'bottom' | 'deck' | 'trucks' | 'wheels' | 'bearings' | 'hardware' | 'stickers';
-
 export default function ClosetScreen() {
-  const { uid } = useLocalSearchParams<{ uid: string }>();
   const router = useRouter();
 
   return (
@@ -38,39 +34,9 @@ export default function ClosetScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
   safeArea: { flex: 1 },
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    padding: 20 
-  },
-  backBtn: { 
-    width: 40, 
-    height: 40, 
-    borderRadius: 20, 
-    backgroundColor: 'rgba(0,0,0,0.5)', 
-    justifyContent: 'center', 
-    alignItems: 'center' 
-  },
-  title: { 
-    fontSize: 20, 
-    fontWeight: '900', 
-    color: '#FFF', 
-    letterSpacing: 2, 
-    fontStyle: 'italic' 
-  },
-  content: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    margin: 20,
-    borderRadius: 20
-  },
-  comingSoon: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 20
-  }
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  title: { fontSize: 20, fontWeight: '900', color: '#FFF', letterSpacing: 2, fontStyle: 'italic' },
+  content: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.7)', margin: 20, borderRadius: 20 },
+  comingSoon: { color: '#FFF', fontSize: 18, fontWeight: 'bold', marginTop: 20 }
 });
