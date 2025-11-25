@@ -5,7 +5,7 @@ import {
   registerSchema, 
   type LoginInput, 
   type RegisterInput 
-} from '@skatehubba/db/validations';
+} from '@skatehubba/db';
 import type { 
   Spot, 
   Challenge, 
@@ -45,8 +45,8 @@ export class SkateHubbaClient {
 
   get spots() {
     return {
-      list: () => this.get<Spot[]>('/spots'),
-      get: (id: string) => this.get<Spot>(`/spots/${id}`),
+      list: (params?: any, signal?: AbortSignal) => this.get<Spot[]>('/spots', { params, signal }),
+      get: (id: string, signal?: AbortSignal) => this.get<Spot>(`/spots/${id}`, { signal }),
       create: (data: Omit<Spot, 'id' | 'createdAt' | 'createdBy'>) => 
         this.post<Spot>('/spots', data),
     };
@@ -80,8 +80,8 @@ export class SkateHubbaClient {
   }
 
   // Generic helpers
-  private async get<T>(url: string): Promise<T> {
-    const res = await this.client.get<T>(url);
+  private async get<T>(url: string, config?: any): Promise<T> {
+    const res = await this.client.get<T>(url, config);
     return res.data;
   }
 

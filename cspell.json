@@ -30,6 +30,18 @@
     "zod",
     "tflite",
     "viro",
-    "mapbox"
+    "mapbox",
+    "gameundici",
+    "zustand",
+    "tanstack",
+    "checkins",
+    "bailed",
+    "lat",
+    "lng",
+    "axios",
+    "tsup",
+    "biomejs",
+    "honeycombio",
+    "opentelemetry"
   ]
 }
