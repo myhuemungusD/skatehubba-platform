@@ -28,7 +28,7 @@
     "@skatehubba/utils": "workspace:*",
     "@tanstack/react-query": "^5.0.0",
     "@types/react-dom": "~19.1.7",
-    "expo": "^54.0.25",
+    "expo": "~52.0.0",
     "expo-av": "~16.0.7",
     "expo-build-properties": "~1.0.9",
     "expo-camera": "~17.0.9",
