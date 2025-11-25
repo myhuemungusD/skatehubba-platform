@@ -1,48 +1,48 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
 import MapView, { Marker, Callout, PROVIDER_DEFAULT } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { collection, getDocs } from 'firebase/firestore';
 
-// --- 1. IMPORT THE SCHEMA ---
+// --- Imports from your setup ---
 import { SkateSpot } from '../types/schema';
+import { db } from '../lib/firebase'; // <--- Now connecting to real DB
 
 export default function MapScreen() {
-  const [selectedSpot, setSelectedSpot] = useState<SkateSpot | null>(null);
+  const [spots, setSpots] = useState<SkateSpot[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // --- 2. STRICTLY TYPED MOCK DATA ---
-  const mockSpots: SkateSpot[] = [
-    {
-      id: 's1',
-      name: 'El Toro High School',
-      description: 'The legendary 20 stair. huge rails, massive impact.',
-      location: { latitude: 33.6189, longitude: -117.6749 }, // Example coords
-      type: 'Street',
-      difficulty: 'Gnarly',
-      checkedInUsers: ['u123', 'u456'],
-      imageUrl: 'https://skatespotter.com/images/eltoro.jpg' 
-    },
-    {
-      id: 's2',
-      name: 'Venice Beach Skatepark',
-      description: 'Classic snake run and bowls right on the beach.',
-      location: { latitude: 33.9850, longitude: -118.4695 },
-      type: 'Park',
-      difficulty: 'Medium',
-      checkedInUsers: ['u789'],
-      imageUrl: 'https://skatespotter.com/images/venice.jpg'
-    },
-    {
-      id: 's3',
-      name: 'Burnside DIY',
-      description: 'Under the bridge. Fast concrete, tight transitions.',
-      location: { latitude: 45.5226, longitude: -122.6653 }, // Portland example
-      type: 'DIY',
-      difficulty: 'Pro',
-      checkedInUsers: [],
-      imageUrl: 'https://skatespotter.com/images/burnside.jpg'
-    }
-  ];
+  // --- FETCH REAL DATA ---
+  useEffect(() => {
+    const fetchSpots = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'spots'));
+        const realSpots: SkateSpot[] = [];
+        
+        querySnapshot.forEach((doc) => {
+          realSpots.push(doc.data() as SkateSpot);
+        });
+
+        setSpots(realSpots);
+      } catch (error) {
+        console.error("Error fetching spots:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSpots();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#F59E0B" />
+        <Text style={styles.loadingText}>Scouting Spots...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -50,24 +50,22 @@ export default function MapScreen() {
         provider={PROVIDER_DEFAULT}
         style={styles.map}
         initialRegion={{
-          latitude: 33.6189, // Centered near first spot
+          latitude: 33.6189, 
           longitude: -117.6749,
-          latitudeDelta: 0.5, // Zoomed out a bit to see multiple
-          longitudeDelta: 0.5,
+          latitudeDelta: 20, // Zoomed out to see the world
+          longitudeDelta: 20,
         }}
       >
-        {mockSpots.map((spot) => (
+        {spots.map((spot) => (
           <Marker
             key={spot.id}
             coordinate={spot.location}
-            onPress={() => setSelectedSpot(spot)}
           >
-            {/* Custom Marker Icon based on Type */}
             <View style={[styles.markerBase, spot.type === 'DIY' ? styles.markerDIY : styles.markerStreet]}>
                <Ionicons name="location" size={20} color="white" />
             </View>
 
-            <Callout tooltip onPress={() => router.push('/map')}>
+            <Callout tooltip onPress={() => router.push(`/spot/${spot.id}`)}>
                <View style={styles.calloutBubble}>
                  <Text style={styles.calloutTitle}>{spot.name}</Text>
                  <Text style={styles.calloutType}>{spot.type} • {spot.difficulty}</Text>
@@ -80,7 +78,6 @@ export default function MapScreen() {
         ))}
       </MapView>
 
-      {/* Floating Action Button (for user centered actions) */}
       <TouchableOpacity style={styles.fab} onPress={() => router.push('/profile/me')}>
          <Ionicons name="person" size={24} color="#FFF" />
       </TouchableOpacity>
@@ -89,10 +86,11 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#000' },
   map: { width: Dimensions.get('window').width, height: Dimensions.get('window').height },
+  loadingContainer: { flex: 1, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' },
+  loadingText: { color: '#FFF', marginTop: 10, fontWeight: 'bold' },
   
-  // Custom Marker Styles
   markerBase: {
     padding: 8,
     borderRadius: 20,
@@ -102,10 +100,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 3,
   },
-  markerStreet: { backgroundColor: '#F59E0B' }, // Amber
-  markerDIY: { backgroundColor: '#EF4444' },    // Red
+  markerStreet: { backgroundColor: '#F59E0B' },
+  markerDIY: { backgroundColor: '#EF4444' },
   
-  // Custom Callout Styles
   calloutBubble: {
     backgroundColor: '#111',
     padding: 12,
