@@ -8,16 +8,49 @@ import {
   SafeAreaView, 
   Dimensions, 
   ScrollView,
-  StatusBar
+  StatusBar,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 // --- 1. IMPORT THE SCHEMA ---
 import { UserProfile } from '../types/schema';
 import { seedDatabase } from '../utils/seed';
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<'STATS' | 'CLIPS'>('STATS');
+
+  const handleEnterChambers = async () => {
+    const uid = auth().currentUser?.uid;
+    if (!uid) {
+      Alert.alert("Sign In Required", "You must be signed in to access the Judge Chambers.");
+      return;
+    }
+  
+    try {
+      // 1. Check the 'isJudge' flag on the user profile
+      const userDoc = await firestore().collection('users').doc(uid).get();
+      
+      if (userDoc.exists && userDoc.data()?.isJudge === true) {
+        // Authorized: Enter the Chamber
+        // @ts-ignore - Navigation types not fully defined in this snippet
+        navigation.navigate('JudgeScreen');
+      } else {
+        // Unauthorized: Show them the door
+        Alert.alert(
+          "Access Denied", 
+          "You are not a Certified Shrediter. Keep skating and uploading to earn your spot."
+        );
+      }
+    } catch (error) {
+      console.error("Error checking judge status:", error);
+      Alert.alert("Error", "Could not verify credentials.");
+    }
+  };
 
   // --- 2. STRICTLY TYPED MOCK DATA ---
   // This object MUST match the UserProfile interface exactly.
@@ -104,6 +137,20 @@ export default function ProfileScreen() {
                  <Text style={styles.statLabel}>STREAK</Text>
                </View>
            </View>
+
+           {/* Judge Access Button */}
+           <TouchableOpacity style={styles.judgeButton} onPress={handleEnterChambers}>
+             <LinearGradient
+               colors={['#1a2a6c', '#b21f1f', '#fdbb2d']}
+               start={{x: 0, y: 0}} 
+               end={{x: 1, y: 0}}
+               style={styles.judgeGradient}
+             >
+               <Ionicons name="gavel" size={24} color="#FFF" style={{marginRight: 10}} />
+               <Text style={styles.judgeButtonText}>ENTER JUDGE CHAMBERS</Text>
+             </LinearGradient>
+           </TouchableOpacity>
+
         </View>
 
         {/* Tabs */}
@@ -184,6 +231,12 @@ const styles = StyleSheet.create({
   statBox: { alignItems: 'center', flex: 1 },
   statValue: { color: '#FFF', fontSize: 18, fontWeight: '700', marginTop: 4 },
   statLabel: { color: '#666', fontSize: 10, textTransform: 'uppercase' },
+  
+  // Judge Button Styles
+  judgeButton: { width: '100%', marginTop: 20, borderRadius: 12, overflow: 'hidden' },
+  judgeGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12 },
+  judgeButtonText: { color: '#FFF', fontWeight: '900', fontSize: 14, letterSpacing: 1 },
+
   tabRow: { flexDirection: 'row', marginTop: 24, borderBottomWidth: 1, borderBottomColor: '#222' },
   tab: { flex: 1, paddingVertical: 16, alignItems: 'center' },
   activeTab: { borderBottomWidth: 2, borderBottomColor: '#FFF' },
