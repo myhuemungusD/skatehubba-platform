@@ -16,6 +16,9 @@ service cloud.firestore {
         request.resource.data.handle is string && 
         request.resource.data.handle.size() <= 20 &&
         request.resource.data.stance in ['regular', 'goofy'];
+      // Allow users to update their own cooldownUntil field
+      allow update: if self(u) && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['cooldownUntil']);
     }
 
     match /challenges/{c} {
@@ -90,6 +93,61 @@ service cloud.firestore {
           || (request.resource.data.diff( resource.data ).affectedKeys().hasOnly(['letters', 'currentTurnUid', 'currentTurnType', 'winnerUid', 'status'])
               && request.auth.uid in [resource.data.challengerUid, resource.data.opponentUid])
         );
+    }
+
+    // --- V2 Core Loop: Submissions Queue & Judge System ---
+    // Submissions are the core of the new judging workflow
+    match /submissions/{submissionId} {
+      // Allow authenticated users to create a new submission.
+      // This is where we enforce the "no re-dos" cooldown rule.
+      allow create: if authed()
+        && isUserOffCooldown(request.auth.uid)
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.challengeId is string
+        && request.resource.data.gameLength in ['SKATE', 'SK8']
+        && request.resource.data.videoURL is string
+        && request.resource.data.status == 'PENDING'
+        && request.resource.data.judging.landedVotes == 0
+        && request.resource.data.judging.letterVotes == 0
+        && request.resource.data.judging.disputeVotes == 0
+        && request.resource.data.judging.judgesVoted.size() == 0
+        && request.resource.data.submittedAt is timestamp;
+
+      // Only designated judges can update a submission (for voting).
+      allow update: if isJudge()
+        && resource.data.status == 'PENDING'
+        && !resource.data.judging.judgesVoted.hasAny([request.auth.uid])
+        && isValidJudgeUpdate();
+
+      // Read access for the original user and judges
+      allow read: if authed()
+        && (resource.data.userId == request.auth.uid || isJudge());
+
+      allow delete: if false; // Submissions are immutable
+    }
+
+    // --- Helper Functions for V2 Core Loop ---
+    
+    // Checks if the user's cooldown period has expired
+    function isUserOffCooldown(userId) {
+      let userDoc = get(/databases/$(database)/documents/users/$(userId)).data;
+      return !('cooldownUntil' in userDoc) || !(userDoc.cooldownUntil is timestamp) || userDoc.cooldownUntil <= request.time;
+    }
+
+    // Checks if the authenticated user is a designated judge
+    function isJudge() {
+      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return 'isJudge' in userDoc && userDoc.isJudge == true;
+    }
+
+    // Ensures judges only modify voting-related fields
+    function isValidJudgeUpdate() {
+      return request.resource.data.keys().size() == resource.data.keys().size()
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.challengeId == resource.data.challengeId
+        && request.resource.data.gameLength == resource.data.gameLength
+        && request.resource.data.videoURL == resource.data.videoURL
+        && request.resource.data.submittedAt == resource.data.submittedAt;
     }
   }
 }
