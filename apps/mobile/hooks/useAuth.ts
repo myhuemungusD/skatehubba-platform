@@ -1,18 +1,21 @@
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '../firebase';
+import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 
-export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export type VoteType = 'LANDED' | 'LETTER' | 'DISPUTE';
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return unsubscribe;
-  }, []);
+export interface JudgingState {
+  landedVotes: number;
+  letterVotes: number;
+  disputeVotes: number;
+  judgesVoted: string[];
+}
 
-  return { user, loading };
-};
+export interface Submission {
+  id: string;
+  userId: string;
+  challengeId: string;
+  gameLength: 'SKATE' | 'SK8';
+  videoURL: string;
+  status: 'PENDING' | 'RESOLVED' | 'DISPUTE';
+  submittedAt: FirebaseFirestoreTypes.Timestamp;
+  judging: JudgingState;
+}
