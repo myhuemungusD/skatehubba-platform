@@ -31,6 +31,8 @@ export default function JudgeScreen() {
 
   // We only render the first item in the queue (the "active" card)
   const currentSubmission = queue[0];
+  // Fix: Performance - Preload the next video to ensure instant playback
+  const nextSubmission = queue[1];
 
   const handleVote = (vote: VoteType) => {
     if (!currentSubmission) return;
@@ -80,7 +82,7 @@ export default function JudgeScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      {/* Full Screen Video */}
+      {/* Full Screen Video - Current */}
       <Video
         ref={videoRef}
         source={{ uri: currentSubmission.videoURL }}
@@ -88,9 +90,32 @@ export default function JudgeScreen() {
         resizeMode="cover"
         repeat={true}
         paused={false}
-        onBuffer={() => {}} // Callback when remote video is buffering
-        onError={(e) => console.log('Video Error:', e)}
+        // Fix: Performance - Add buffer config to prevent stall
+        bufferConfig={{
+          minBufferMs: 2500,
+          maxBufferMs: 5000,
+          bufferForPlaybackMs: 2500,
+          bufferForPlaybackAfterRebufferMs: 5000
+        }}
+        onBuffer={() => {}} 
+        onError={(e: any) => console.log('Video Error:', e)}
       />
+
+      {/* Fix: Performance - Hidden Video Player for Preloading Next Clip */}
+      {nextSubmission && (
+        <Video
+          source={{ uri: nextSubmission.videoURL }}
+          style={{ width: 0, height: 0, opacity: 0 }} // Hidden but active
+          paused={true} // Paused but loaded
+          muted={true}
+          bufferConfig={{
+            minBufferMs: 2500,
+            maxBufferMs: 5000,
+            bufferForPlaybackMs: 2500,
+            bufferForPlaybackAfterRebufferMs: 5000
+          }}
+        />
+      )}
 
       {/* Overlay UI */}
       <SafeAreaView style={styles.overlayContainer}>

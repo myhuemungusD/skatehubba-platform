@@ -5,7 +5,7 @@
  * Handles fetching the submission queue and optimistic updates for voting.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Submission, VoteType } from '../types/v2-core-loop';
 import { getPendingSubmissions, submitJudgeVote } from '../services/V2SubmissionService';
 
@@ -13,6 +13,15 @@ export const useJudgeQueue = () => {
   const [queue, setQueue] = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Fix: Race Condition - Track mounted state to prevent updates on unmounted component
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   /**
    * Fetch the initial queue of pending submissions.
@@ -22,12 +31,19 @@ export const useJudgeQueue = () => {
     setError(null);
     try {
       const submissions = await getPendingSubmissions(50); // Fetch batch of 50
-      setQueue(submissions);
-    } catch (err: any) {
+      if (isMounted.current) {
+        setQueue(submissions);
+      }
+    } catch (err: unknown) {
+      // Fix: Type Safety - Use unknown instead of any
       console.error('Error fetching judge queue:', err);
-      setError('Failed to load submissions. Please try again.');
+      if (isMounted.current) {
+        setError('Failed to load submissions. Please try again.');
+      }
     } finally {
-      setIsLoading(false);
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
     }
   }, []);
 

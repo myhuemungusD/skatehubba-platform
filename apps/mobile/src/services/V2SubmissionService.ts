@@ -5,7 +5,7 @@
  * Implements atomic transactions to ensure vote integrity.
  */
 
-import firestore from '@react-native-firebase/firestore';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {
   Submission,
@@ -56,9 +56,10 @@ export const createSubmission = async (
 
     console.log(`Submission created: ${docRef.id}`);
     return docRef.id;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const firebaseError = error as { code?: string; message?: string };
     // Check if error is due to cooldown (Firestore rules rejection)
-    if (error.code === 'permission-denied') {
+    if (firebaseError.code === 'permission-denied') {
       throw new Error('Cannot submit: You are currently on cooldown. Please wait before trying again.');
     }
     console.error('Error creating submission:', error);
@@ -87,7 +88,7 @@ export const submitJudgeVote = async (
   const submissionRef = firestore().collection('submissions').doc(submissionId);
 
   try {
-    await firestore().runTransaction(async (transaction) => {
+    await firestore().runTransaction(async (transaction: FirebaseFirestoreTypes.Transaction) => {
       // 1. Get the current state of the submission
       const submissionDoc = await transaction.get(submissionRef);
       
@@ -145,11 +146,12 @@ export const submitJudgeVote = async (
 
       console.log(`Vote of ${vote} submitted for ${submissionId} by judge ${judgeId}`);
     });
-  } catch (error: any) {
-    if (error.message.includes('already voted')) {
+  } catch (error: unknown) {
+    const firebaseError = error as { code?: string; message?: string };
+    if (firebaseError.message?.includes('already voted')) {
       throw error;
     }
-    if (error.code === 'permission-denied') {
+    if (firebaseError.code === 'permission-denied') {
       throw new Error('You do not have permission to vote on submissions. Judge access required.');
     }
     console.error('Transaction failed:', error);
@@ -174,7 +176,7 @@ export const getPendingSubmissions = async (
       .limit(limit)
       .get();
 
-    return snapshot.docs.map((doc) => ({
+    return snapshot.docs.map((doc: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({
       id: doc.id,
       ...doc.data(),
     })) as Submission[];
@@ -227,7 +229,7 @@ export const getUserSubmissions = async (userId: string): Promise<Submission[]> 
       .orderBy('submittedAt', 'desc')
       .get();
 
-    return snapshot.docs.map((doc) => ({
+    return snapshot.docs.map((doc: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({
       id: doc.id,
       ...doc.data(),
     })) as Submission[];
