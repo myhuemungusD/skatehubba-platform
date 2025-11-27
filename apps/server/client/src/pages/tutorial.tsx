@@ -146,7 +146,7 @@ export default function Tutorial({ userId }: TutorialProps) {
 
   const handleInteraction = (type: "tap" | "swipe" | "drag") => {
     setInteractionData((prev) => {
-      const key = type === "drag" ? "taps" : type + "s";
+      const key = type === "drag" ? "taps" : `${type}s`;
       const currentValue = prev[key as keyof typeof prev] as number;
       return {
         ...prev,
@@ -185,7 +185,7 @@ export default function Tutorial({ userId }: TutorialProps) {
     }
   };
 
-  const handleNext = () => {
+  const _handleNext = () => {
     if (currentStepIndex < totalSteps - 1) {
       setCurrentStepIndex((prev) => prev + 1);
     }

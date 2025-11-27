@@ -4,7 +4,6 @@ import { useState } from "react";
 import Navigation from "../components/Navigation";
 import { ClosetGrid } from "../components/skater/ClosetGrid";
 import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
@@ -22,7 +21,7 @@ import { useAuth } from "../hooks/useAuth";
 
 export default function ClosetPage() {
   const { user, isAuthenticated } = useAuth();
-  const [selectedCategory, setSelectedCategory] = useState("tricks");
+  const [_selectedCategory, _setSelectedCategory] = useState("tricks");
 
   const { data: inventory, isLoading } = useQuery({
     queryKey: ["/api/inventory", user?.uid],

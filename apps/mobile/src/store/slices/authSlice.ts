@@ -36,8 +36,8 @@ export interface AuthSlice {
 
 export const createAuthSlice: StateCreator<GlobalState, [], [], AuthSlice> = (
   set,
-  get,
-  api,
+  _get,
+  _api,
 ) => ({
   user: null,
   loading: true,

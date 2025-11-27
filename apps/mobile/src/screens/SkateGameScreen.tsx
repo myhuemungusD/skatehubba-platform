@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  Dimensions,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -35,10 +34,10 @@ export default function SkateGameScreen() {
   const isP1Turn = session.turn === session.players.p1.uid;
 
   // Who is setting the trick? (The person whose turn it is)
-  const getSetter = () => (isP1Turn ? session.players.p1 : session.players.p2);
-  const getCopier = () => (isP1Turn ? session.players.p2 : session.players.p1);
+  const _getSetter = () => (isP1Turn ? session.players.p1 : session.players.p2);
+  const _getCopier = () => (isP1Turn ? session.players.p2 : session.players.p1);
   const getSetterName = () => (isP1Turn ? "YOU" : "OPPONENT");
-  const getCopierName = () => (isP1Turn ? "OPPONENT" : "YOU");
+  const _getCopierName = () => (isP1Turn ? "OPPONENT" : "YOU");
 
   // --- Game Actions ---
   const handleRoshambo = (winner: "p1" | "p2") => {
@@ -52,7 +51,7 @@ export default function SkateGameScreen() {
     }));
   };
 
-  const handleLand = () => {
+  const _handleLand = () => {
     Vibration.vibrate(20);
     // If Setter lands, Copier must copy. Turn stays with Setter.
     // If Copier lands, they successfully defended. Turn goes back to Setter?
@@ -72,7 +71,7 @@ export default function SkateGameScreen() {
     Vibration.vibrate([0, 100, 50, 100]);
 
     // 1. Identify who just missed
-    const currentTurnUid = session.turn;
+    const _currentTurnUid = session.turn;
 
     // Logic:
     // If I am Setting and I miss -> Turn goes to Opponent.

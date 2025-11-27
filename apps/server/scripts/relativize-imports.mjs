@@ -36,7 +36,7 @@ function relativize(spec, fromFile) {
   let rel = path
     .relative(path.dirname(fromFile), withExt)
     .replaceAll("\\", "/");
-  if (!rel.startsWith(".")) rel = "./" + rel;
+  if (!rel.startsWith(".")) rel = `./${rel}`;
   // strip extension for Vite
   return rel.replace(/(\.tsx?|\.jsx?)$/, "");
 }

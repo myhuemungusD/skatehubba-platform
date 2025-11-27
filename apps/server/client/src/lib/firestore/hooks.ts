@@ -1,11 +1,9 @@
 import {
   collection,
-  DocumentReference,
   doc,
   limit,
   onSnapshot,
   orderBy,
-  Query,
   type QueryConstraint,
   query,
   type Unsubscribe,

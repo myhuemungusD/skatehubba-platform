@@ -5,7 +5,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { ArrowLeft, DollarSign, Heart, Users, Zap } from "lucide-react";
+import { DollarSign, Heart, Users, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import Navigation from "../components/Navigation";
@@ -101,7 +101,7 @@ const DonateForm = ({ amount }: DonateFormProps) => {
         // Redirect to success page
         window.location.href = `${window.location.origin}/donate?success=true`;
       }
-    } catch (err) {
+    } catch (_err) {
       toast({
         title: "Payment Error",
         description: "An unexpected error occurred during payment.",
@@ -155,7 +155,7 @@ const DonateForm = ({ amount }: DonateFormProps) => {
 };
 
 export default function Donate() {
-  const [, setLocation] = useLocation();
+  const [, _setLocation] = useLocation();
   const [selectedAmount, setSelectedAmount] = useState(25);
   const [customAmount, setCustomAmount] = useState("");
   const [clientSecret, setClientSecret] = useState("");
@@ -187,7 +187,7 @@ export default function Donate() {
 
   const handleCustomAmountChange = (value: string) => {
     const numValue = parseFloat(value);
-    if (!isNaN(numValue) && numValue >= 1) {
+    if (!Number.isNaN(numValue) && numValue >= 1) {
       setSelectedAmount(numValue);
       setCustomAmount(value);
     }

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { MessageSquare, Send, X } from "lucide-react";
+import { MessageSquare, Send } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../hooks/useAuth";

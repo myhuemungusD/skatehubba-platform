@@ -1,4 +1,3 @@
-import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 const AVATAR_BASE = require("@/assets/avatar/base.png");

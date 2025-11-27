@@ -37,10 +37,10 @@ if (typeof window !== "undefined") {
   setPersistence(auth, browserLocalPersistence).catch(console.warn);
 }
 
-let appCheck: any = null;
+let _appCheck: any = null;
 if (env.PROD && typeof window !== "undefined" && env.VITE_RECAPTCHA_SITE_KEY) {
   try {
-    appCheck = initializeAppCheck(app, {
+    _appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider(env.VITE_RECAPTCHA_SITE_KEY),
       isTokenAutoRefreshEnabled: true,
     });

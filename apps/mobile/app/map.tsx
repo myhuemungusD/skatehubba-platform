@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
-import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAuthStore } from "../lib/auth";
 import { SKATE } from "../theme";
 
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: SKATE.colors.neon + "40",
+    borderColor: `${SKATE.colors.neon}40`,
   },
   cardTitle: {
     color: SKATE.colors.neon,

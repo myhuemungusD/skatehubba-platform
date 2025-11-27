@@ -1,7 +1,7 @@
+import crypto from "node:crypto";
 import type { AuthSession, CustomUser, InsertCustomUser } from "@skatehubba/db";
 import { authSessions, customUsers } from "@skatehubba/db";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { and, eq, gt } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
@@ -38,7 +38,7 @@ export class AuthService {
     try {
       const decoded = jwt.verify(token, AuthService.JWT_SECRET) as any;
       return { userId: decoded.userId };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

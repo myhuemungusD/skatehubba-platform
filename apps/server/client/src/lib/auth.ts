@@ -115,7 +115,7 @@ export async function loginWithGoogle() {
 export async function checkRedirectResult() {
   try {
     const result = await getRedirectResult(auth);
-    if (result && result.user) {
+    if (result?.user) {
       // User successfully signed in via redirect
       const idToken = await result.user.getIdToken();
 

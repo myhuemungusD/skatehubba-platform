@@ -92,7 +92,7 @@ router.get("/nearby", async (req, res) => {
 
     const userLat = parseFloat(lat as string);
     const userLng = parseFloat(lng as string);
-    const searchRadius = parseInt(radius as string) || 5000; // Default 5km
+    const searchRadius = parseInt(radius as string, 10) || 5000; // Default 5km
 
     // ⚡️ PostGIS Magic: ST_DWithin
     // Finds points within 'searchRadius' meters of the user's location

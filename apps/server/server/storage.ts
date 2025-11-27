@@ -1,4 +1,3 @@
-import * as schema from "@skatehubba/db";
 import {
   type InsertTutorialStep,
   type InsertUserProgress,
@@ -165,7 +164,7 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
-  async getSpot(id: string): Promise<any> {
+  async getSpot(_id: string): Promise<any> {
     // Spots table not yet implemented - return placeholder
     return null;
   }
@@ -252,19 +251,19 @@ export class DatabaseStorage implements IStorage {
     return subscriber;
   }
 
-  async createDonation(donation: any): Promise<any> {
+  async createDonation(_donation: any): Promise<any> {
     return null; // Donations table not implemented yet
   }
 
   async updateDonationStatus(
-    paymentIntentId: string,
-    status: string,
+    _paymentIntentId: string,
+    _status: string,
   ): Promise<any> {
     return null;
   }
 
   async getRecentDonors(
-    limit: number = 5,
+    _limit: number = 5,
   ): Promise<{ firstName: string; createdAt: Date }[]> {
     return [];
   }

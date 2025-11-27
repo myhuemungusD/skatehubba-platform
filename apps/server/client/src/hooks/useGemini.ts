@@ -17,7 +17,7 @@ export function useGemini() {
         .json<{ text: string }>();
 
       return response.text;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = "Failed to generate text";
       setError(errorMessage);
       throw new Error(errorMessage);

@@ -4,7 +4,7 @@ import { trackButtonClick } from "../lib/analytics";
 import UltimateEmailSignup from "./UltimateEmailSignup";
 
 export default function EmailSignup() {
-  const handleSuccess = (data: any) => {
+  const handleSuccess = (_data: any) => {
     // Track using existing analytics
     trackButtonClick("email_signup", "landing_page");
   };

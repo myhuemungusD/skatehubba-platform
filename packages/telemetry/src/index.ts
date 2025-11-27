@@ -1,4 +1,4 @@
-import { context, type Span, trace } from "@opentelemetry/api";
+import { type Span, trace } from "@opentelemetry/api";
 
 // Stub implementation for Honeycomb + OpenTelemetry
 // In a real implementation, this would configure the OTLP exporter

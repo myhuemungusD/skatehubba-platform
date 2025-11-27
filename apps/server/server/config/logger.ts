@@ -41,10 +41,10 @@ export const httpLogger = pinoHttp({
     res: pino.stdSerializers.res,
   },
   // Log errors with full context
-  customErrorMessage: (req, res, error) => {
+  customErrorMessage: (req, res, _error) => {
     return `${req.method} ${req.url} - ${res.statusCode}`;
   },
-  customLogLevel: (req, res) => {
+  customLogLevel: (_req, res) => {
     if (res.statusCode >= 500) return "error";
     if (res.statusCode >= 400) return "warn";
     return "info";

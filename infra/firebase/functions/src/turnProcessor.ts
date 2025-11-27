@@ -103,7 +103,7 @@ export const processTurn = functions.https.onCall(async (request) => {
 
       const winner =
         newLetters[attempt.attempterUid]?.length === 5
-          ? c.currentTrick!.setterUid
+          ? c.currentTrick?.setterUid
           : undefined;
 
       transaction.update(challengeRef, {
@@ -112,7 +112,7 @@ export const processTurn = functions.https.onCall(async (request) => {
         letters: newLetters,
         currentSetter: landed
           ? attempt.attempterUid
-          : c.currentTrick!.setterUid, // winner sets next
+          : c.currentTrick?.setterUid, // winner sets next
         currentTrick: landed ? null : c.currentTrick,
         pendingAttempt: admin.firestore.FieldValue.delete(),
         clipHistory: admin.firestore.FieldValue.arrayUnion({

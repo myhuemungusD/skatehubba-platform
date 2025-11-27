@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { body, ValidationChain, validationResult } from "express-validator";
+import { body, validationResult } from "express-validator";
 
 // Middleware to handle validation errors
 export const handleValidationErrors = (

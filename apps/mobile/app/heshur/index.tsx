@@ -1,7 +1,7 @@
 import { Button, SKATE } from "@skatehubba/ui";
 import { functions } from "@skatehubba/utils";
 import { httpsCallable } from "firebase/functions";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 
 const heshurChat = httpsCallable(functions, "heshurChat");

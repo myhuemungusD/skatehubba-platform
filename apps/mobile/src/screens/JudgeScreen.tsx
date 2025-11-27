@@ -7,7 +7,7 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useRef, useState } from "react";
+import { useRef } from "react";
 import {
   ActivityIndicator,
   Dimensions,

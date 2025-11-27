@@ -1,4 +1,4 @@
-import { applyActionCode, getAuth } from "firebase/auth";
+import { applyActionCode } from "firebase/auth";
 import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";

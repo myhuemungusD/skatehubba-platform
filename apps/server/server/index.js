@@ -124,13 +124,13 @@ app.use((req, res, next) => {
 // DATABASE & SERVICES
 // ============================================================================
 
-let db,
+let _db,
   storage,
   sendSubscriberNotification,
-  NewSubscriberInput,
-  setupAuthRoutes,
-  feedback,
-  insertFeedbackSchema;
+  _NewSubscriberInput,
+  _setupAuthRoutes,
+  _feedback,
+  _insertFeedbackSchema;
 
 async function initializeDatabase() {
   try {
@@ -141,13 +141,13 @@ async function initializeDatabase() {
 
     await import("./admin.ts");
 
-    db = dbModule.db;
+    _db = dbModule.db;
     storage = storageModule.storage;
     sendSubscriberNotification = emailModule.sendSubscriberNotification;
-    NewSubscriberInput = schemaModule.NewSubscriberInput;
-    setupAuthRoutes = schemaModule.setupAuthRoutes || (() => {});
-    feedback = schemaModule.feedback;
-    insertFeedbackSchema = schemaModule.insertFeedbackSchema;
+    _NewSubscriberInput = schemaModule.NewSubscriberInput;
+    _setupAuthRoutes = schemaModule.setupAuthRoutes || (() => {});
+    _feedback = schemaModule.feedback;
+    _insertFeedbackSchema = schemaModule.insertFeedbackSchema;
 
     console.log("🎯 Database integration loaded successfully");
 
@@ -166,7 +166,7 @@ async function initializeDatabase() {
 // HEALTH CHECK ENDPOINTS - KUBERNETES READY
 // ============================================================================
 
-app.get("/api/health", (req, res) => {
+app.get("/api/health", (_req, res) => {
   res.status(200).json({
     status: "ok",
     env: process.env.NODE_ENV || "development",
@@ -178,7 +178,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // Readiness probe - checks database connectivity
-app.get("/api/ready", async (req, res) => {
+app.get("/api/ready", async (_req, res) => {
   try {
     const dbModule = await import("./db.ts");
     const isHealthy = await dbModule.checkDatabaseHealth?.();
@@ -210,7 +210,7 @@ app.get("/api/ready", async (req, res) => {
 });
 
 // Liveness probe - checks if server is running
-app.get("/api/live", (req, res) => {
+app.get("/api/live", (_req, res) => {
   res.status(200).json({
     status: "alive",
     time: new Date().toISOString(),
@@ -219,7 +219,7 @@ app.get("/api/live", (req, res) => {
 });
 
 // Detailed API documentation
-app.get("/api", (req, res) => {
+app.get("/api", (_req, res) => {
   res.json({
     name: "SkateHubba API",
     version: "2.0.0",
@@ -476,7 +476,7 @@ app.use((req, res) => {
   });
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   const isDev = process.env.NODE_ENV === "development";
   const statusCode = err.status || 500;
 

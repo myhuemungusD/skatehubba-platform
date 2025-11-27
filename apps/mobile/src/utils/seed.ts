@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import type { SkateSpot, UserProfile } from "../types/schema";
 

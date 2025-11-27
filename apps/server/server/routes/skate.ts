@@ -1,12 +1,10 @@
 import { skateGames, users } from "@skatehubba/db";
 import express from "express";
-import { v4 as uuidv4 } from "uuid";
-import { and, db, eq, sql } from "../db";
+import { db, eq, sql } from "../db";
 import {
   acquireGameLock,
   deleteGameFromRedis,
   getGameFromRedis,
-  redis,
   saveGameToRedis,
 } from "../redis";
 
@@ -323,7 +321,7 @@ router.post("/:id/turn", async (req, res) => {
 });
 
 // Get leaderboard
-router.get("/leaderboard", async (req, res) => {
+router.get("/leaderboard", async (_req, res) => {
   try {
     // Query users sorted by stats->>'skateWins' descending
     // Note: JSONB querying syntax depends on dialect, but Drizzle has helpers or raw SQL

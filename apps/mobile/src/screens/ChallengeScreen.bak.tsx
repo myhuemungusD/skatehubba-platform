@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons"; // Standard Expo Icons
 import { LinearGradient } from "expo-linear-gradient"; // You might need to install this: npx expo install expo-linear-gradient
-import React from "react";
 import {
   Dimensions,
   Image,

@@ -3,12 +3,8 @@
  * This file contains legacy route definitions kept for reference only
  */
 
-import crypto from "crypto";
-import express, {
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import crypto from "node:crypto";
+import type { NextFunction, Request, Response } from "express";
 import validator from "validator";
 import type { z } from "zod";
 import { env } from "./config/env";
@@ -60,7 +56,7 @@ export const requireApiKey = (
 ) => {
   const apiKey =
     req.headers["x-api-key"] ||
-    req.headers["authorization"]?.replace("Bearer ", "");
+    req.headers.authorization?.replace("Bearer ", "");
 
   if (!env.ADMIN_API_KEY) {
     return res.status(500).json({ error: "Admin API key not configured" });
@@ -102,7 +98,7 @@ export const validateRequest =
       }
       req.validatedBody = result.data;
       next();
-    } catch (error) {
+    } catch (_error) {
       res.status(400).json({ error: "Request validation failed" });
     }
   };

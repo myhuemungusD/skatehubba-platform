@@ -126,7 +126,7 @@ export const validateUserAgent = (
 // IP logging middleware
 export const logIPAddress = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
   // Get real IP address (accounting for proxies)

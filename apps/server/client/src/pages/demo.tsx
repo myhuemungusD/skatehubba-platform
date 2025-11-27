@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { Input } from "../components/ui/input";
 import { useToast } from "../hooks/use-toast";
 
 export default function Demo() {

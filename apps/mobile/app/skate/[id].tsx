@@ -1,18 +1,11 @@
 // ⚠️ Import your engine logic
 // Check your path! If @skatehubba/utils isn't aliased, use the relative path below
 import { joinSkateChallenge, submitTurnResult } from "@skatehubba/utils";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { doc, onSnapshot } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Button,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Button, Text, View } from "react-native";
 import { VideoRecorder } from "../../components/skate/VideoRecorder";
 import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../lib/firebase";
@@ -22,7 +15,7 @@ import { SKATE } from "../../theme";
 export default function SkateGameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
-  const router = useRouter();
+  const _router = useRouter();
   const queryClient = useQueryClient();
   const [gameData, setGameData] = useState<any>(null);
 
@@ -172,7 +165,7 @@ export default function SkateGameScreen() {
               </Text>
               <VideoRecorder
                 maxDurationSec={15}
-                onRecordingComplete={(uri) => {
+                onRecordingComplete={(_uri) => {
                   // Mock upload for testing
                   const mockUrl = "https://example.com/match_video.mp4";
                   submitTurn.mutate({ result: "landed", url: mockUrl });
@@ -202,7 +195,7 @@ export default function SkateGameScreen() {
             </Text>
             <VideoRecorder
               maxDurationSec={15}
-              onRecordingComplete={(uri) => {
+              onRecordingComplete={(_uri) => {
                 const mockUrl = "https://example.com/set_video.mp4";
                 submitTurn.mutate({ result: "landed", url: mockUrl });
               }}

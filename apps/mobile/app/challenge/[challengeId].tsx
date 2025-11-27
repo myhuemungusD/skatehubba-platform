@@ -1,5 +1,4 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
 import { ChallengeScreen } from "../../../src/screens/ChallengeScreen";
 
 export default function ChallengeRoute() {
@@ -9,7 +8,7 @@ export default function ChallengeRoute() {
   // Adapt Expo Router hooks to React Navigation props expected by ChallengeScreen
   const navigation = {
     goBack: () => router.back(),
-    navigate: (screen: string, params?: any) => router.push(screen), // Basic adaptation
+    navigate: (screen: string, _params?: any) => router.push(screen), // Basic adaptation
   };
 
   const route = {

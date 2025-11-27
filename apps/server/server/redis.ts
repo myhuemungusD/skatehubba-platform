@@ -1,5 +1,4 @@
 import Redis from "ioredis";
-import { env } from "./config/env";
 
 // Initialize Redis client
 // In production, use REDIS_URL from environment variables

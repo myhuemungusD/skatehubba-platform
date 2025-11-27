@@ -16,61 +16,55 @@ export const submitJudgeVote = async (
   if (!judgeId) throw new Error("Judge must be authenticated");
 
   const submissionRef = firestore().collection("submissions").doc(submissionId);
+  await firestore().runTransaction(
+    async (transaction: FirebaseFirestoreTypes.Transaction) => {
+      const submissionDoc = await transaction.get(submissionRef);
+      if (!submissionDoc.exists) throw new Error("Submission does not exist");
 
-  try {
-    await firestore().runTransaction(
-      async (transaction: FirebaseFirestoreTypes.Transaction) => {
-        const submissionDoc = await transaction.get(submissionRef);
-        if (!submissionDoc.exists) throw new Error("Submission does not exist");
+      const data = submissionDoc.data() as Submission;
 
-        const data = submissionDoc.data() as Submission;
+      // SAFETY: Prevent user from judging their own clip
+      if (data.userId === judgeId) {
+        throw new Error(
+          "You cannot judge your own clips. That's posuer style.",
+        );
+      }
 
-        // SAFETY: Prevent user from judging their own clip
-        if (data.userId === judgeId) {
-          throw new Error(
-            "You cannot judge your own clips. That's posuer style.",
-          );
-        }
+      if (data.judging.judgesVoted.includes(judgeId)) {
+        throw new Error("Judge has already voted on this submission");
+      }
 
-        if (data.judging.judgesVoted.includes(judgeId)) {
-          throw new Error("Judge has already voted on this submission");
-        }
+      const newJudging = { ...data.judging };
+      let newStatus: SubmissionStatus = "PENDING";
+      let resolvedOutcome: ResolvedOutcome = null;
 
-        const newJudging = { ...data.judging };
-        let newStatus: SubmissionStatus = "PENDING";
-        let resolvedOutcome: ResolvedOutcome = null;
+      // Update counters
+      if (vote === "LANDED") newJudging.landedVotes++;
+      else if (vote === "LETTER") newJudging.letterVotes++;
+      else if (vote === "DISPUTE") newJudging.disputeVotes++;
 
-        // Update counters
-        if (vote === "LANDED") newJudging.landedVotes++;
-        else if (vote === "LETTER") newJudging.letterVotes++;
-        else if (vote === "DISPUTE") newJudging.disputeVotes++;
+      newJudging.judgesVoted.push(judgeId);
 
-        newJudging.judgesVoted.push(judgeId);
+      // RESOLUTION LOGIC
+      if (newJudging.landedVotes >= RESOLUTION_THRESHOLD) {
+        newStatus = "RESOLVED";
+        resolvedOutcome = "LANDED";
+      } else if (newJudging.letterVotes >= RESOLUTION_THRESHOLD) {
+        newStatus = "RESOLVED";
+        resolvedOutcome = "LETTER";
+      } else if (newJudging.disputeVotes >= DISPUTE_THRESHOLD) {
+        // FIX: Move disputes out of the main queue
+        newStatus = "UNDER_REVIEW";
+        resolvedOutcome = null; // Needs manual review
+      }
 
-        // RESOLUTION LOGIC
-        if (newJudging.landedVotes >= RESOLUTION_THRESHOLD) {
-          newStatus = "RESOLVED";
-          resolvedOutcome = "LANDED";
-        } else if (newJudging.letterVotes >= RESOLUTION_THRESHOLD) {
-          newStatus = "RESOLVED";
-          resolvedOutcome = "LETTER";
-        } else if (newJudging.disputeVotes >= DISPUTE_THRESHOLD) {
-          // FIX: Move disputes out of the main queue
-          newStatus = "UNDER_REVIEW";
-          resolvedOutcome = null; // Needs manual review
-        }
-
-        transaction.update(submissionRef, {
-          judging: newJudging,
-          status: newStatus,
-          resolvedOutcome: resolvedOutcome,
-        });
-      },
-    );
-  } catch (error) {
-    // ... error handling
-    throw error;
-  }
+      transaction.update(submissionRef, {
+        judging: newJudging,
+        status: newStatus,
+        resolvedOutcome: resolvedOutcome,
+      });
+    },
+  );
 };
 
 /**

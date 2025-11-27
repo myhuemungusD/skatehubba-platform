@@ -15,7 +15,7 @@ export function requestIdMiddleware(
 
 // Add version headers
 export function versionHeaderMiddleware(
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction,
 ) {

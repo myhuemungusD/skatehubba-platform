@@ -8,7 +8,7 @@ export const globalLimiter = rateLimit({
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => process.env.NODE_ENV === "development",
+  skip: (_req) => process.env.NODE_ENV === "development",
   keyGenerator: (req) => req.ip || req.socket.remoteAddress || "unknown",
 });
 

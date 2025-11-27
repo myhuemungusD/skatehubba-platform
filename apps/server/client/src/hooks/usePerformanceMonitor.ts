@@ -65,13 +65,13 @@ export function usePerformanceMonitor() {
           "layout-shift",
         ],
       });
-    } catch (e) {
+    } catch (_e) {
       // Browser doesn't support all metrics
       console.warn("Performance monitoring not fully supported");
     }
 
     // Time to First Byte
-    if (window.performance && window.performance.timing) {
+    if (window.performance?.timing) {
       const timing = window.performance.timing;
       metrics.ttfb = timing.responseStart - timing.requestStart;
       console.log("TTFB:", metrics.ttfb, "ms");

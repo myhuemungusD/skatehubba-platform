@@ -12,7 +12,6 @@ import type {
   User,
 } from "@skatehubba/types";
 import axios, { type AxiosInstance } from "axios";
-import { z } from "zod";
 
 export class SkateHubbaClient {
   private client: AxiosInstance;
@@ -25,7 +24,7 @@ export class SkateHubbaClient {
   }
 
   setToken(token: string) {
-    this.client.defaults.headers["Authorization"] = `Bearer ${token}`;
+    this.client.defaults.headers.Authorization = `Bearer ${token}`;
   }
 
   get auth() {

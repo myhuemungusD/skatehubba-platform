@@ -6,7 +6,6 @@
  * trying the same challenge again.
  */
 
-import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { COOLDOWN_HOURS } from "../types/v2-core-loop";
 
@@ -20,7 +19,7 @@ import { COOLDOWN_HOURS } from "../types/v2-core-loop";
  */
 export const setCooldown = async (
   userId: string,
-  challengeId?: string,
+  _challengeId?: string,
 ): Promise<void> => {
   const cooldownTimestamp = firestore.Timestamp.fromMillis(
     Date.now() + COOLDOWN_HOURS * 60 * 60 * 1000, // Now + 24 hours in milliseconds

@@ -61,7 +61,7 @@ export function SpotMap({
       }
 
       // Draw spots (simplified positioning)
-      spots.forEach((spot, i) => {
+      spots.forEach((_spot, i) => {
         const x = (canvas.width / (spots.length + 1)) * (i + 1);
         const y = canvas.height / 2 + (Math.random() - 0.5) * 200;
 

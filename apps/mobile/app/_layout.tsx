@@ -1,6 +1,5 @@
 import firebase from "@react-native-firebase/app";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as Linking from "expo-linking";
 import { Stack, useRouter, useSegments } from "expo-router";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -70,7 +69,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     if (!loading) {
       setHasNavigated(false);
     }
-  }, [user, loading]);
+  }, [loading]);
 
   if (loading) {
     return (

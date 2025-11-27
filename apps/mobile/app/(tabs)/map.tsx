@@ -7,9 +7,8 @@ import {
   getDocs,
   query,
   serverTimestamp,
-  where,
 } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ImageBackground,
   Pressable,
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderColor: SKATE.colors.neon + "40",
+    borderColor: `${SKATE.colors.neon}40`,
   },
   spotName: { color: "#fff", fontSize: 16 },
   distance: { color: SKATE.colors.gold },

@@ -285,8 +285,8 @@ select:focus-visible,
 /* Skip link for keyboard navigation */
 .skip-link:focus {
   position: absolute;
-  left: 0 !important;
-  top: 0 !important;
+  left: 0;
+  top: 0;
   z-index: 9999;
   padding: 1rem 1.5rem;
   background-color: var(--orange);
@@ -302,10 +302,10 @@ select:focus-visible,
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
   }
 }
 
@@ -470,8 +470,8 @@ select:focus-visible,
 @layer utilities {
   /* High contrast focus styles */
   .focus-visible {
-    outline: 3px solid #f97316 !important;
-    outline-offset: 2px !important;
+    outline: 3px solid #f97316;
+    outline-offset: 2px;
   }
 
   /* Skip to main content link */
@@ -514,40 +514,40 @@ button:focus-visible,
 [role="button"]:focus-visible,
 input[type="button"]:focus-visible,
 input[type="submit"]:focus-visible {
-  outline: 3px solid #f97316 !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2) !important;
+  outline: 3px solid #f97316;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
 }
 
 /* Enhanced input focus styles */
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 3px solid #f97316 !important;
-  outline-offset: 1px !important;
-  border-color: #f97316 !important;
-  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.3) !important;
+  outline: 3px solid #f97316;
+  outline-offset: 1px;
+  border-color: #f97316;
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.3);
 }
 
 /* Enhanced link focus styles */
 a:focus-visible {
-  outline: 3px solid #f97316 !important;
-  outline-offset: 2px !important;
-  background-color: rgba(249, 115, 22, 0.1) !important;
-  border-radius: 0.25rem !important;
+  outline: 3px solid #f97316;
+  outline-offset: 2px;
+  background-color: rgba(249, 115, 22, 0.1);
+  border-radius: 0.25rem;
 }
 
 /* Improved color contrast for better readability */
 .text-gray-300 {
-  color: #f3f4f6 !important; /* Much lighter gray for better contrast */
+  color: #f3f4f6; /* Much lighter gray for better contrast */
 }
 
 .text-gray-400 {
-  color: #e5e7eb !important; /* Much lighter gray for better contrast */
+  color: #e5e7eb; /* Much lighter gray for better contrast */
 }
 
 .text-gray-500 {
-  color: #d1d5db !important; /* Improved contrast for gray-500 */
+  color: #d1d5db; /* Improved contrast for gray-500 */
 }
 
 .graffiti-bg {
@@ -557,15 +557,15 @@ a:focus-visible {
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .text-orange-400 {
-    color: #ff8c00 !important; /* Brighter orange for high contrast */
+    color: #ff8c00; /* Brighter orange for high contrast */
   }
 
   .bg-orange-500 {
-    background-color: #ff8c00 !important;
+    background-color: #ff8c00;
   }
 
   .border-orange-400 {
-    border-color: #ff8c00 !important;
+    border-color: #ff8c00;
   }
 }
 

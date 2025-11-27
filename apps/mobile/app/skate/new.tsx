@@ -2,7 +2,7 @@
 import { createSkateChallenge } from "@skatehubba/utils";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, Alert, Text, TextInput, View } from "react-native";
 import { VideoRecorder } from "@/components/skate/VideoRecorder";
 import { useAuth } from "@/hooks/useAuth";

@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { Award, Crown, MapPin, Medal, TrendingUp, Trophy } from "lucide-react";
 import { Link } from "wouter";
 import Navigation from "../components/Navigation";

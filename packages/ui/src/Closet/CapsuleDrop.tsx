@@ -1,6 +1,5 @@
 import * as Haptics from "expo-haptics";
-import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Mock types for now
 type Capsule = {

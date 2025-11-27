@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from "react-native";
+import { Platform } from "react-native";
 
 // import { Passkey } from 'react-native-passkey'; // Commented out until native module is linked
 

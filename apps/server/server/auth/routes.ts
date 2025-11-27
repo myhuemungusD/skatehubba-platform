@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { admin } from "../admin.ts";
-import { authLimiter, passwordResetLimiter } from "../middleware/security.ts";
+import { authLimiter } from "../middleware/security.ts";
 import { authenticateUser } from "./middleware.ts";
 import { AuthService } from "./service.ts";
 
@@ -108,7 +108,7 @@ export function setupAuthRoutes(app: Express) {
 
       if (sessionToken) {
         await AuthService.deleteSession(sessionToken);
-      } else if (authHeader && authHeader.startsWith("Bearer ")) {
+      } else if (authHeader?.startsWith("Bearer ")) {
         const token = authHeader.substring(7);
         await AuthService.deleteSession(token);
       }

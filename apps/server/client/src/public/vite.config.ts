@@ -1,8 +1,8 @@
 // vite.config.ts (Final Version)
 
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
-import path from "path";
 import { defineConfig } from "vite";
 
 // Define the port your Express API server runs on (CRITICAL ASSUMPTION)
@@ -23,7 +23,7 @@ export default defineConfig({
   // 3. Development Server Configuration
   server: {
     host: "0.0.0.0",
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
     allowedHosts: true,
     strictPort: true, // Fail if port is already in use
 

@@ -91,17 +91,17 @@ export const authenticateUser = async (
 // Optional authentication - sets user if token is valid, but doesn't require it
 export const optionalAuthentication = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
   try {
     const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
+    if (authHeader?.startsWith("Bearer ")) {
       const token = authHeader.substring(7);
       try {
         const decoded = await admin.auth().verifyIdToken(token, true);
         const user = await AuthService.findUserByFirebaseUid(decoded.uid);
-        if (user && user.isActive) {
+        if (user?.isActive) {
           req.currentUser = user;
         }
       } catch {
@@ -109,7 +109,7 @@ export const optionalAuthentication = async (
       }
     }
     next();
-  } catch (error) {
+  } catch (_error) {
     // Ignore authentication errors in optional mode
     next();
   }

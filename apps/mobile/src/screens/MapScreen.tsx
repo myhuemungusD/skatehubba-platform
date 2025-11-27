@@ -1,9 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Dimensions,
   StyleSheet,
   Text,
@@ -82,7 +81,7 @@ export default function MapScreen() {
   // Initial fetch
   useEffect(() => {
     fetchSpotsInBounds(region);
-  }, []);
+  }, [fetchSpotsInBounds, region]);
 
   const onRegionChangeComplete = (newRegion: Region) => {
     setRegion(newRegion);

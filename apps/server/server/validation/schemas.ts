@@ -65,7 +65,7 @@ export const validateRequest =
       }
       req.validatedBody = result.data;
       next();
-    } catch (error) {
+    } catch (_error) {
       res.status(500).json({
         ok: false,
         error: "Validation error",

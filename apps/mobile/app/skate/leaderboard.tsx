@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
-import React from "react";
 import { FlatList, Text, View } from "react-native";
 import { db } from "../../lib/firebase";
 import { SKATE } from "../../theme";

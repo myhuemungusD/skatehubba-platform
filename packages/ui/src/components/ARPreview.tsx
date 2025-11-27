@@ -5,7 +5,6 @@ import {
   ViroARSceneNavigator,
 } from "@reactvision/react-viro";
 import { Button, SKATE } from "@skatehubba/ui";
-import { useTrick } from "@skatehubba/utils";
 import * as Haptics from "expo-haptics";
 import type React from "react";
 import { useState } from "react";

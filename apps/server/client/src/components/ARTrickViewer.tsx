@@ -63,7 +63,7 @@ export function ARTrickViewer({
       stream.getTracks().forEach((track) => track.stop());
       setCameraPermission("granted");
       return true;
-    } catch (error) {
+    } catch (_error) {
       setCameraPermission("denied");
       toast({
         title: "Camera Permission Required",

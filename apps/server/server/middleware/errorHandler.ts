@@ -58,7 +58,7 @@ export const errorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ) => {
   const isDev = process.env.NODE_ENV === "development";
   const requestId = (req as any).id;

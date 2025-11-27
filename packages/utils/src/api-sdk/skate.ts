@@ -2,13 +2,12 @@ import {
   addDoc,
   collection,
   doc,
-  getDoc,
   getFirestore,
   serverTimestamp,
   type Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import { type SkateGame, SkateLetter, TurnType } from "../types/skate";
+import type { SkateGame } from "../types/skate";
 
 // --- CONSTANTS ---
 const MAX_LETTERS = 5; // S-K-A-T-E

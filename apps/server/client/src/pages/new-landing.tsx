@@ -1,10 +1,5 @@
-import { useState } from "react";
-import { z } from "zod";
-import { NewSubscriberInput } from "../../../shared/schema";
 import EmailSignup from "../components/EmailSignup";
-import { Button } from "../components/ui/button";
 import { env } from "../config/env";
-import { useToast } from "../hooks/use-toast";
 
 const DONATE_STRIPE = env.VITE_DONATE_STRIPE_URL || "#";
 const DONATE_PAYPAL = env.VITE_DONATE_PAYPAL_URL || "#";

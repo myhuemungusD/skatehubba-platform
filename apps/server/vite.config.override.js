@@ -1,7 +1,7 @@
 // Custom Vite config to fix Replit host blocking
 
+import path from "node:path";
 import react from "@vitejs/plugin-react";
-import path from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({

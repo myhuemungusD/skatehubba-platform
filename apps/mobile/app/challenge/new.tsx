@@ -1,6 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-// Custom Imports (Keep these if they exist in your project)
-import { SKATE } from "@skatehubba/ui";
 import { ResizeMode, Video } from "expo-av"; // ✅ FIXED: Added ResizeMode
 import { CameraView, useCameraPermissions } from "expo-camera"; // ✅ FIXED: New Architecture Camera
 import { useRouter } from "expo-router";
@@ -8,7 +6,7 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 // Firebase Imports
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import React, { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,

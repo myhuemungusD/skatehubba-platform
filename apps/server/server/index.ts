@@ -1,7 +1,7 @@
 // Fullstack TypeScript wrapper - launches both frontend and backend
-import { spawn } from "child_process";
-import path from "path";
-import { fileURLToPath } from "url";
+import { spawn } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverPath = path.join(__dirname, "index.js");
@@ -21,7 +21,7 @@ const apiServer = spawn("node", [tsxBinary, serverPath], {
 });
 
 // No separate Vite server needed - it's integrated into the API server
-const viteServer = null;
+const _viteServer = null;
 
 // Output handling with clear labels
 apiServer.stdout?.on("data", (data) => {

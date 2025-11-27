@@ -1,11 +1,4 @@
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Image, Pressable, StyleSheet, Text } from "react-native";
 import { SKATE } from "@/theme";
 
 // Expanded catalog with real skateboarding brands: PD (Dustin Dollin), Hours is Yours, Happy Hour Shades

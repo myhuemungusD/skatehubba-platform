@@ -1,11 +1,5 @@
-import {
-  getWebInstrumentations,
-  HoneycombWebSDK,
-  initializeWebInstrumentation,
-} from "@honeycombio/opentelemetry-web";
-
 // Configuration for Honeycomb
-const HONEYCOMB_API_KEY =
+const _HONEYCOMB_API_KEY =
   process.env.EXPO_PUBLIC_HONEYCOMB_API_KEY || "mock-key";
 const SERVICE_NAME = "skatehubba-mobile";
 

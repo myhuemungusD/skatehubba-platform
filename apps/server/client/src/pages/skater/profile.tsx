@@ -1,6 +1,6 @@
 import type { ClosetItem, UserProfile } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams } from "wouter";
 import Navigation from "@/components/Navigation";
 import { ChallengeButton } from "@/components/skater/ChallengeButton";

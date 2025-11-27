@@ -1,9 +1,7 @@
 import MapboxGL from "@rnmapbox/maps";
-import { SKATE } from "@skatehubba/ui";
 import { db } from "@skatehubba/utils";
 import { useQuery } from "@tanstack/react-query";
 import { collection, getDocs } from "firebase/firestore";
-import React from "react";
 import { StyleSheet, View } from "react-native";
 
 // Ensure you have your token set in .env or config

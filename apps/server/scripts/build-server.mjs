@@ -1,6 +1,5 @@
+import fs from "node:fs";
 import { build } from "esbuild";
-import fs from "fs";
-import path from "path";
 
 console.log("🔧 Building server with esbuild...");
 

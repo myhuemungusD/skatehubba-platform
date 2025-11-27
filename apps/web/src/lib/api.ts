@@ -27,7 +27,7 @@ export async function apiRequest<T = any>(
 
   // Add auth token if user is signed in
   if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers.Authorization = `Bearer ${token}`;
   }
 
   // Merge with provided headers

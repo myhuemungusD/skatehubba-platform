@@ -48,7 +48,7 @@ interface Game {
 export default function SkateGamePage() {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [_selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [trickDescription, setTrickDescription] = useState("");
 
   // Fetch real games from backend

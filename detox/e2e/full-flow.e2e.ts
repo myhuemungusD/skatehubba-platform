@@ -1,4 +1,4 @@
-import { by, device, element, expect } from "detox";
+import { device } from "detox";
 
 describe("Full App Flow", () => {
   beforeAll(async () => {

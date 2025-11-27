@@ -1,8 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  loadTensorflowModel,
-  useTensorflowModel,
-} from "react-native-fast-tflite";
 import { useFrameProcessor } from "react-native-vision-camera";
 
 // Singleton model loader to avoid reloading on every render
@@ -10,7 +6,7 @@ const loadedModel: any = null;
 
 export const useTrickDetector = () => {
   const [model, setModel] = useState<any>(null);
-  const [detectedTrick, setDetectedTrick] = useState<string | null>(null);
+  const [detectedTrick, _setDetectedTrick] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -34,7 +30,7 @@ export const useTrickDetector = () => {
   // Vision Camera Frame Processor
   // Note: This requires 'worklet' directive in reanimated/vision-camera context
   const frameProcessor = useFrameProcessor(
-    (frame) => {
+    (_frame) => {
       "worklet";
       if (!model) return;
 

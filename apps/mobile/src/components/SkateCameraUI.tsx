@@ -12,7 +12,6 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRecordingTimer } from '../hooks/useRecordingTimer';
 import { setCooldown } from '../services/CooldownService';
 import { createSubmission } from '../services/V2SubmissionService';
-import { UploadProgress, uploadSubmissionVideo } from '../services/VideoUploadService';
 import { type GameLength, MAX_RECORDING_SECONDS } from '../types/v2-core-loop';
 
 interface SkateCameraUIProps {
@@ -42,10 +41,10 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
   onVideoDeleted,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(false);
-  const [finalDuration, setFinalDuration] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [_showPrompt, setShowPrompt] = useState(false);
+  const [_finalDuration, setFinalDuration] = useState(0);
+  const [_isUploading, _setIsUploading] = useState(false);
+  const [_uploadProgress, _setUploadProgress] = useState(0);
 
   // Callback for when the 15-second timer runs out
   const onTimerEnd = useCallback(() => {
@@ -99,7 +98,7 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
 
 // ... imports
 
-export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
+export const _SkateCameraUI: React.FC<SkateCameraUIProps> = ({
   videoFilePath,
   gameLength,
   challengeId,
@@ -108,9 +107,9 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
   onVideoSent,
   onVideoDeleted,
 }) => {
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, _setIsRecording] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
-  const [finalDuration, setFinalDuration] = useState(0);
+  const [finalDuration, _setFinalDuration] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -160,7 +159,7 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
       setIsUploading(false);
       setUploadProgress(0);
     }
-  }, [videoFilePath, challengeId, gameLength, finalDuration, resetTimer, onVideoSent]);
+  }, [videoFilePath, challengeId, gameLength, finalDuration, onVideoSent]);
 
   // ... existing code ...
 
@@ -200,7 +199,7 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
       console.error('Error setting cooldown:', error);
       alert('Failed to set cooldown');
     }
-  }, [challengeId, resetTimer, onVideoDeleted]);
+  }, [challengeId, onVideoDeleted]);
 
   return (
     <View style={styles.container}>

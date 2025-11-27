@@ -13,10 +13,10 @@ export default function TestAuthPage() {
     try {
       setStatus(`✅ Firebase app initialized: ${auth.app.name}`);
       setStatus(
-        (prev) => prev + `\n✅ Auth domain: ${auth.app.options.authDomain}`,
+        (prev) => `${prev}\n✅ Auth domain: ${auth.app.options.authDomain}`,
       );
       setStatus(
-        (prev) => prev + `\n✅ Project ID: ${auth.app.options.projectId}`,
+        (prev) => `${prev}\n✅ Project ID: ${auth.app.options.projectId}`,
       );
       setError(null);
     } catch (err: any) {

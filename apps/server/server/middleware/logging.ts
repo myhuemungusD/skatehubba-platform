@@ -26,7 +26,7 @@ export const logger = pinoHttp({
       statusCode: res.statusCode,
     }),
   },
-  customLogLevel: (req, res) => {
+  customLogLevel: (_req, res) => {
     if (res.statusCode >= 400) return "error";
     if (res.statusCode >= 300) return "silent";
     return "info";

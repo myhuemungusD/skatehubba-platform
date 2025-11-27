@@ -1,7 +1,6 @@
 import { useIsFocused } from "@react-navigation/native"; // Or your router's equivalent
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   SafeAreaView,
   StatusBar,
