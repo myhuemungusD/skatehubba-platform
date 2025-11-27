@@ -1,74 +1,110 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
-import MapView, { Marker, Callout, PROVIDER_DEFAULT } from 'react-native-maps';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, Dimensions, Alert } from 'react-native';
+import MapView, { Marker, Callout, PROVIDER_DEFAULT, Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { collection, getDocs } from 'firebase/firestore';
 
-// --- Imports from your setup ---
-import { SkateSpot } from '../types/schema';
-import { db } from '../lib/firebase'; // <--- Now connecting to real DB
+// --- Types ---
+interface GeoJSONFeature {
+  type: 'Feature';
+  id: string;
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number]; // [lng, lat]
+  };
+  properties: {
+    name: string;
+    description?: string;
+    spotType: string;
+    bustFactor: number;
+    hasLights: boolean;
+    images: string[];
+    tags: string[];
+  };
+}
+
+interface GeoJSONCollection {
+  type: 'FeatureCollection';
+  features: GeoJSONFeature[];
+}
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function MapScreen() {
-  const [spots, setSpots] = useState<SkateSpot[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [spots, setSpots] = useState<GeoJSONFeature[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [region, setRegion] = useState<Region>({
+    latitude: 33.6189, 
+    longitude: -117.6749,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
-  // --- FETCH REAL DATA ---
-  useEffect(() => {
-    const fetchSpots = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'spots'));
-        const realSpots: SkateSpot[] = [];
-        
-        querySnapshot.forEach((doc) => {
-          realSpots.push(doc.data() as SkateSpot);
-        });
+  // --- FETCH SPOTS IN BOUNDS ---
+  const fetchSpotsInBounds = useCallback(async (currentRegion: Region) => {
+    // Calculate bounding box
+    const minLat = currentRegion.latitude - currentRegion.latitudeDelta / 2;
+    const maxLat = currentRegion.latitude + currentRegion.latitudeDelta / 2;
+    const minLng = currentRegion.longitude - currentRegion.longitudeDelta / 2;
+    const maxLng = currentRegion.longitude + currentRegion.longitudeDelta / 2;
 
-        setSpots(realSpots);
-      } catch (error) {
-        console.error("Error fetching spots:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSpots();
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${API_URL}/api/spots/bounds?minLat=${minLat}&maxLat=${maxLat}&minLng=${minLng}&maxLng=${maxLng}`
+      );
+      
+      if (!response.ok) throw new Error('Failed to fetch spots');
+      
+      const data: GeoJSONCollection = await response.json();
+      setSpots(data.features);
+    } catch (error) {
+      console.error("Error fetching spots:", error);
+      // Optional: Show toast or silent fail
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#F59E0B" />
-        <Text style={styles.loadingText}>Scouting Spots...</Text>
-      </View>
-    );
-  }
+  // Initial fetch
+  useEffect(() => {
+    fetchSpotsInBounds(region);
+  }, []);
+
+  const onRegionChangeComplete = (newRegion: Region) => {
+    setRegion(newRegion);
+    fetchSpotsInBounds(newRegion);
+  };
 
   return (
     <View style={styles.container}>
       <MapView
         provider={PROVIDER_DEFAULT}
         style={styles.map}
-        initialRegion={{
-          latitude: 33.6189, 
-          longitude: -117.6749,
-          latitudeDelta: 20, // Zoomed out to see the world
-          longitudeDelta: 20,
-        }}
+        initialRegion={region}
+        onRegionChangeComplete={onRegionChangeComplete}
       >
-        {spots.map((spot) => (
+        {spots.map((feature) => (
           <Marker
-            key={spot.id}
-            coordinate={spot.location}
+            key={feature.id}
+            coordinate={{
+              latitude: feature.geometry.coordinates[1], // GeoJSON is [lng, lat]
+              longitude: feature.geometry.coordinates[0],
+            }}
           >
-            <View style={[styles.markerBase, spot.type === 'DIY' ? styles.markerDIY : styles.markerStreet]}>
+            <View style={[
+              styles.markerBase, 
+              feature.properties.spotType === 'diy' ? styles.markerDIY : styles.markerStreet
+            ]}>
                <Ionicons name="location" size={20} color="white" />
             </View>
 
-            <Callout tooltip onPress={() => router.push(`/spot/${spot.id}`)}>
+            <Callout tooltip onPress={() => router.push(`/spot/${feature.id}`)}>
                <View style={styles.calloutBubble}>
-                 <Text style={styles.calloutTitle}>{spot.name}</Text>
-                 <Text style={styles.calloutType}>{spot.type} • {spot.difficulty}</Text>
+                 <Text style={styles.calloutTitle}>{feature.properties.name}</Text>
+                 <Text style={styles.calloutType}>
+                   {feature.properties.spotType.toUpperCase()} • Bust: {feature.properties.bustFactor}/10
+                 </Text>
                  <View style={styles.calloutBtn}>
                     <Text style={styles.calloutBtnText}>CHECK IN</Text>
                  </View>
@@ -77,6 +113,12 @@ export default function MapScreen() {
           </Marker>
         ))}
       </MapView>
+
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="small" color="#F59E0B" />
+        </View>
+      )}
 
       <TouchableOpacity style={styles.fab} onPress={() => router.push('/profile/me')}>
          <Ionicons name="person" size={24} color="#FFF" />
@@ -88,8 +130,14 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
   map: { width: Dimensions.get('window').width, height: Dimensions.get('window').height },
-  loadingContainer: { flex: 1, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' },
-  loadingText: { color: '#FFF', marginTop: 10, fontWeight: 'bold' },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 50,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    padding: 10,
+    borderRadius: 20,
+  },
   
   markerBase: {
     padding: 8,
