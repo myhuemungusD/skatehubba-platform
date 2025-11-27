@@ -1,26 +1,32 @@
-import { addDoc, collection, doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from './firebase';
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import { db } from "./firebase";
 
 export async function reportContent(
   reporterUid: string,
   contentId: string,
-  contentType: 'skate_game' | 'video' | 'user',
+  contentType: "skate_game" | "video" | "user",
   reason: string,
-  reportedUserId?: string
+  reportedUserId?: string,
 ) {
   try {
-    await addDoc(collection(db, 'reports'), {
+    await addDoc(collection(db, "reports"), {
       reporterUid,
       contentId,
       contentType,
       reason,
       reportedUserId,
-      status: 'pending',
+      status: "pending",
       createdAt: serverTimestamp(),
     });
     return true;
   } catch (error) {
-    console.error('Error reporting content:', error);
+    console.error("Error reporting content:", error);
     throw error;
   }
 }
@@ -28,13 +34,13 @@ export async function reportContent(
 export async function blockUser(blockerUid: string, blockedUid: string) {
   try {
     // Add to a subcollection of blocked users for the blocker
-    await setDoc(doc(db, 'users', blockerUid, 'blocked', blockedUid), {
+    await setDoc(doc(db, "users", blockerUid, "blocked", blockedUid), {
       blockedUid,
       createdAt: serverTimestamp(),
     });
     return true;
   } catch (error) {
-    console.error('Error blocking user:', error);
+    console.error("Error blocking user:", error);
     throw error;
   }
 }

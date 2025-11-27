@@ -1,4 +1,7 @@
-export const uploadSkateClip = async (uri: string, userId: string): Promise<string> => {
+export const uploadSkateClip = async (
+  uri: string,
+  userId: string,
+): Promise<string> => {
   // Mock upload
   console.log(`Uploading ${uri} for user ${userId}`);
   return new Promise((resolve) => {

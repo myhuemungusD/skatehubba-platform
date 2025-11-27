@@ -1,16 +1,21 @@
-import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import { useEffect, useState } from 'react';
-import { apiRequest } from "../lib/queryClient";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { ArrowLeft, Loader2, ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "wouter";
 import { useToast } from "../hooks/use-toast";
 import { useCart } from "../lib/cart/store";
-import { Link, useLocation } from "wouter";
-import { ShoppingCart, ArrowLeft, Loader2 } from "lucide-react";
+import { apiRequest } from "../lib/queryClient";
 
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
+  throw new Error("Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY");
 }
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -58,7 +63,11 @@ const CheckoutForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" data-testid="checkout-form">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6"
+      data-testid="checkout-form"
+    >
       <div className="bg-gray-800 rounded-lg p-6">
         <PaymentElement />
       </div>
@@ -74,9 +83,7 @@ const CheckoutForm = () => {
             Processing...
           </>
         ) : (
-          <>
-            Pay Now
-          </>
+          <>Pay Now</>
         )}
       </button>
     </form>
@@ -92,8 +99,8 @@ export default function Checkout() {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     if (snap.subtotal > 0) {
-      apiRequest("POST", "/api/create-shop-payment-intent", { 
-        items: snap.items 
+      apiRequest("POST", "/api/create-shop-payment-intent", {
+        items: snap.items,
       })
         .then((res: Response) => res.json())
         .then((data: any) => {
@@ -116,9 +123,11 @@ export default function Checkout() {
           <div className="text-center py-20">
             <ShoppingCart className="w-24 h-24 mx-auto text-gray-600 mb-6" />
             <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
-            <p className="text-gray-400 mb-6">Add some items to your cart before checking out.</p>
-            <Link 
-              href="/shop" 
+            <p className="text-gray-400 mb-6">
+              Add some items to your cart before checking out.
+            </p>
+            <Link
+              href="/shop"
               className="inline-block bg-orange-600 hover:bg-orange-700 px-6 py-3 rounded-lg font-semibold transition-colors"
               data-testid="link-back-to-shop"
             >
@@ -135,10 +144,12 @@ export default function Checkout() {
       <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
         <div className="mx-auto max-w-2xl p-6">
           <div className="text-center py-20">
-            <h1 className="text-2xl font-bold text-red-500 mb-4">Payment Error</h1>
+            <h1 className="text-2xl font-bold text-red-500 mb-4">
+              Payment Error
+            </h1>
             <p className="text-gray-400 mb-6">{error}</p>
-            <Link 
-              href="/cart" 
+            <Link
+              href="/cart"
               className="inline-block bg-orange-600 hover:bg-orange-700 px-6 py-3 rounded-lg font-semibold transition-colors"
             >
               Back to Cart
@@ -166,8 +177,8 @@ export default function Checkout() {
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <div className="mx-auto max-w-2xl p-6">
         <div className="mb-8">
-          <Link 
-            href="/cart" 
+          <Link
+            href="/cart"
             className="text-orange-500 hover:text-orange-400 mb-4 inline-flex items-center gap-2"
             data-testid="link-back-to-cart"
           >
@@ -193,7 +204,10 @@ export default function Checkout() {
             ))}
             <div className="border-t border-gray-700 pt-3 mt-3 flex justify-between text-lg">
               <span className="font-semibold">Total</span>
-              <span className="font-bold text-orange-500" data-testid="checkout-total">
+              <span
+                className="font-bold text-orange-500"
+                data-testid="checkout-total"
+              >
                 ${snap.subtotal.toFixed(2)}
               </span>
             </div>

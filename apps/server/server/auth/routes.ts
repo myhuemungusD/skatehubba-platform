@@ -1,20 +1,20 @@
-import type { Express } from 'express';
-import { AuthService } from './service.ts';
-import { authenticateUser } from './middleware.ts';
-import { authLimiter, passwordResetLimiter } from '../middleware/security.ts';
-import { admin } from '../admin.ts';
+import type { Express } from "express";
+import { admin } from "../admin.ts";
+import { authLimiter, passwordResetLimiter } from "../middleware/security.ts";
+import { authenticateUser } from "./middleware.ts";
+import { AuthService } from "./service.ts";
 
 export function setupAuthRoutes(app: Express) {
   // Single login/register endpoint - Firebase ID token only (with rate limiting)
-  app.post('/api/auth/login', authLimiter, async (req, res) => {
+  app.post("/api/auth/login", authLimiter, async (req, res) => {
     try {
-      const authHeader = req.headers.authorization ?? '';
+      const authHeader = req.headers.authorization ?? "";
 
-      if (!authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Firebase ID token required' });
+      if (!authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Firebase ID token required" });
       }
 
-      const idToken = authHeader.slice('Bearer '.length).trim();
+      const idToken = authHeader.slice("Bearer ".length).trim();
 
       try {
         // Verify Firebase ID token
@@ -28,10 +28,11 @@ export function setupAuthRoutes(app: Express) {
         if (!user) {
           // Create new user from Firebase token data
           const { user: newUser } = await AuthService.createUser({
-            email: decoded.email || `user${uid.slice(0,8)}@firebase.local`,
-            password: 'firebase-auth-user', // Placeholder
-            firstName: firstName || decoded.name?.split(' ')[0] || 'User',
-            lastName: lastName || decoded.name?.split(' ').slice(1).join(' ') || '',
+            email: decoded.email || `user${uid.slice(0, 8)}@firebase.local`,
+            password: "firebase-auth-user", // Placeholder
+            firstName: firstName || decoded.name?.split(" ")[0] || "User",
+            lastName:
+              lastName || decoded.name?.split(" ").slice(1).join(" ") || "",
             firebaseUid: uid,
           });
           user = newUser;
@@ -44,12 +45,12 @@ export function setupAuthRoutes(app: Express) {
         await AuthService.updateLastLogin(user.id);
 
         // Set HttpOnly cookie (XSS-safe, auto-sent with requests)
-        res.cookie('sessionToken', sessionJwt, {
-          httpOnly: true,       // JavaScript can't access (XSS protection)
-          secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-          sameSite: 'lax',      // CSRF protection
+        res.cookie("sessionToken", sessionJwt, {
+          httpOnly: true, // JavaScript can't access (XSS protection)
+          secure: process.env.NODE_ENV === "production", // HTTPS only in production
+          sameSite: "lax", // CSRF protection
           maxAge: 24 * 60 * 60 * 1000, // 24 hours
-          path: '/',
+          path: "/",
         });
 
         return res.status(200).json({
@@ -60,23 +61,23 @@ export function setupAuthRoutes(app: Express) {
             photoUrl: decoded.picture || null,
             roles: [],
             createdAt: user.createdAt,
-            provider: 'firebase',
+            provider: "firebase",
           },
-          strategy: 'firebase',
+          strategy: "firebase",
           // NOTE: Token is in HttpOnly cookie, not returned in response for security
         });
       } catch (firebaseError) {
-        console.error('Firebase ID token verification failed:', firebaseError);
-        return res.status(401).json({ error: 'Invalid Firebase token' });
+        console.error("Firebase ID token verification failed:", firebaseError);
+        return res.status(401).json({ error: "Invalid Firebase token" });
       }
     } catch (error) {
-      console.error('Login error:', error);
-      return res.status(500).json({ error: 'Login failed' });
+      console.error("Login error:", error);
+      return res.status(500).json({ error: "Login failed" });
     }
   });
 
   // Get current user endpoint
-  app.get('/api/auth/me', authenticateUser, async (req, res) => {
+  app.get("/api/auth/me", authenticateUser, async (req, res) => {
     try {
       const user = req.currentUser!;
       res.json({
@@ -91,43 +92,43 @@ export function setupAuthRoutes(app: Express) {
         },
       });
     } catch (error) {
-      console.error('Get user error:', error);
+      console.error("Get user error:", error);
       res.status(500).json({
-        error: 'Failed to get user information',
+        error: "Failed to get user information",
       });
     }
   });
 
   // Logout endpoint
-  app.post('/api/auth/logout', authenticateUser, async (req, res) => {
+  app.post("/api/auth/logout", authenticateUser, async (req, res) => {
     try {
       // Delete session from cookie or Authorization header
       const sessionToken = req.cookies?.sessionToken;
       const authHeader = req.headers.authorization;
-      
+
       if (sessionToken) {
         await AuthService.deleteSession(sessionToken);
-      } else if (authHeader && authHeader.startsWith('Bearer ')) {
+      } else if (authHeader && authHeader.startsWith("Bearer ")) {
         const token = authHeader.substring(7);
         await AuthService.deleteSession(token);
       }
 
       // Clear the HttpOnly cookie
-      res.clearCookie('sessionToken', {
+      res.clearCookie("sessionToken", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
       });
 
       res.json({
         success: true,
-        message: 'Logged out successfully',
+        message: "Logged out successfully",
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       res.status(500).json({
-        error: 'Logout failed',
+        error: "Logout failed",
       });
     }
   });

@@ -1,13 +1,13 @@
 /**
  * useRecordingTimer Hook
- * 
+ *
  * Custom hook to manage the 15-second countdown for video recording.
  * This enforces the hard limit on video duration and provides clean
  * separation of concerns for the timer logic.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { MAX_RECORDING_SECONDS } from '../types/v2-core-loop';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { MAX_RECORDING_SECONDS } from "../types/v2-core-loop";
 
 interface TimerControls {
   /** Current time left in seconds */
@@ -24,7 +24,7 @@ interface TimerControls {
 
 /**
  * Custom hook to manage the 15-second countdown for the video constraint.
- * 
+ *
  * @param onTimerEnd Callback function to execute when the timer hits 0.
  * @returns TimerControls object with timer state and control functions.
  */
@@ -40,13 +40,14 @@ export const useRecordingTimer = (onTimerEnd: () => void): TimerControls => {
    */
   const startTimer = useCallback(() => {
     if (intervalRef.current !== null) return; // Prevent multiple intervals
-    
+
     setTimeLeft(MAX_RECORDING_SECONDS); // Reset to max
     setIsCounting(true);
-    
+
     intervalRef.current = setInterval(() => {
-      setTimeLeft(prevTime => {
-        if (prevTime <= 1) { // 1 second remaining, about to hit 0
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          // 1 second remaining, about to hit 0
           clearInterval(intervalRef.current!);
           intervalRef.current = null;
           setIsCounting(false);
@@ -61,7 +62,7 @@ export const useRecordingTimer = (onTimerEnd: () => void): TimerControls => {
   /**
    * Stop the countdown timer.
    * Called when the user manually stops recording.
-   * 
+   *
    * @returns The actual recorded duration in seconds.
    */
   const stopTimer = useCallback((): number => {
@@ -97,11 +98,11 @@ export const useRecordingTimer = (onTimerEnd: () => void): TimerControls => {
     };
   }, []);
 
-  return { 
-    timeLeft, 
-    isCounting, 
-    startTimer, 
-    stopTimer, 
-    resetTimer 
+  return {
+    timeLeft,
+    isCounting,
+    startTimer,
+    stopTimer,
+    resetTimer,
   };
 };

@@ -4,8 +4,11 @@ export const NewSubscriberInput = z.object({
   firstName: z
     .string()
     .optional()
-    .transform(v => v?.trim() || null),
-  email: z.string().email().transform(v => v.trim().toLowerCase()),
+    .transform((v) => v?.trim() || null),
+  email: z
+    .string()
+    .email()
+    .transform((v) => v.trim().toLowerCase()),
   isActive: z.boolean().optional(),
 });
 export type NewSubscriberInput = z.infer<typeof NewSubscriberInput>;
@@ -17,24 +20,39 @@ export const SubscriberSchema = NewSubscriberInput.extend({
 });
 export type SubscriberData = z.infer<typeof SubscriberSchema>;
 
-export const usernameSchema = z.string()
+export const usernameSchema = z
+  .string()
   .min(3, "Username must be at least 3 characters")
   .max(30, "Username must be less than 30 characters")
-  .regex(/^[a-zA-Z0-9_-]+$/, "Username can only contain letters, numbers, hyphens, and underscores");
+  .regex(
+    /^[a-zA-Z0-9_-]+$/,
+    "Username can only contain letters, numbers, hyphens, and underscores",
+  );
 
-export const passwordSchema = z.string()
+export const passwordSchema = z
+  .string()
   .min(8, "Password must be at least 8 characters")
   .max(128, "Password too long")
-  .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number");
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+    "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+  );
 
-export const paymentAmountSchema = z.number()
-  .min(0.50, "Amount must be at least $0.50")
+export const paymentAmountSchema = z
+  .number()
+  .min(0.5, "Amount must be at least $0.50")
   .max(10000, "Amount cannot exceed $10,000");
 
-export const sanitizedStringSchema = z.string()
+export const sanitizedStringSchema = z
+  .string()
   .trim()
   .max(1000, "String too long")
-  .transform((str) => (str as string).replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ''));
+  .transform((str) =>
+    (str as string).replace(
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      "",
+    ),
+  );
 
 export const registerSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

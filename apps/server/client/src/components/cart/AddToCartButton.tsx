@@ -1,15 +1,15 @@
+import { useToast } from "@/hooks/use-toast";
 import { useCart } from "../../lib/cart/store";
 import type { CartItem } from "../../lib/cart/types";
-import { useToast } from "@/hooks/use-toast";
 
-interface AddToCartButtonProps extends Omit<CartItem, 'quantity'> {
+interface AddToCartButtonProps extends Omit<CartItem, "quantity"> {
   quantity?: number;
 }
 
 export default function AddToCartButton(props: AddToCartButtonProps) {
   const add = useCart((s) => s.add);
   const { toast } = useToast();
-  
+
   const handleAddToCart = () => {
     add({ ...props, quantity: Math.max(1, props.quantity || 1) });
     toast({
@@ -18,7 +18,7 @@ export default function AddToCartButton(props: AddToCartButtonProps) {
       duration: 3000,
     });
   };
-  
+
   return (
     <button
       onClick={handleAddToCart}

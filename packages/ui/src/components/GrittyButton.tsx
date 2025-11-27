@@ -1,8 +1,11 @@
-import React from 'react';
-import { Pressable, Text } from 'react-native';
-import { SKATE } from '../theme';
+import type React from "react";
+import { Pressable, Text } from "react-native";
+import { SKATE } from "../theme";
 
-interface Props { children: React.ReactNode; onPress: () => void; }
+interface Props {
+  children: React.ReactNode;
+  onPress: () => void;
+}
 
 export const GrittyButton: React.FC<Props> = ({ children, onPress }) => (
   <Pressable onPress={onPress} style={styles.button}>
@@ -19,5 +22,5 @@ const styles = {
     borderWidth: 2,
     borderColor: SKATE.colors.neon,
   },
-  text: { color: 'white', fontWeight: '900', textAlign: 'center' },
+  text: { color: "white", fontWeight: "900", textAlign: "center" },
 };

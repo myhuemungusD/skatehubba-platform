@@ -1,5 +1,5 @@
-import { auth } from './firebase';
-import type { User } from 'firebase/auth';
+import type { User } from "firebase/auth";
+import { auth } from "./firebase";
 
 export interface UserProfile {
   id: string;
@@ -29,27 +29,30 @@ export class UserService {
     };
   }
 
-  static async updateProfile(updates: { displayName?: string; photoURL?: string }): Promise<void> {
+  static async updateProfile(updates: {
+    displayName?: string;
+    photoURL?: string;
+  }): Promise<void> {
     const user = auth.currentUser;
-    if (!user) throw new Error('No authenticated user');
+    if (!user) throw new Error("No authenticated user");
 
-    const { updateProfile } = await import('firebase/auth');
+    const { updateProfile } = await import("firebase/auth");
     await updateProfile(user, updates);
   }
 
   static async deleteAccount(): Promise<void> {
     const user = auth.currentUser;
-    if (!user) throw new Error('No authenticated user');
+    if (!user) throw new Error("No authenticated user");
 
-    const { deleteUser } = await import('firebase/auth');
+    const { deleteUser } = await import("firebase/auth");
     await deleteUser(user);
   }
 
   static async sendEmailVerification(): Promise<void> {
     const user = auth.currentUser;
-    if (!user) throw new Error('No authenticated user');
+    if (!user) throw new Error("No authenticated user");
 
-    const { sendEmailVerification } = await import('firebase/auth');
+    const { sendEmailVerification } = await import("firebase/auth");
     await sendEmailVerification(user);
   }
 }

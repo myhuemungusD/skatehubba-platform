@@ -35,7 +35,7 @@ export const logger = pino({
  */
 export const httpLogger = pinoHttp({
   logger,
-  genReqId: (req) => req.id || req.headers['x-request-id'] || uuidv4(),
+  genReqId: (req) => req.id || req.headers["x-request-id"] || uuidv4(),
   serializers: {
     req: pino.stdSerializers.req,
     res: pino.stdSerializers.res,

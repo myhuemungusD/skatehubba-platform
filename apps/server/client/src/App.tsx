@@ -1,23 +1,24 @@
-
-import { useEffect, lazy, Suspense } from "react";
-import { Router, Route, Switch } from "wouter";
-import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense, useEffect } from "react";
+import { Route, Router, Switch } from "wouter";
+import { AISkateChat } from "./components/AISkateChat";
+import { FeedbackButton } from "./components/FeedbackButton";
+import { LoadingScreen } from "./components/LoadingScreen";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+import {
+  OrganizationStructuredData,
+  WebAppStructuredData,
+} from "./components/StructuredData";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { useAuth } from "./hooks/useAuth";
-import { LoadingScreen } from "./components/LoadingScreen";
-import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
-import { OrganizationStructuredData, WebAppStructuredData } from "./components/StructuredData";
-import { analytics as firebaseAnalytics } from "./lib/firebase";
 import { usePerformanceMonitor } from "./hooks/usePerformanceMonitor";
 import { useSkipLink } from "./hooks/useSkipLink";
-import { AISkateChat } from "./components/AISkateChat";
-import { FeedbackButton } from "./components/FeedbackButton";
-
+import { analytics as firebaseAnalytics } from "./lib/firebase";
+import { queryClient } from "./lib/queryClient";
 // Eager load critical pages
 import UnifiedLanding from "./pages/unified-landing";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 // Lazy load non-critical pages for better performance
 const Landing = lazy(() => import("./pages/landing"));
@@ -55,57 +56,114 @@ function AppRoutes() {
       <Switch>
         {isLoading || !isAuthenticated ? (
           <>
-          <Route path="/" component={UnifiedLanding} />
-          <Route path="/old" component={Landing} />
-          <Route path="/new" component={NewLanding} />
-          <Route path="/home" component={Home} />
-          <Route path="/demo" component={Demo} />
-          <Route path="/donate" component={DonationPage} />
-          <Route path="/shop" component={ShopPage} />
-          <Route path="/cart" component={CartPage} />
-          <Route path="/checkout" component={CheckoutPage} />
-          <Route path="/order-confirmation" component={OrderConfirmationPage} />
-          <Route path="/closet" component={ClosetPage} />
-          <Route path="/auth" component={AuthPage} />
-          <Route path="/signup" component={SignupPage} />
-          <Route path="/signin" component={SigninPage} />
-          <Route path="/verify" component={VerifyPage} />
-          <Route path="/auth/verify" component={AuthVerifyPage} />
-          <Route path="/verify-email" component={VerifyEmailPage} />
-          <Route path="/verified" component={VerifiedPage} />
-          <Route path="/test-auth" component={TestAuthPage} />
-          <Route path="/tutorial" component={() => <AuthPage />} />
-          {/* Protected routes with email verification */}
-          <Route path="/map" component={() => <ProtectedRoute><MapPage /></ProtectedRoute>} />
-          <Route path="/skate-game" component={() => <ProtectedRoute><SkateGamePage /></ProtectedRoute>} />
-          <Route path="/leaderboard" component={() => <ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
-        </>
-      ) : (
-        <>
-          <Route path="/" component={Home} />
-          <Route path="/home" component={Home} />
-          <Route path="/donate" component={DonationPage} />
-          <Route path="/shop" component={ShopPage} />
-          <Route path="/cart" component={CartPage} />
-          <Route path="/checkout" component={CheckoutPage} />
-          <Route path="/order-confirmation" component={OrderConfirmationPage} />
-          <Route path="/closet" component={ClosetPage} />
-          <Route path="/auth" component={AuthPage} />
-          <Route path="/signup" component={SignupPage} />
-          <Route path="/signin" component={SigninPage} />
-          <Route path="/verify" component={VerifyPage} />
-          <Route path="/auth/verify" component={AuthVerifyPage} />
-          <Route path="/verify-email" component={VerifyEmailPage} />
-          <Route path="/verified" component={VerifiedPage} />
-          {/* Protected routes with email verification */}
-          <Route path="/map" component={() => <ProtectedRoute><MapPage /></ProtectedRoute>} />
-          <Route path="/skate-game" component={() => <ProtectedRoute><SkateGamePage /></ProtectedRoute>} />
-          <Route path="/leaderboard" component={() => <ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
-          <Route path="/tutorial" component={() => {
-            return user ? <ProtectedRoute><Tutorial userId={user.uid} /></ProtectedRoute> : <Home />;
-          }} />
-        </>
-      )}
+            <Route path="/" component={UnifiedLanding} />
+            <Route path="/old" component={Landing} />
+            <Route path="/new" component={NewLanding} />
+            <Route path="/home" component={Home} />
+            <Route path="/demo" component={Demo} />
+            <Route path="/donate" component={DonationPage} />
+            <Route path="/shop" component={ShopPage} />
+            <Route path="/cart" component={CartPage} />
+            <Route path="/checkout" component={CheckoutPage} />
+            <Route
+              path="/order-confirmation"
+              component={OrderConfirmationPage}
+            />
+            <Route path="/closet" component={ClosetPage} />
+            <Route path="/auth" component={AuthPage} />
+            <Route path="/signup" component={SignupPage} />
+            <Route path="/signin" component={SigninPage} />
+            <Route path="/verify" component={VerifyPage} />
+            <Route path="/auth/verify" component={AuthVerifyPage} />
+            <Route path="/verify-email" component={VerifyEmailPage} />
+            <Route path="/verified" component={VerifiedPage} />
+            <Route path="/test-auth" component={TestAuthPage} />
+            <Route path="/tutorial" component={() => <AuthPage />} />
+            {/* Protected routes with email verification */}
+            <Route
+              path="/map"
+              component={() => (
+                <ProtectedRoute>
+                  <MapPage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/skate-game"
+              component={() => (
+                <ProtectedRoute>
+                  <SkateGamePage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/leaderboard"
+              component={() => (
+                <ProtectedRoute>
+                  <LeaderboardPage />
+                </ProtectedRoute>
+              )}
+            />
+          </>
+        ) : (
+          <>
+            <Route path="/" component={Home} />
+            <Route path="/home" component={Home} />
+            <Route path="/donate" component={DonationPage} />
+            <Route path="/shop" component={ShopPage} />
+            <Route path="/cart" component={CartPage} />
+            <Route path="/checkout" component={CheckoutPage} />
+            <Route
+              path="/order-confirmation"
+              component={OrderConfirmationPage}
+            />
+            <Route path="/closet" component={ClosetPage} />
+            <Route path="/auth" component={AuthPage} />
+            <Route path="/signup" component={SignupPage} />
+            <Route path="/signin" component={SigninPage} />
+            <Route path="/verify" component={VerifyPage} />
+            <Route path="/auth/verify" component={AuthVerifyPage} />
+            <Route path="/verify-email" component={VerifyEmailPage} />
+            <Route path="/verified" component={VerifiedPage} />
+            {/* Protected routes with email verification */}
+            <Route
+              path="/map"
+              component={() => (
+                <ProtectedRoute>
+                  <MapPage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/skate-game"
+              component={() => (
+                <ProtectedRoute>
+                  <SkateGamePage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/leaderboard"
+              component={() => (
+                <ProtectedRoute>
+                  <LeaderboardPage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/tutorial"
+              component={() => {
+                return user ? (
+                  <ProtectedRoute>
+                    <Tutorial userId={user.uid} />
+                  </ProtectedRoute>
+                ) : (
+                  <Home />
+                );
+              }}
+            />
+          </>
+        )}
       </Switch>
     </Suspense>
   );
@@ -114,14 +172,14 @@ function AppRoutes() {
 export default function App() {
   // Monitor performance in development
   usePerformanceMonitor();
-  
+
   // Enable skip link for accessibility
   useSkipLink();
 
   useEffect(() => {
     // Initialize Firebase Analytics on app start
     if (firebaseAnalytics) {
-      console.log('Firebase Analytics initialized successfully');
+      console.log("Firebase Analytics initialized successfully");
     }
   }, []);
 
@@ -133,7 +191,8 @@ export default function App() {
             name: "SkateHubba",
             url: "https://skatehubba.com",
             logo: "https://skatehubba.com/icon-512.png",
-            description: "Remote SKATE battles, legendary spot check-ins, and live lobbies. Join the ultimate skateboarding social platform.",
+            description:
+              "Remote SKATE battles, legendary spot check-ins, and live lobbies. Join the ultimate skateboarding social platform.",
             sameAs: [
               "https://twitter.com/skatehubba_app",
               "https://instagram.com/skatehubba",
@@ -144,7 +203,8 @@ export default function App() {
           data={{
             name: "SkateHubba",
             url: "https://skatehubba.com",
-            description: "Stream. Connect. Skate. Your skateboarding social universe.",
+            description:
+              "Stream. Connect. Skate. Your skateboarding social universe.",
             applicationCategory: "SportsApplication",
             operatingSystem: "Any",
             offers: {

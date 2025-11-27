@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 /**
  * Hook to enable skip links for better keyboard navigation
@@ -7,14 +7,14 @@ import { useEffect } from 'react';
 export function useSkipLink() {
   useEffect(() => {
     // Create skip link if it doesn't exist
-    const existingSkipLink = document.getElementById('skip-to-main');
+    const existingSkipLink = document.getElementById("skip-to-main");
     if (existingSkipLink) return;
 
-    const skipLink = document.createElement('a');
-    skipLink.id = 'skip-to-main';
-    skipLink.href = '#main-content';
-    skipLink.textContent = 'Skip to main content';
-    skipLink.className = 'skip-link';
+    const skipLink = document.createElement("a");
+    skipLink.id = "skip-to-main";
+    skipLink.href = "#main-content";
+    skipLink.textContent = "Skip to main content";
+    skipLink.className = "skip-link";
     skipLink.style.cssText = `
       position: absolute;
       left: -9999px;
@@ -28,19 +28,19 @@ export function useSkipLink() {
     `;
 
     // Show skip link on focus
-    skipLink.addEventListener('focus', () => {
-      skipLink.style.left = '0';
-      skipLink.style.top = '0';
+    skipLink.addEventListener("focus", () => {
+      skipLink.style.left = "0";
+      skipLink.style.top = "0";
     });
 
-    skipLink.addEventListener('blur', () => {
-      skipLink.style.left = '-9999px';
+    skipLink.addEventListener("blur", () => {
+      skipLink.style.left = "-9999px";
     });
 
     document.body.insertBefore(skipLink, document.body.firstChild);
 
     return () => {
-      const link = document.getElementById('skip-to-main');
+      const link = document.getElementById("skip-to-main");
       if (link && document.body.contains(link)) {
         document.body.removeChild(link);
       }

@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { MapPin, Loader2, CheckCircle, XCircle } from 'lucide-react';
-import { Button } from './ui/button';
-import { useToast } from '../hooks/use-toast';
-import { useAuth } from '../hooks/useAuth';
-import { useSpotAccess } from '../store/useSpotAccess';
-import { apiRequest } from '../lib/queryClient';
+import { useMutation } from "@tanstack/react-query";
+import { CheckCircle, Loader2, MapPin, XCircle } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "../hooks/use-toast";
+import { useAuth } from "../hooks/useAuth";
+import { apiRequest } from "../lib/queryClient";
+import { useSpotAccess } from "../store/useSpotAccess";
+import { Button } from "./ui/button";
 
 interface ARCheckInButtonProps {
   spotId: string;
@@ -46,35 +46,36 @@ export function ARCheckInButton({
 
   const checkInMutation = useMutation({
     mutationFn: async ({ lat, lng }: { lat: number; lng: number }) => {
-      const response = await apiRequest('POST', '/api/spots/check-in', {
+      const response = await apiRequest("POST", "/api/spots/check-in", {
         spotId,
         userId: user?.uid,
         latitude: lat,
         longitude: lng,
       });
-      return await response.json() as CheckInResponse;
+      return (await response.json()) as CheckInResponse;
     },
     onSuccess: (data) => {
       if (data.success && data.access) {
         grantAccess(data.access);
         toast({
-          title: '✅ Check-In Successful!',
+          title: "✅ Check-In Successful!",
           description: `You're now checked in at ${spotName}. Access expires in 24 hours.`,
         });
         onCheckInSuccess?.(data.access);
       } else {
         toast({
-          title: '❌ Check-In Failed',
-          description: data.message || 'Unable to check in at this spot.',
-          variant: 'destructive',
+          title: "❌ Check-In Failed",
+          description: data.message || "Unable to check in at this spot.",
+          variant: "destructive",
         });
       }
     },
     onError: (error: any) => {
       toast({
-        title: '❌ Check-In Error',
-        description: error.message || 'Failed to verify your location. Please try again.',
-        variant: 'destructive',
+        title: "❌ Check-In Error",
+        description:
+          error.message || "Failed to verify your location. Please try again.",
+        variant: "destructive",
       });
     },
   });
@@ -82,9 +83,9 @@ export function ARCheckInButton({
   const handleCheckIn = async () => {
     if (!isAuthenticated) {
       toast({
-        title: 'Login Required',
-        description: 'Please log in to check in at spots.',
-        variant: 'destructive',
+        title: "Login Required",
+        description: "Please log in to check in at spots.",
+        variant: "destructive",
       });
       return;
     }
@@ -93,7 +94,7 @@ export function ARCheckInButton({
 
     if (hasAccess) {
       toast({
-        title: 'Already Checked In',
+        title: "Already Checked In",
         description: `You already have valid access to ${spotName}.`,
       });
       return;
@@ -101,9 +102,9 @@ export function ARCheckInButton({
 
     if (!navigator.geolocation) {
       toast({
-        title: 'Geolocation Not Supported',
-        description: 'Your device does not support geolocation.',
-        variant: 'destructive',
+        title: "Geolocation Not Supported",
+        description: "Your device does not support geolocation.",
+        variant: "destructive",
       });
       return;
     }
@@ -118,31 +119,32 @@ export function ARCheckInButton({
       },
       (error) => {
         setIsGettingLocation(false);
-        let errorMessage = 'Unable to get your location.';
-        
+        let errorMessage = "Unable to get your location.";
+
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Location permission denied. Please enable location access.';
+            errorMessage =
+              "Location permission denied. Please enable location access.";
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information unavailable.';
+            errorMessage = "Location information unavailable.";
             break;
           case error.TIMEOUT:
-            errorMessage = 'Location request timed out.';
+            errorMessage = "Location request timed out.";
             break;
         }
 
         toast({
-          title: 'Location Error',
+          title: "Location Error",
           description: errorMessage,
-          variant: 'destructive',
+          variant: "destructive",
         });
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 0,
-      }
+      },
     );
   };
 
@@ -172,7 +174,7 @@ export function ARCheckInButton({
       {isLoading ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin" />
-          {isGettingLocation ? 'Getting Location...' : 'Verifying...'}
+          {isGettingLocation ? "Getting Location..." : "Verifying..."}
         </>
       ) : (
         <>

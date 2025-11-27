@@ -1,6 +1,6 @@
-import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import type { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
-export type VoteType = 'LANDED' | 'LETTER' | 'DISPUTE';
+export type VoteType = "LANDED" | "LETTER" | "DISPUTE";
 
 export interface JudgingState {
   landedVotes: number;
@@ -13,9 +13,9 @@ export interface Submission {
   id: string;
   userId: string;
   challengeId: string;
-  gameLength: 'SKATE' | 'SK8';
+  gameLength: "SKATE" | "SK8";
   videoURL: string;
-  status: 'PENDING' | 'RESOLVED' | 'DISPUTE';
+  status: "PENDING" | "RESOLVED" | "DISPUTE";
   submittedAt: FirebaseFirestoreTypes.Timestamp;
   judging: JudgingState;
 }

@@ -1,7 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { SKATE } from '@skatehubba/ui';
+import { SKATE } from "@skatehubba/ui";
+import { StyleSheet, Text, View } from "react-native";
 
-export function EquippedDisplay({ equipped }: { equipped: Record<string, string> }) {
+export function EquippedDisplay({
+  equipped,
+}: {
+  equipped: Record<string, string>;
+}) {
   const hardwareCount = equipped.hardware ? 1 : 0;
   const bearingsCount = equipped.bearings ? 1 : 0;
 
@@ -15,10 +19,10 @@ export function EquippedDisplay({ equipped }: { equipped: Record<string, string>
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
     bottom: 20,
-    backgroundColor: 'rgba(0,0,0,0.8)',
+    backgroundColor: "rgba(0,0,0,0.8)",
     padding: 12,
     borderRadius: 8,
     borderWidth: 3,
@@ -26,7 +30,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: SKATE.colors.neon,
-    fontFamily: 'BakerScript',
+    fontFamily: "BakerScript",
     fontSize: 18,
     marginVertical: 4,
   },

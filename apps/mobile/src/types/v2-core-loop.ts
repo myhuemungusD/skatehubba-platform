@@ -1,23 +1,23 @@
 /**
  * V2 Core Loop Type Definitions
- * 
+ *
  * These types define the data model for the new judging system,
  * enforcing the "no re-dos" rule and structured judge voting.
  */
 
-import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import type { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
 // --- Game Length Options ---
-export type GameLength = 'SKATE' | 'SK8';
+export type GameLength = "SKATE" | "SK8";
 
 // --- Submission Status ---
-export type SubmissionStatus = 'PENDING' | 'RESOLVED' | 'DISPUTE';
+export type SubmissionStatus = "PENDING" | "RESOLVED" | "DISPUTE";
 
 // --- Vote Types ---
-export type VoteType = 'LANDED' | 'LETTER' | 'DISPUTE';
+export type VoteType = "LANDED" | "LETTER" | "DISPUTE";
 
 // --- Resolved Outcomes ---
-export type ResolvedOutcome = 'LANDED' | 'LETTER' | null;
+export type ResolvedOutcome = "LANDED" | "LETTER" | null;
 
 // --- Judging Votes Structure ---
 export interface JudgingVotes {
@@ -67,7 +67,7 @@ export interface UserCooldown {
 export interface V2User extends UserCooldown {
   uid: string;
   handle: string;
-  stance: 'regular' | 'goofy';
+  stance: "regular" | "goofy";
   // ... other existing user fields
 }
 

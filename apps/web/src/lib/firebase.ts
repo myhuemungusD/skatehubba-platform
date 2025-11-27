@@ -1,9 +1,9 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
-import { getFunctions } from "firebase/functions";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -24,12 +24,14 @@ const functions = getFunctions(app);
 // Initialize App Check (Client-Side Only)
 if (typeof window !== "undefined") {
   // self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; // Uncomment for local dev testing if needed
-  
+
   initializeAppCheck(app, {
     // 🟢 YOUR KEY IS HERE 🟢
-    provider: new ReCaptchaV3Provider("6Lfl8-krAAAAALbkfVVyE0x8Ke2d0U9QnSecBgVK"),
+    provider: new ReCaptchaV3Provider(
+      "6Lfl8-krAAAAALbkfVVyE0x8Ke2d0U9QnSecBgVK",
+    ),
     isTokenAutoRefreshEnabled: true,
   });
 }
 
-export { app, db, auth, storage, functions }
+export { app, db, auth, storage, functions };

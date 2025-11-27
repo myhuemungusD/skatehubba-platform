@@ -2,8 +2,8 @@
 export interface SkateChallenge {
   id: string;
   players: [string, string]; // sorted [uidA, uidB]
-  status: 'pending' | 'active' | 'judging' | 'finished';
-  gameType: 'skate';
+  status: "pending" | "active" | "judging" | "finished";
+  gameType: "skate";
 
   // Letters: '' → 'S' → 'SK' → 'SKA' → 'SKAT' → 'SKATE' = dead
   letters: Record<string, string>; // uid → 'SKA'
@@ -33,7 +33,7 @@ export interface SkateChallenge {
     url: string;
     uid: string;
     ts: number;
-    type: 'set' | 'attempt';
+    type: "set" | "attempt";
     landed?: boolean;
   }>;
 

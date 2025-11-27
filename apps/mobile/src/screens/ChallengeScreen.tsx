@@ -1,35 +1,49 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, Alert, StatusBar, SafeAreaView } from 'react-native';
-import { 
-  Camera, 
-  useCameraDevice, 
-  useCameraPermission, 
+import { useIsFocused } from "@react-navigation/native"; // Or your router's equivalent
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import {
+  Camera,
+  useCameraDevice,
+  useCameraPermission,
   useMicrophonePermission,
-  VideoFile
-} from 'react-native-vision-camera';
-import { useIsFocused } from '@react-navigation/native'; // Or your router's equivalent
-import { SkateCameraUI } from '../components/SkateCameraUI';
-import { GameLengthSelector } from '../components/GameLengthSelector';
-import { GameLength } from '../types/v2-core-loop';
+  type VideoFile,
+} from "react-native-vision-camera";
+import { GameLengthSelector } from "../components/GameLengthSelector";
+import { SkateCameraUI } from "../components/SkateCameraUI";
+import type { GameLength } from "../types/v2-core-loop";
 
 // Assuming standard navigation props
 export const ChallengeScreen = ({ route, navigation }: any) => {
   const { challengeId } = route?.params || {};
   const isFocused = useIsFocused();
-  
+
   // Permissions
-  const { hasPermission: hasCamPermission, requestPermission: requestCamPermission } = useCameraPermission();
-  const { hasPermission: hasMicPermission, requestPermission: requestMicPermission } = useMicrophonePermission();
-  
+  const {
+    hasPermission: hasCamPermission,
+    requestPermission: requestCamPermission,
+  } = useCameraPermission();
+  const {
+    hasPermission: hasMicPermission,
+    requestPermission: requestMicPermission,
+  } = useMicrophonePermission();
+
   // State
-  const [selectedLength, setSelectedLength] = useState<GameLength>('SKATE'); // Default selection
+  const [selectedLength, setSelectedLength] = useState<GameLength>("SKATE"); // Default selection
   const [gameLength, setGameLength] = useState<GameLength | null>(null); // Active game length
   const [videoPath, setVideoPath] = useState<string | null>(null);
   const [isActive, setIsActive] = useState(true); // To pause camera when backgrounded
-  
+
   // Camera Refs
   const camera = useRef<Camera>(null);
-  const device = useCameraDevice('back');
+  const device = useCameraDevice("back");
 
   // Initial Permission Request
   useEffect(() => {
@@ -38,7 +52,12 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
       if (!hasMicPermission) await requestMicPermission();
     };
     requestPermissions();
-  }, [hasCamPermission, hasMicPermission, requestCamPermission, requestMicPermission]);
+  }, [
+    hasCamPermission,
+    hasMicPermission,
+    requestCamPermission,
+    requestMicPermission,
+  ]);
 
   // Handle App Background/Foreground (Optional but recommended)
   useEffect(() => {
@@ -53,16 +72,16 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
     try {
       camera.current.startRecording({
         onRecordingFinished: (video: VideoFile) => {
-          console.log('Recording finished:', video.path);
+          console.log("Recording finished:", video.path);
           setVideoPath(video.path);
         },
         onRecordingError: (error: any) => {
-          console.error('Recording error:', error);
-          Alert.alert('Recording Error', 'Failed to record video.');
+          console.error("Recording error:", error);
+          Alert.alert("Recording Error", "Failed to record video.");
         },
       });
     } catch (e) {
-      console.error('Failed to start recording', e);
+      console.error("Failed to start recording", e);
     }
   }, []);
 
@@ -71,31 +90,27 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
     try {
       await camera.current.stopRecording();
     } catch (e) {
-      console.error('Failed to stop recording', e);
+      console.error("Failed to stop recording", e);
     }
   }, []);
 
   // --- UI Callbacks ---
 
   const handleVideoSent = useCallback(() => {
-    Alert.alert(
-      "SENT IT!", 
-      "Your clip is with the judges. Good luck.",
-      [{ text: "OK", onPress: () => navigation.goBack() }]
-    );
+    Alert.alert("SENT IT!", "Your clip is with the judges. Good luck.", [
+      { text: "OK", onPress: () => navigation.goBack() },
+    ]);
   }, [navigation]);
 
   const handleVideoDeleted = useCallback(() => {
-    // Reset state to allow re-recording? 
-    // Actually, the prompt says "DELETE" sets a cooldown. 
+    // Reset state to allow re-recording?
+    // Actually, the prompt says "DELETE" sets a cooldown.
     // If cooldown is set, we should probably kick them out or show a locked state.
     // But SkateCameraUI handles the cooldown logic.
     // We just need to close the screen or reset.
-    Alert.alert(
-      "Cooldown Active", 
-      "You bailed. Try again in 24 hours.",
-      [{ text: "Understood", onPress: () => navigation.goBack() }]
-    );
+    Alert.alert("Cooldown Active", "You bailed. Try again in 24 hours.", [
+      { text: "Understood", onPress: () => navigation.goBack() },
+    ]);
   }, [navigation]);
 
   const handleStartChallenge = () => {
@@ -107,7 +122,9 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
   if (!hasCamPermission || !hasMicPermission) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.text}>Camera & Microphone permissions are required.</Text>
+        <Text style={styles.text}>
+          Camera & Microphone permissions are required.
+        </Text>
       </View>
     );
   }
@@ -128,23 +145,23 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>CHALLENGE MODE</Text>
         </View>
-        
+
         <View style={styles.selectorWrapper}>
-          <GameLengthSelector 
+          <GameLengthSelector
             selectedLength={selectedLength}
             onSelect={setSelectedLength}
           />
         </View>
 
         <View style={styles.actionContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.startButton}
             onPress={handleStartChallenge}
           >
             <Text style={styles.startButtonText}>START CHALLENGE</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.cancelButton}
             onPress={() => navigation.goBack()}
           >
@@ -159,7 +176,7 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
   return (
     <View style={styles.container}>
       <StatusBar hidden />
-      
+
       <Camera
         ref={camera}
         style={StyleSheet.absoluteFill}
@@ -172,17 +189,17 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
       <SkateCameraUI
         videoFilePath={videoPath}
         gameLength={gameLength}
-        challengeId={challengeId || 'default_challenge'} // Fallback if no ID
+        challengeId={challengeId || "default_challenge"} // Fallback if no ID
         onStartRecording={handleStartRecording}
         onStopRecording={handleStopRecording}
         onVideoSent={handleVideoSent}
         onVideoDeleted={handleVideoDeleted}
       />
-      
+
       {/* Back Button (only if not recording) */}
       {/* You might want to hide this during recording, handled by UI overlay usually */}
       <View style={styles.topBar}>
-         <Text style={styles.modeBadge}>{gameLength}</Text>
+        <Text style={styles.modeBadge}>{gameLength}</Text>
       </View>
     </View>
   );
@@ -191,35 +208,35 @@ export const ChallengeScreen = ({ route, navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: "black",
   },
   centerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000",
   },
   text: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
   },
   selectionContainer: {
     flex: 1,
-    backgroundColor: '#111',
-    justifyContent: 'center',
+    backgroundColor: "#111",
+    justifyContent: "center",
   },
   header: {
-    position: 'absolute',
+    position: "absolute",
     top: 60,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   headerTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 24,
-    fontWeight: '900',
+    fontWeight: "900",
     letterSpacing: 2,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   selectorWrapper: {
     paddingHorizontal: 20,
@@ -227,42 +244,42 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     paddingHorizontal: 20,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 16,
   },
   startButton: {
-    backgroundColor: '#FFD700', // Gold
+    backgroundColor: "#FFD700", // Gold
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 8,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   startButtonText: {
-    color: 'black',
+    color: "black",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1,
   },
   cancelButton: {
     paddingVertical: 12,
   },
   cancelButtonText: {
-    color: '#666',
+    color: "#666",
     fontSize: 16,
   },
   topBar: {
-    position: 'absolute',
+    position: "absolute",
     top: 50,
     left: 20,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: "rgba(0,0,0,0.5)",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 4,
   },
   modeBadge: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 12,
-  }
+  },
 });

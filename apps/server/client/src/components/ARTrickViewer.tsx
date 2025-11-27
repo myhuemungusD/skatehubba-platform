@@ -1,10 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Camera, Lock, XCircle, Loader2 } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { useToast } from '../hooks/use-toast';
-import { useSpotAccess } from '../store/useSpotAccess';
-import { Badge } from './ui/badge';
+import { Camera, Loader2, Lock, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useToast } from "../hooks/use-toast";
+import { useSpotAccess } from "../store/useSpotAccess";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 interface ARTrickViewerProps {
   spotId: string;
@@ -24,7 +30,9 @@ export function ARTrickViewer({
   const { toast } = useToast();
   const { hasValidAccess } = useSpotAccess();
   const [arSupported, setArSupported] = useState<boolean | null>(null);
-  const [cameraPermission, setCameraPermission] = useState<'granted' | 'denied' | 'prompt'>('prompt');
+  const [cameraPermission, setCameraPermission] = useState<
+    "granted" | "denied" | "prompt"
+  >("prompt");
   const [arMode, setArMode] = useState(false);
   const [isLoadingModel, setIsLoadingModel] = useState(false);
 
@@ -35,9 +43,11 @@ export function ARTrickViewer({
   }, []);
 
   const checkARSupport = async () => {
-    if ('xr' in navigator) {
+    if ("xr" in navigator) {
       try {
-        const isSupported = await (navigator as any).xr?.isSessionSupported('immersive-ar');
+        const isSupported = await (navigator as any).xr?.isSessionSupported(
+          "immersive-ar",
+        );
         setArSupported(isSupported || false);
       } catch {
         setArSupported(false);
@@ -50,15 +60,15 @@ export function ARTrickViewer({
   const requestCameraPermission = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop());
-      setCameraPermission('granted');
+      stream.getTracks().forEach((track) => track.stop());
+      setCameraPermission("granted");
       return true;
     } catch (error) {
-      setCameraPermission('denied');
+      setCameraPermission("denied");
       toast({
-        title: 'Camera Permission Required',
-        description: 'Please allow camera access to use AR features.',
-        variant: 'destructive',
+        title: "Camera Permission Required",
+        description: "Please allow camera access to use AR features.",
+        variant: "destructive",
       });
       return false;
     }
@@ -67,23 +77,23 @@ export function ARTrickViewer({
   const handleEnterAR = async () => {
     if (!hasAccess) {
       toast({
-        title: '🔒 Locked',
-        description: 'Check in at this spot to unlock AR trick viewer.',
-        variant: 'destructive',
+        title: "🔒 Locked",
+        description: "Check in at this spot to unlock AR trick viewer.",
+        variant: "destructive",
       });
       return;
     }
 
     if (arSupported === false) {
       toast({
-        title: 'AR Not Supported',
-        description: 'Your device does not support AR features.',
-        variant: 'destructive',
+        title: "AR Not Supported",
+        description: "Your device does not support AR features.",
+        variant: "destructive",
       });
       return;
     }
 
-    if (cameraPermission !== 'granted') {
+    if (cameraPermission !== "granted") {
       const granted = await requestCameraPermission();
       if (!granted) return;
     }
@@ -94,8 +104,9 @@ export function ARTrickViewer({
     setTimeout(() => {
       setIsLoadingModel(false);
       toast({
-        title: '🎮 AR Mode Active',
-        description: 'Point your camera at a flat surface to view the trick hologram.',
+        title: "🎮 AR Mode Active",
+        description:
+          "Point your camera at a flat surface to view the trick hologram.",
       });
     }, 1500);
   };
@@ -103,14 +114,17 @@ export function ARTrickViewer({
   const handleExitAR = () => {
     setArMode(false);
     toast({
-      title: 'AR Mode Exited',
-      description: 'You can re-enter AR mode anytime.',
+      title: "AR Mode Exited",
+      description: "You can re-enter AR mode anytime.",
     });
   };
 
   if (!hasAccess) {
     return (
-      <Card className={`bg-neutral-900/50 border-gray-700 ${className}`} data-testid="card-ar-locked">
+      <Card
+        className={`bg-neutral-900/50 border-gray-700 ${className}`}
+        data-testid="card-ar-locked"
+      >
         <CardHeader>
           <CardTitle className="text-gray-300 flex items-center gap-2">
             <Lock className="w-5 h-5 text-orange-500" />
@@ -134,19 +148,25 @@ export function ARTrickViewer({
 
   if (arMode) {
     return (
-      <Card className={`bg-black border-orange-500 ${className}`} data-testid="card-ar-active">
+      <Card
+        className={`bg-black border-orange-500 ${className}`}
+        data-testid="card-ar-active"
+      >
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2 justify-between">
             <span className="flex items-center gap-2">
               <Camera className="w-5 h-5 text-orange-500" />
               AR Mode Active
             </span>
-            <Badge variant="outline" className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+            <Badge
+              variant="outline"
+              className="bg-orange-500/20 text-orange-400 border-orange-500/30"
+            >
               LIVE
             </Badge>
           </CardTitle>
           <CardDescription className="text-gray-300">
-            {trickId ? `Viewing: ${trickId}` : 'Point camera at flat surface'}
+            {trickId ? `Viewing: ${trickId}` : "Point camera at flat surface"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -171,7 +191,7 @@ export function ARTrickViewer({
               </div>
             )}
           </div>
-          
+
           <Button
             onClick={handleExitAR}
             variant="outline"
@@ -187,7 +207,10 @@ export function ARTrickViewer({
   }
 
   return (
-    <Card className={`bg-neutral-900/50 border-green-500/50 ${className}`} data-testid="card-ar-unlocked">
+    <Card
+      className={`bg-neutral-900/50 border-green-500/50 ${className}`}
+      data-testid="card-ar-unlocked"
+    >
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
           <Camera className="w-5 h-5 text-green-500" />
@@ -203,7 +226,9 @@ export function ARTrickViewer({
             <Camera className="w-12 h-12 mx-auto mb-2 text-green-500" />
             <p className="text-sm">Ready to launch AR experience</p>
             {hologramUrl && (
-              <p className="text-xs text-gray-500 mt-1">Hologram loaded: {trickId}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Hologram loaded: {trickId}
+              </p>
             )}
           </div>
         </div>
@@ -212,7 +237,8 @@ export function ARTrickViewer({
           <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-sm text-yellow-300">
             <p className="font-semibold mb-1">AR Not Available</p>
             <p className="text-xs text-yellow-400">
-              Your device doesn't support WebXR. You'll see a 2D preview instead.
+              Your device doesn't support WebXR. You'll see a 2D preview
+              instead.
             </p>
           </div>
         )}
@@ -223,7 +249,7 @@ export function ARTrickViewer({
           data-testid="button-enter-ar"
         >
           <Camera className="w-4 h-4" />
-          {arSupported ? 'Launch AR Viewer' : 'View 2D Preview'}
+          {arSupported ? "Launch AR Viewer" : "View 2D Preview"}
         </Button>
       </CardContent>
     </Card>

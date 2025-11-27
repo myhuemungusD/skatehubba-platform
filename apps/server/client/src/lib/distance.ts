@@ -6,7 +6,7 @@ export function calculateDistance(
   lat1: number,
   lng1: number,
   lat2: number,
-  lng2: number
+  lng2: number,
 ): number {
   const R = 6371e3; // Earth's radius in meters
   const φ1 = (lat1 * Math.PI) / 180;
@@ -36,8 +36,8 @@ export function formatDistance(meters: number): string {
 /**
  * Determine proximity level based on distance
  */
-export function getProximity(meters: number): 'here' | 'near' | 'far' {
-  if (meters < 60) return 'here';
-  if (meters < 500) return 'near';
-  return 'far';
+export function getProximity(meters: number): "here" | "near" | "far" {
+  if (meters < 60) return "here";
+  if (meters < 500) return "near";
+  return "far";
 }

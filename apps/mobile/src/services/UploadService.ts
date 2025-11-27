@@ -1,6 +1,6 @@
 /**
  * UploadService.ts
- * 
+ *
  * Handles robust video uploading to Firebase Storage.
  * Features:
  * - Unique path generation
@@ -9,9 +9,9 @@
  * - Metadata attachment
  */
 
-import storage from '@react-native-firebase/storage';
-import auth from '@react-native-firebase/auth';
-import { Platform } from 'react-native';
+import auth from "@react-native-firebase/auth";
+import storage from "@react-native-firebase/storage";
+import { Platform } from "react-native";
 
 export interface UploadProgress {
   bytesTransferred: number;
@@ -21,7 +21,7 @@ export interface UploadProgress {
 
 /**
  * Uploads a video file to Firebase Storage.
- * 
+ *
  * @param localUri - The local file URI of the video
  * @param challengeId - The ID of the challenge (for organization)
  * @param onProgress - Callback for upload progress
@@ -30,25 +30,26 @@ export interface UploadProgress {
 export const uploadSubmissionVideo = async (
   localUri: string,
   challengeId: string,
-  onProgress?: (progress: UploadProgress) => void
+  onProgress?: (progress: UploadProgress) => void,
 ): Promise<string> => {
   const userId = auth().currentUser?.uid;
-  if (!userId) throw new Error('User must be authenticated to upload.');
+  if (!userId) throw new Error("User must be authenticated to upload.");
 
   // 1. Generate a unique file path
   // Structure: submissions/{challengeId}/{userId}_{timestamp}.mp4
   const timestamp = Date.now();
   const fileName = `${userId}_${timestamp}.mp4`;
   const storagePath = `submissions/${challengeId}/${fileName}`;
-  
+
   const reference = storage().ref(storagePath);
 
   // 2. Handle platform-specific URI formatting
-  const uploadUri = Platform.OS === 'ios' ? localUri.replace('file://', '') : localUri;
+  const uploadUri =
+    Platform.OS === "ios" ? localUri.replace("file://", "") : localUri;
 
   // 3. Create the upload task
   const task = reference.putFile(uploadUri, {
-    contentType: 'video/mp4',
+    contentType: "video/mp4",
     customMetadata: {
       userId,
       challengeId,
@@ -57,7 +58,7 @@ export const uploadSubmissionVideo = async (
   });
 
   // 4. Monitor progress
-  task.on('state_changed', (snapshot) => {
+  task.on("state_changed", (snapshot) => {
     const progress = snapshot.bytesTransferred / snapshot.totalBytes;
     if (onProgress) {
       onProgress({
@@ -71,13 +72,15 @@ export const uploadSubmissionVideo = async (
   try {
     // 5. Wait for completion
     await task;
-    
+
     // 6. Get the download URL
     const url = await reference.getDownloadURL();
-    console.log('Upload successful:', url);
+    console.log("Upload successful:", url);
     return url;
   } catch (error) {
-    console.error('Upload failed:', error);
-    throw new Error('Failed to upload video. Please check your connection and try again.');
+    console.error("Upload failed:", error);
+    throw new Error(
+      "Failed to upload video. Please check your connection and try again.",
+    );
   }
 };

@@ -1,13 +1,25 @@
-import { useState } from "react";
 import type { ConfirmationResult } from "firebase/auth";
-import { loginUser, loginWithGoogle, setupRecaptcha, sendPhoneVerification, verifyPhoneCode } from "../lib/auth";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import { useToast } from "../hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
-import { Link } from "wouter";
-import { Mail, Lock } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
+import { useState } from "react";
 import { SiGoogle } from "react-icons/si";
+import { Link } from "wouter";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { useToast } from "../hooks/use-toast";
+import {
+  loginUser,
+  loginWithGoogle,
+  sendPhoneVerification,
+  setupRecaptcha,
+  verifyPhoneCode,
+} from "../lib/auth";
 
 export default function SigninPage() {
   const [email, setEmail] = useState("");
@@ -15,46 +27,48 @@ export default function SigninPage() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [confirmationResult, setConfirmationResult] =
+    useState<ConfirmationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       await loginUser(email, password);
-      toast({ 
+      toast({
         title: "Welcome back! 🛹",
-        description: "You've successfully signed in."
+        description: "You've successfully signed in.",
       });
       window.location.href = "/shop";
     } catch (err: any) {
       const errorMessage = err.message;
-      
+
       // Special handling for email verification error
       if (errorMessage.includes("verify your email")) {
-        toast({ 
-          title: "Email Not Verified", 
-          description: "Please check your inbox and click the verification link. ",
+        toast({
+          title: "Email Not Verified",
+          description:
+            "Please check your inbox and click the verification link. ",
           variant: "destructive",
           duration: 15000, // 15 seconds for action toasts
           action: (
             <button
-              onClick={() => window.location.href = "/verify"}
+              onClick={() => (window.location.href = "/verify")}
               className="text-orange-400 underline font-semibold hover:text-orange-300"
               data-testid="button-toast-resend-email"
             >
               Resend Email
             </button>
-          )
+          ),
         });
       } else {
-        toast({ 
-          title: "Login failed", 
+        toast({
+          title: "Login failed",
           description: errorMessage,
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } finally {
@@ -64,19 +78,19 @@ export default function SigninPage() {
 
   async function handleGoogleSignIn() {
     setIsLoading(true);
-    
+
     try {
       await loginWithGoogle();
-      toast({ 
+      toast({
         title: "Welcome back! 🛹",
-        description: "You've successfully signed in with Google."
+        description: "You've successfully signed in with Google.",
       });
       window.location.href = "/shop";
     } catch (err: any) {
-      toast({ 
-        title: "Google sign-in failed", 
+      toast({
+        title: "Google sign-in failed",
         description: err.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -88,18 +102,21 @@ export default function SigninPage() {
 
     try {
       const recaptchaVerifier = await setupRecaptcha("recaptcha-container");
-      const confirmation = await sendPhoneVerification(phone, recaptchaVerifier);
+      const confirmation = await sendPhoneVerification(
+        phone,
+        recaptchaVerifier,
+      );
       setConfirmationResult(confirmation);
       setShowOtp(true);
       toast({
         title: "Code sent! 📱",
-        description: "Check your phone for the verification code."
+        description: "Check your phone for the verification code.",
       });
     } catch (err: any) {
       toast({
         title: "Failed to send code",
         description: err.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -117,14 +134,17 @@ export default function SigninPage() {
       await verifyPhoneCode(confirmationResult, otp);
       toast({
         title: "Welcome back! 🛹",
-        description: "You've successfully signed in."
+        description: "You've successfully signed in.",
       });
       window.location.href = "/shop";
     } catch (err: any) {
       toast({
         title: "Verification failed",
-        description: err instanceof Error ? err.message : "Invalid code. Please try again.",
-        variant: "destructive"
+        description:
+          err instanceof Error
+            ? err.message
+            : "Invalid code. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -273,7 +293,11 @@ export default function SigninPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-400">
                 Don't have an account?{" "}
-                <Link href="/signup" className="text-orange-400 hover:text-orange-300 font-semibold" data-testid="link-to-signup">
+                <Link
+                  href="/signup"
+                  className="text-orange-400 hover:text-orange-300 font-semibold"
+                  data-testid="link-to-signup"
+                >
                   Sign Up
                 </Link>
               </p>
@@ -281,7 +305,10 @@ export default function SigninPage() {
 
             <div className="mt-4 text-center">
               <Link href="/">
-                <span className="text-gray-400 hover:text-white cursor-pointer inline-block" data-testid="link-back-home">
+                <span
+                  className="text-gray-400 hover:text-white cursor-pointer inline-block"
+                  data-testid="link-back-home"
+                >
                   ← Back to Home
                 </span>
               </Link>

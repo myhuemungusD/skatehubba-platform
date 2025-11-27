@@ -1,7 +1,7 @@
-import { Router, Response } from "express";
-import { db } from "../db";
 import { users } from "@skatehubba/db";
 import { eq } from "drizzle-orm";
+import { type Response, Router } from "express";
+import { db } from "../db";
 import { requireAuth } from "../middleware/auth";
 
 const router = Router();
@@ -10,14 +10,19 @@ router.get("/profile", requireAuth, async (req: any, res: Response) => {
   try {
     const { uid, email, name, picture } = req.user!;
 
-    const existingUsers = await db.select().from(users).where(eq(users.id, uid));
+    const existingUsers = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, uid));
     let user = existingUsers[0];
 
     if (!user) {
       if (!email) {
-        return res.status(400).json({ error: "Email is required to create a profile" });
+        return res
+          .status(400)
+          .json({ error: "Email is required to create a profile" });
       }
-      
+
       const [newUser] = await db
         .insert(users)
         .values({
@@ -27,7 +32,7 @@ router.get("/profile", requireAuth, async (req: any, res: Response) => {
           photoURL: picture ?? null,
         })
         .returning();
-      
+
       user = newUser;
       console.log(`✨ Auto-created profile for new user: ${uid} (${email})`);
     }

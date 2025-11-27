@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
 import { applyActionCode, getAuth } from "firebase/auth";
-import { Card, CardContent } from "../components/ui/card";
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "wouter";
 import { Button } from "../components/ui/button";
-import { Link } from "wouter";
+import { Card, CardContent } from "../components/ui/card";
 
 export default function AuthVerifyPage() {
   const [, setLocation] = useLocation();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -16,24 +17,26 @@ export default function AuthVerifyPage() {
       try {
         // Import auth dynamically to catch initialization errors
         const { auth } = await import("../lib/firebase");
-        
+
         if (!auth) {
           setStatus("error");
-          setMessage("Firebase authentication not configured. Please contact support.");
+          setMessage(
+            "Firebase authentication not configured. Please contact support.",
+          );
           return;
         }
 
         // Get the action code from URL query params
         const urlParams = new URLSearchParams(window.location.search);
-        const mode = urlParams.get('mode');
-        const oobCode = urlParams.get('oobCode');
+        const mode = urlParams.get("mode");
+        const oobCode = urlParams.get("oobCode");
 
-        if (mode === 'verifyEmail' && oobCode) {
+        if (mode === "verifyEmail" && oobCode) {
           // Apply the verification code
           await applyActionCode(auth, oobCode);
           setStatus("success");
           setMessage("Your email has been verified successfully!");
-          
+
           // Auto-redirect to signin after 3 seconds
           setTimeout(() => {
             setLocation("/signin");
@@ -45,7 +48,10 @@ export default function AuthVerifyPage() {
       } catch (error: any) {
         console.error("Email verification error:", error);
         setStatus("error");
-        setMessage(error.message || "Verification failed. The link may be invalid or expired.");
+        setMessage(
+          error.message ||
+            "Verification failed. The link may be invalid or expired.",
+        );
       }
     };
 
@@ -67,19 +73,27 @@ export default function AuthVerifyPage() {
             {status === "loading" && (
               <div className="text-center py-8">
                 <Loader2 className="w-16 h-16 text-orange-500 animate-spin mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-white mb-2">Verifying Email...</h2>
-                <p className="text-gray-400">Please wait while we verify your email address.</p>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Verifying Email...
+                </h2>
+                <p className="text-gray-400">
+                  Please wait while we verify your email address.
+                </p>
               </div>
             )}
 
             {status === "success" && (
               <div className="text-center py-8">
                 <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-white mb-2">Email Verified! ✅</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Email Verified! ✅
+                </h2>
                 <p className="text-gray-300 mb-6">{message}</p>
-                <p className="text-gray-400 text-sm mb-4">Redirecting to sign in...</p>
+                <p className="text-gray-400 text-sm mb-4">
+                  Redirecting to sign in...
+                </p>
                 <Link href="/signin">
-                  <Button 
+                  <Button
                     className="bg-orange-500 hover:bg-orange-600 text-white"
                     data-testid="button-goto-signin"
                   >
@@ -92,11 +106,13 @@ export default function AuthVerifyPage() {
             {status === "error" && (
               <div className="text-center py-8">
                 <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-white mb-2">Verification Failed</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Verification Failed
+                </h2>
                 <p className="text-gray-300 mb-6">{message}</p>
                 <div className="space-y-2">
                   <Link href="/signup">
-                    <Button 
+                    <Button
                       className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                       data-testid="button-try-again"
                     >
@@ -104,8 +120,8 @@ export default function AuthVerifyPage() {
                     </Button>
                   </Link>
                   <Link href="/">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
                       data-testid="button-back-home"
                     >

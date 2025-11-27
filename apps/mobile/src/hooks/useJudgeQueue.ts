@@ -1,19 +1,22 @@
 /**
  * useJudgeQueue.ts
- * 
+ *
  * Logic Layer for the Judge View.
  * Handles fetching the submission queue and optimistic updates for voting.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Submission, VoteType } from '../types/v2-core-loop';
-import { getPendingSubmissions, submitJudgeVote } from '../services/V2SubmissionService';
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  getPendingSubmissions,
+  submitJudgeVote,
+} from "../services/V2SubmissionService";
+import type { Submission, VoteType } from "../types/v2-core-loop";
 
 export const useJudgeQueue = () => {
   const [queue, setQueue] = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Fix: Race Condition - Track mounted state to prevent updates on unmounted component
   const isMounted = useRef(true);
 
@@ -36,9 +39,9 @@ export const useJudgeQueue = () => {
       }
     } catch (err: unknown) {
       // Fix: Type Safety - Use unknown instead of any
-      console.error('Error fetching judge queue:', err);
+      console.error("Error fetching judge queue:", err);
       if (isMounted.current) {
-        setError('Failed to load submissions. Please try again.');
+        setError("Failed to load submissions. Please try again.");
       }
     } finally {
       if (isMounted.current) {
@@ -51,21 +54,26 @@ export const useJudgeQueue = () => {
    * Submit a vote for a submission.
    * Uses optimistic updates to immediately remove the item from the UI.
    */
-  const handleVote = useCallback(async (submissionId: string, vote: VoteType) => {
-    // 1. Optimistic Update: Remove from queue immediately
-    setQueue(currentQueue => currentQueue.filter(sub => sub.id !== submissionId));
+  const handleVote = useCallback(
+    async (submissionId: string, vote: VoteType) => {
+      // 1. Optimistic Update: Remove from queue immediately
+      setQueue((currentQueue) =>
+        currentQueue.filter((sub) => sub.id !== submissionId),
+      );
 
-    // 2. Perform the actual API call in the background
-    try {
-      await submitJudgeVote(submissionId, vote);
-      console.log(`Vote ${vote} confirmed for ${submissionId}`);
-    } catch (err) {
-      console.error('Vote failed:', err);
-      // Note: In a robust production app, we might want to rollback the optimistic update here
-      // or show a toast notification. For MVP, we prioritize the "flow".
-      alert('Vote failed to record. Please check your connection.');
-    }
-  }, []);
+      // 2. Perform the actual API call in the background
+      try {
+        await submitJudgeVote(submissionId, vote);
+        console.log(`Vote ${vote} confirmed for ${submissionId}`);
+      } catch (err) {
+        console.error("Vote failed:", err);
+        // Note: In a robust production app, we might want to rollback the optimistic update here
+        // or show a toast notification. For MVP, we prioritize the "flow".
+        alert("Vote failed to record. Please check your connection.");
+      }
+    },
+    [],
+  );
 
   // Initial fetch on mount
   useEffect(() => {

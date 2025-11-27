@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import { 
-  collection, 
-  doc, 
-  onSnapshot, 
-  query, 
-  where, 
-  orderBy, 
-  limit,
-  Query,
+import {
+  collection,
   DocumentReference,
-  QueryConstraint,
-  Unsubscribe
-} from 'firebase/firestore';
-import { db } from '../firebase';
+  doc,
+  limit,
+  onSnapshot,
+  orderBy,
+  Query,
+  type QueryConstraint,
+  query,
+  type Unsubscribe,
+  where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { db } from "../firebase";
 
 export interface FirestoreHookOptions {
   enabled?: boolean;
@@ -33,7 +33,7 @@ export interface UseFirestoreDocumentResult<T> {
 export function useFirestoreCollection<T = any>(
   collectionPath: string,
   constraints: QueryConstraint[] = [],
-  options: FirestoreHookOptions = {}
+  options: FirestoreHookOptions = {},
 ): UseFirestoreCollectionResult<T> {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,16 +53,17 @@ export function useFirestoreCollection<T = any>(
 
     try {
       const collectionRef = collection(db, collectionPath);
-      const q = constraints.length > 0 
-        ? query(collectionRef, ...constraints)
-        : collectionRef;
+      const q =
+        constraints.length > 0
+          ? query(collectionRef, ...constraints)
+          : collectionRef;
 
       unsubscribe = onSnapshot(
         q,
         (snapshot) => {
-          const documents = snapshot.docs.map(doc => ({
+          const documents = snapshot.docs.map((doc) => ({
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
           })) as T[];
           setData(documents);
           setLoading(false);
@@ -71,7 +72,7 @@ export function useFirestoreCollection<T = any>(
           console.error(`Error fetching collection ${collectionPath}:`, err);
           setError(err as Error);
           setLoading(false);
-        }
+        },
       );
     } catch (err) {
       console.error(`Error setting up listener for ${collectionPath}:`, err);
@@ -92,7 +93,7 @@ export function useFirestoreCollection<T = any>(
 export function useFirestoreDocument<T = any>(
   collectionPath: string,
   documentId: string | null,
-  options: FirestoreHookOptions = {}
+  options: FirestoreHookOptions = {},
 ): UseFirestoreDocumentResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -120,7 +121,7 @@ export function useFirestoreDocument<T = any>(
           if (snapshot.exists()) {
             setData({
               id: snapshot.id,
-              ...snapshot.data()
+              ...snapshot.data(),
             } as T);
           } else {
             setData(null);
@@ -128,13 +129,19 @@ export function useFirestoreDocument<T = any>(
           setLoading(false);
         },
         (err) => {
-          console.error(`Error fetching document ${collectionPath}/${documentId}:`, err);
+          console.error(
+            `Error fetching document ${collectionPath}/${documentId}:`,
+            err,
+          );
           setError(err as Error);
           setLoading(false);
-        }
+        },
       );
     } catch (err) {
-      console.error(`Error setting up listener for ${collectionPath}/${documentId}:`, err);
+      console.error(
+        `Error setting up listener for ${collectionPath}/${documentId}:`,
+        err,
+      );
       setError(err as Error);
       setLoading(false);
     }

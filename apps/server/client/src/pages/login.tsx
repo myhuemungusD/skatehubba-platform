@@ -1,12 +1,18 @@
-import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
-import { SiGoogle } from "react-icons/si";
 import { UserCircle } from "lucide-react";
-import { loginWithGoogle, loginAnonymously, listenToAuth } from "../lib/auth";
-import { trackEvent } from "../lib/analytics";
+import { useEffect, useState } from "react";
+import { SiGoogle } from "react-icons/si";
+import { useLocation } from "wouter";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { useToast } from "../hooks/use-toast";
+import { trackEvent } from "../lib/analytics";
+import { listenToAuth, loginAnonymously, loginWithGoogle } from "../lib/auth";
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
@@ -30,25 +36,25 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     try {
       const result = await loginWithGoogle();
-      
+
       // If result is null, user was redirected to Google
       // They'll return to the app and be authenticated via GoogleRedirectHandler in App.tsx
       if (result) {
         // Popup flow succeeded - auth listener above will handle navigation
         toast({
           title: "Welcome! 🛹",
-          description: "You've successfully signed in with Google."
+          description: "You've successfully signed in with Google.",
         });
-        trackEvent('login', { method: 'google' });
+        trackEvent("login", { method: "google" });
         // Note: Don't reset isGoogleLoading - component will unmount on navigation
       }
       // Redirect flow - page will unload (user redirected to Google)
     } catch (err: any) {
       // Error occurred - reset loading state so user can retry
-      toast({ 
-        title: "Google sign-in failed", 
+      toast({
+        title: "Google sign-in failed",
         description: err.message,
-        variant: "destructive"
+        variant: "destructive",
       });
       setIsGoogleLoading(false);
     }
@@ -60,15 +66,15 @@ export default function LoginPage() {
       await loginAnonymously();
       toast({
         title: "Welcome! 🛹",
-        description: "You've signed in as a guest."
+        description: "You've signed in as a guest.",
       });
-      trackEvent('login', { method: 'anonymous' });
+      trackEvent("login", { method: "anonymous" });
       // Note: Don't reset isAnonymousLoading - component will unmount on navigation
     } catch (err: any) {
-      toast({ 
-        title: "Guest sign-in failed", 
+      toast({
+        title: "Guest sign-in failed",
         description: err.message,
-        variant: "destructive"
+        variant: "destructive",
       });
       setIsAnonymousLoading(false);
     }
@@ -90,7 +96,9 @@ export default function LoginPage() {
 
         <Card className="bg-[#232323] border-gray-700">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center text-white">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl text-center text-white">
+              Welcome Back
+            </CardTitle>
             <CardDescription className="text-center text-gray-400">
               Choose how you'd like to sign in
             </CardDescription>
@@ -125,7 +133,8 @@ export default function LoginPage() {
             </Button>
 
             <p className="text-xs text-center text-gray-500 mt-6">
-              By signing in, you agree to our Terms of Service and Privacy Policy
+              By signing in, you agree to our Terms of Service and Privacy
+              Policy
             </p>
 
             {/* Link to Full Auth Page */}

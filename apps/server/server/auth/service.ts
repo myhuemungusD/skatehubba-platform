@@ -1,11 +1,11 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
-import { db } from '../db.ts';
-import { customUsers, authSessions } from '@skatehubba/db';
-import { eq, and, gt } from 'drizzle-orm';
-import type { CustomUser, InsertCustomUser, AuthSession } from '@skatehubba/db';
-import { env } from '../config/env';
+import type { AuthSession, CustomUser, InsertCustomUser } from "@skatehubba/db";
+import { authSessions, customUsers } from "@skatehubba/db";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import { and, eq, gt } from "drizzle-orm";
+import jwt from "jsonwebtoken";
+import { env } from "../config/env";
+import { db } from "../db.ts";
 
 export class AuthService {
   private static readonly JWT_SECRET = env.JWT_SECRET;
@@ -15,27 +15,28 @@ export class AuthService {
 
   // Hash password
   static async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, this.SALT_ROUNDS);
+    return bcrypt.hash(password, AuthService.SALT_ROUNDS);
   }
 
   // Verify password
-  static async verifyPassword(password: string, hash: string): Promise<boolean> {
+  static async verifyPassword(
+    password: string,
+    hash: string,
+  ): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
 
   // Generate JWT token
   static generateJWT(userId: string): string {
-    return jwt.sign(
-      { userId, type: 'access' },
-      this.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    return jwt.sign({ userId, type: "access" }, AuthService.JWT_SECRET, {
+      expiresIn: "24h",
+    });
   }
 
   // Verify JWT token
   static verifyJWT(token: string): { userId: string } | null {
     try {
-      const decoded = jwt.verify(token, this.JWT_SECRET) as any;
+      const decoded = jwt.verify(token, AuthService.JWT_SECRET) as any;
       return { userId: decoded.userId };
     } catch (error) {
       return null;
@@ -44,7 +45,7 @@ export class AuthService {
 
   // Generate random token for email verification
   static generateSecureToken(): string {
-    return crypto.randomBytes(32).toString('hex');
+    return crypto.randomBytes(32).toString("hex");
   }
 
   // Create user
@@ -55,11 +56,13 @@ export class AuthService {
     lastName: string;
     firebaseUid?: string;
   }): Promise<{ user: CustomUser; emailToken: string }> {
-    const passwordHash = userData.firebaseUid 
-      ? 'firebase-auth-user' // Placeholder for Firebase users
-      : await this.hashPassword(userData.password);
-    const emailToken = this.generateSecureToken();
-    const emailTokenExpiry = new Date(Date.now() + this.EMAIL_TOKEN_EXPIRY);
+    const passwordHash = userData.firebaseUid
+      ? "firebase-auth-user" // Placeholder for Firebase users
+      : await AuthService.hashPassword(userData.password);
+    const emailToken = AuthService.generateSecureToken();
+    const emailTokenExpiry = new Date(
+      Date.now() + AuthService.EMAIL_TOKEN_EXPIRY,
+    );
 
     const [user] = await db
       .insert(customUsers)
@@ -85,7 +88,7 @@ export class AuthService {
       .select()
       .from(customUsers)
       .where(eq(customUsers.email, email.toLowerCase().trim()));
-    
+
     return user || null;
   }
 
@@ -95,17 +98,19 @@ export class AuthService {
       .select()
       .from(customUsers)
       .where(eq(customUsers.id, id));
-    
+
     return user || null;
   }
 
   // Find user by Firebase UID
-  static async findUserByFirebaseUid(firebaseUid: string): Promise<CustomUser | null> {
+  static async findUserByFirebaseUid(
+    firebaseUid: string,
+  ): Promise<CustomUser | null> {
     const [user] = await db
       .select()
       .from(customUsers)
       .where(eq(customUsers.firebaseUid, firebaseUid));
-    
+
     return user || null;
   }
 
@@ -117,8 +122,8 @@ export class AuthService {
       .where(
         and(
           eq(customUsers.emailVerificationToken, token),
-          gt(customUsers.emailVerificationExpires, new Date())
-        )
+          gt(customUsers.emailVerificationExpires, new Date()),
+        ),
       );
 
     if (!user) return null;
@@ -155,9 +160,11 @@ export class AuthService {
   }
 
   // Create session
-  static async createSession(userId: string): Promise<{ token: string; session: AuthSession }> {
-    const token = this.generateJWT(userId);
-    const expiresAt = new Date(Date.now() + this.TOKEN_EXPIRY);
+  static async createSession(
+    userId: string,
+  ): Promise<{ token: string; session: AuthSession }> {
+    const token = AuthService.generateJWT(userId);
+    const expiresAt = new Date(Date.now() + AuthService.TOKEN_EXPIRY);
 
     const [session] = await db
       .insert(authSessions)
@@ -174,7 +181,7 @@ export class AuthService {
   // Validate session
   static async validateSession(token: string): Promise<CustomUser | null> {
     // First verify JWT
-    const decoded = this.verifyJWT(token);
+    const decoded = AuthService.verifyJWT(token);
     if (!decoded) return null;
 
     // Check if session exists and is valid
@@ -184,21 +191,19 @@ export class AuthService {
       .where(
         and(
           eq(authSessions.token, token),
-          gt(authSessions.expiresAt, new Date())
-        )
+          gt(authSessions.expiresAt, new Date()),
+        ),
       );
 
     if (!session) return null;
 
     // Get user
-    return this.findUserById(session.userId);
+    return AuthService.findUserById(session.userId);
   }
 
   // Delete session (logout)
   static async deleteSession(token: string): Promise<void> {
-    await db
-      .delete(authSessions)
-      .where(eq(authSessions.token, token));
+    await db.delete(authSessions).where(eq(authSessions.token, token));
   }
 
   // Update last login
@@ -213,12 +218,14 @@ export class AuthService {
   }
 
   // Generate password reset token
-  static async generatePasswordResetToken(email: string): Promise<string | null> {
-    const user = await this.findUserByEmail(email);
+  static async generatePasswordResetToken(
+    email: string,
+  ): Promise<string | null> {
+    const user = await AuthService.findUserByEmail(email);
     if (!user || !user.isEmailVerified) return null;
 
-    const resetToken = this.generateSecureToken();
-    const resetExpiry = new Date(Date.now() + this.EMAIL_TOKEN_EXPIRY);
+    const resetToken = AuthService.generateSecureToken();
+    const resetExpiry = new Date(Date.now() + AuthService.EMAIL_TOKEN_EXPIRY);
 
     await db
       .update(customUsers)
@@ -233,20 +240,23 @@ export class AuthService {
   }
 
   // Reset password with token
-  static async resetPassword(token: string, newPassword: string): Promise<CustomUser | null> {
+  static async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<CustomUser | null> {
     const [user] = await db
       .select()
       .from(customUsers)
       .where(
         and(
           eq(customUsers.resetPasswordToken, token),
-          gt(customUsers.resetPasswordExpires, new Date())
-        )
+          gt(customUsers.resetPasswordExpires, new Date()),
+        ),
       );
 
     if (!user) return null;
 
-    const passwordHash = await this.hashPassword(newPassword);
+    const passwordHash = await AuthService.hashPassword(newPassword);
 
     const [updatedUser] = await db
       .update(customUsers)
@@ -263,7 +273,10 @@ export class AuthService {
   }
 
   // Update user helper method
-  static async updateUser(userId: string, updates: Partial<InsertCustomUser>): Promise<CustomUser | null> {
+  static async updateUser(
+    userId: string,
+    updates: Partial<InsertCustomUser>,
+  ): Promise<CustomUser | null> {
     const [updatedUser] = await db
       .update(customUsers)
       .set({

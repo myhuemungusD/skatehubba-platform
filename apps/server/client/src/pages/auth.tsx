@@ -1,22 +1,40 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Link, useLocation } from "wouter";
-import { Eye, EyeOff, Mail, User, Lock } from "lucide-react";
-import { SiGoogle } from "react-icons/si";
-import { Checkbox } from "../components/ui/checkbox";
 import type { ConfirmationResult } from "firebase/auth";
-import { registerUser, loginUser, loginWithGoogle, setupRecaptcha, sendPhoneVerification, verifyPhoneCode } from "../lib/auth";
-import { trackEvent } from "../lib/analytics";
+import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { SiGoogle } from "react-icons/si";
+import { Link, useLocation } from "wouter";
+import type { LoginInput, RegisterInput } from "../../../shared/schema";
+import { loginSchema, registerSchema } from "../../../shared/schema";
 import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Checkbox } from "../components/ui/checkbox";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 import { useToast } from "../hooks/use-toast";
-import { registerSchema, loginSchema } from "../../../shared/schema";
-import type { RegisterInput, LoginInput } from "../../../shared/schema";
+import { trackEvent } from "../lib/analytics";
+import {
+  loginUser,
+  loginWithGoogle,
+  registerUser,
+  sendPhoneVerification,
+  setupRecaptcha,
+  verifyPhoneCode,
+} from "../lib/auth";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
@@ -26,7 +44,8 @@ export default function AuthPage() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [confirmationResult, setConfirmationResult] =
+    useState<ConfirmationResult | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isPhoneLoading, setIsPhoneLoading] = useState(false);
   const [keepMeLoggedIn, setKeepMeLoggedIn] = useState(true); // Default to checked
@@ -59,18 +78,19 @@ export default function AuthPage() {
         lastName: data.lastName,
       });
 
-      trackEvent('sign_up', { method: 'firebase' });
+      trackEvent("sign_up", { method: "firebase" });
       return firebaseUser;
     },
     onSuccess: () => {
       toast({
         title: "Verification Email Sent! 📧",
-        description: "Check your email to verify your account before logging in.",
+        description:
+          "Check your email to verify your account before logging in.",
         variant: "default",
       });
       registerForm.reset();
       // Redirect to verify page
-      setLocation('/verify');
+      setLocation("/verify");
     },
     onError: (error: any) => {
       toast({
@@ -85,7 +105,7 @@ export default function AuthPage() {
   const loginMutation = useMutation({
     mutationFn: async (data: LoginInput) => {
       const result = await loginUser(data.email, data.password);
-      trackEvent('login', { method: 'firebase' });
+      trackEvent("login", { method: "firebase" });
       return result;
     },
     onSuccess: () => {
@@ -95,12 +115,13 @@ export default function AuthPage() {
         variant: "default",
       });
       // Force reload to refresh auth state and redirect to map
-      window.location.href = '/map';
+      window.location.href = "/map";
     },
     onError: (error: any) => {
       toast({
         title: "Sign In Failed",
-        description: error.message || "Please check your credentials and try again.",
+        description:
+          error.message || "Please check your credentials and try again.",
         variant: "destructive",
       });
     },
@@ -121,15 +142,15 @@ export default function AuthPage() {
       await loginWithGoogle();
       toast({
         title: "Welcome! 🛹",
-        description: "You've successfully signed in with Google."
+        description: "You've successfully signed in with Google.",
       });
-      trackEvent('login', { method: 'google' });
+      trackEvent("login", { method: "google" });
       window.location.href = "/map";
     } catch (err: any) {
-      toast({ 
-        title: "Google sign-in failed", 
+      toast({
+        title: "Google sign-in failed",
         description: err.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsGoogleLoading(false);
@@ -140,18 +161,21 @@ export default function AuthPage() {
     setIsPhoneLoading(true);
     try {
       const recaptchaVerifier = await setupRecaptcha("recaptcha-container");
-      const confirmation = await sendPhoneVerification(phone, recaptchaVerifier);
+      const confirmation = await sendPhoneVerification(
+        phone,
+        recaptchaVerifier,
+      );
       setConfirmationResult(confirmation);
       setShowOtp(true);
       toast({
         title: "Code sent! 📱",
-        description: "Check your phone for the verification code."
+        description: "Check your phone for the verification code.",
       });
     } catch (err: any) {
-      toast({ 
-        title: "Failed to send code", 
+      toast({
+        title: "Failed to send code",
         description: err.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsPhoneLoading(false);
@@ -168,15 +192,18 @@ export default function AuthPage() {
       await verifyPhoneCode(confirmationResult, otp);
       toast({
         title: "Welcome! 🛹",
-        description: "You've successfully signed in."
+        description: "You've successfully signed in.",
       });
-      trackEvent('login', { method: 'phone' });
+      trackEvent("login", { method: "phone" });
       window.location.href = "/map";
     } catch (err: any) {
       toast({
         title: "Verification failed",
-        description: err instanceof Error ? err.message : "Invalid code. Please try again.",
-        variant: "destructive"
+        description:
+          err instanceof Error
+            ? err.message
+            : "Invalid code. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsPhoneLoading(false);
@@ -197,7 +224,9 @@ export default function AuthPage() {
 
         <Card className="bg-[#232323] border-gray-700">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center text-white">Get Started</CardTitle>
+            <CardTitle className="text-2xl text-center text-white">
+              Get Started
+            </CardTitle>
             <CardDescription className="text-center text-gray-400">
               Sign in or create an account to continue
             </CardDescription>
@@ -205,21 +234,35 @@ export default function AuthPage() {
           <CardContent>
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-[#181818]">
-                <TabsTrigger value="login" className="text-white data-[state=active]:bg-orange-500">
+                <TabsTrigger
+                  value="login"
+                  className="text-white data-[state=active]:bg-orange-500"
+                >
                   Sign In
                 </TabsTrigger>
-                <TabsTrigger value="register" className="text-white data-[state=active]:bg-orange-500">
+                <TabsTrigger
+                  value="register"
+                  className="text-white data-[state=active]:bg-orange-500"
+                >
                   Sign Up
                 </TabsTrigger>
               </TabsList>
 
               {/* Login Tab */}
               <TabsContent value="login" className="space-y-4 mt-6">
-                <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+                <form
+                  onSubmit={loginForm.handleSubmit(onLogin)}
+                  className="space-y-4"
+                >
                   <div className="space-y-2">
-                    <Label htmlFor="login-email" className="text-white">Email</Label>
+                    <Label htmlFor="login-email" className="text-white">
+                      Email
+                    </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
+                      <Mail
+                        className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                        aria-hidden="true"
+                      />
                       <Input
                         id="login-email"
                         type="email"
@@ -230,14 +273,21 @@ export default function AuthPage() {
                       />
                     </div>
                     {loginForm.formState.errors.email && (
-                      <p className="text-sm text-red-400">{loginForm.formState.errors.email.message}</p>
+                      <p className="text-sm text-red-400">
+                        {loginForm.formState.errors.email.message}
+                      </p>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="login-password" className="text-white">Password</Label>
+                    <Label htmlFor="login-password" className="text-white">
+                      Password
+                    </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
+                      <Lock
+                        className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                        aria-hidden="true"
+                      />
                       <Input
                         id="login-password"
                         type={showPassword ? "text" : "password"}
@@ -253,13 +303,21 @@ export default function AuthPage() {
                         className="absolute right-1 top-1 h-8 w-8 text-gray-400 hover:text-white"
                         onClick={() => setShowPassword(!showPassword)}
                         data-testid="button-toggle-password"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" aria-hidden="true" />
+                        ) : (
+                          <Eye className="h-4 w-4" aria-hidden="true" />
+                        )}
                       </Button>
                     </div>
                     {loginForm.formState.errors.password && (
-                      <p className="text-sm text-red-400">{loginForm.formState.errors.password.message}</p>
+                      <p className="text-sm text-red-400">
+                        {loginForm.formState.errors.password.message}
+                      </p>
                     )}
                   </div>
 
@@ -267,7 +325,9 @@ export default function AuthPage() {
                     <Checkbox
                       id="keep-logged-in"
                       checked={keepMeLoggedIn}
-                      onCheckedChange={(checked) => setKeepMeLoggedIn(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setKeepMeLoggedIn(checked === true)
+                      }
                       className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                       data-testid="checkbox-keep-logged-in"
                     />
@@ -371,7 +431,11 @@ export default function AuthPage() {
                 </div>
 
                 <div className="text-center mt-4">
-                  <Button variant="link" className="text-orange-400 hover:text-orange-300" data-testid="link-forgot-password">
+                  <Button
+                    variant="link"
+                    className="text-orange-400 hover:text-orange-300"
+                    data-testid="link-forgot-password"
+                  >
                     Forgot your password?
                   </Button>
                 </div>
@@ -379,12 +443,23 @@ export default function AuthPage() {
 
               {/* Register Tab */}
               <TabsContent value="register" className="space-y-4 mt-6">
-                <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
+                <form
+                  onSubmit={registerForm.handleSubmit(onRegister)}
+                  className="space-y-4"
+                >
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="register-firstName" className="text-white">First Name</Label>
+                      <Label
+                        htmlFor="register-firstName"
+                        className="text-white"
+                      >
+                        First Name
+                      </Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
+                        <User
+                          className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                          aria-hidden="true"
+                        />
                         <Input
                           id="register-firstName"
                           type="text"
@@ -395,14 +470,21 @@ export default function AuthPage() {
                         />
                       </div>
                       {registerForm.formState.errors.firstName && (
-                        <p className="text-sm text-red-400">{registerForm.formState.errors.firstName.message}</p>
+                        <p className="text-sm text-red-400">
+                          {registerForm.formState.errors.firstName.message}
+                        </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="register-lastName" className="text-white">Last Name</Label>
+                      <Label htmlFor="register-lastName" className="text-white">
+                        Last Name
+                      </Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
+                        <User
+                          className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                          aria-hidden="true"
+                        />
                         <Input
                           id="register-lastName"
                           type="text"
@@ -413,15 +495,22 @@ export default function AuthPage() {
                         />
                       </div>
                       {registerForm.formState.errors.lastName && (
-                        <p className="text-sm text-red-400">{registerForm.formState.errors.lastName.message}</p>
+                        <p className="text-sm text-red-400">
+                          {registerForm.formState.errors.lastName.message}
+                        </p>
                       )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="register-email" className="text-white">Email</Label>
+                    <Label htmlFor="register-email" className="text-white">
+                      Email
+                    </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
+                      <Mail
+                        className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                        aria-hidden="true"
+                      />
                       <Input
                         id="register-email"
                         type="email"
@@ -432,14 +521,21 @@ export default function AuthPage() {
                       />
                     </div>
                     {registerForm.formState.errors.email && (
-                      <p className="text-sm text-red-400">{registerForm.formState.errors.email.message}</p>
+                      <p className="text-sm text-red-400">
+                        {registerForm.formState.errors.email.message}
+                      </p>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="register-password" className="text-white">Password</Label>
+                    <Label htmlFor="register-password" className="text-white">
+                      Password
+                    </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
+                      <Lock
+                        className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                        aria-hidden="true"
+                      />
                       <Input
                         id="register-password"
                         type={showConfirmPassword ? "text" : "password"}
@@ -453,18 +549,31 @@ export default function AuthPage() {
                         variant="ghost"
                         size="sm"
                         className="absolute right-1 top-1 h-8 w-8 text-gray-400 hover:text-white"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         data-testid="button-toggle-register-password"
-                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
                       >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" aria-hidden="true" />
+                        ) : (
+                          <Eye className="h-4 w-4" aria-hidden="true" />
+                        )}
                       </Button>
                     </div>
                     {registerForm.formState.errors.password && (
-                      <p className="text-sm text-red-400">{registerForm.formState.errors.password.message}</p>
+                      <p className="text-sm text-red-400">
+                        {registerForm.formState.errors.password.message}
+                      </p>
                     )}
                     <p className="text-xs text-gray-500">
-                      Must contain at least 8 characters with uppercase, lowercase, and numbers
+                      Must contain at least 8 characters with uppercase,
+                      lowercase, and numbers
                     </p>
                   </div>
 
@@ -474,12 +583,15 @@ export default function AuthPage() {
                     disabled={registerMutation.isPending}
                     data-testid="button-register"
                   >
-                    {registerMutation.isPending ? "Creating Account..." : "Create Account"}
+                    {registerMutation.isPending
+                      ? "Creating Account..."
+                      : "Create Account"}
                   </Button>
                 </form>
 
                 <div className="text-center text-xs text-gray-500">
-                  By creating an account, you agree to our Terms of Service and Privacy Policy
+                  By creating an account, you agree to our Terms of Service and
+                  Privacy Policy
                 </div>
               </TabsContent>
             </Tabs>
@@ -487,7 +599,11 @@ export default function AuthPage() {
             {/* Back to Home */}
             <div className="mt-6 text-center">
               <Link to="/">
-                <Button variant="link" className="text-gray-400 hover:text-white" data-testid="link-back-home">
+                <Button
+                  variant="link"
+                  className="text-gray-400 hover:text-white"
+                  data-testid="link-back-home"
+                >
                   ← Back to Home
                 </Button>
               </Link>

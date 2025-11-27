@@ -1,9 +1,9 @@
-import Redis from 'ioredis';
-import { env } from './config/env';
+import Redis from "ioredis";
+import { env } from "./config/env";
 
 // Initialize Redis client
 // In production, use REDIS_URL from environment variables
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
 
 export const redis = new Redis(redisUrl, {
   maxRetriesPerRequest: 3,
@@ -13,15 +13,15 @@ export const redis = new Redis(redisUrl, {
   },
 });
 
-redis.on('error', (err) => {
-  console.error('Redis connection error:', err);
+redis.on("error", (err) => {
+  console.error("Redis connection error:", err);
 });
 
-redis.on('connect', () => {
-  console.log('✅ Connected to Redis');
+redis.on("connect", () => {
+  console.log("✅ Connected to Redis");
 });
 
-export const GAME_KEY_PREFIX = 'game:';
+export const GAME_KEY_PREFIX = "game:";
 export const GAME_EXPIRY = 60 * 60 * 24; // 24 hours
 
 export const getGameFromRedis = async (gameId: string) => {
@@ -33,8 +33,8 @@ export const saveGameToRedis = async (gameId: string, gameState: any) => {
   await redis.set(
     `${GAME_KEY_PREFIX}${gameId}`,
     JSON.stringify(gameState),
-    'EX',
-    GAME_EXPIRY
+    "EX",
+    GAME_EXPIRY,
   );
 };
 
@@ -49,13 +49,16 @@ export const deleteGameFromRedis = async (gameId: string) => {
  * @param ttl Time to live in milliseconds (default 2000ms)
  * @returns A function to release the lock, or null if lock failed
  */
-export const acquireGameLock = async (gameId: string, ttl = 2000): Promise<(() => Promise<void>) | null> => {
+export const acquireGameLock = async (
+  gameId: string,
+  ttl = 2000,
+): Promise<(() => Promise<void>) | null> => {
   const lockKey = `lock:game:${gameId}`;
   const lockValue = Date.now().toString();
-  
+
   // SET NX PX: Set if Not Exists, with Expiry (PX) in milliseconds
-  const acquired = await redis.set(lockKey, lockValue, 'PX', ttl, 'NX');
-  
+  const acquired = await redis.set(lockKey, lockValue, "PX", ttl, "NX");
+
   if (!acquired) return null;
 
   return async () => {

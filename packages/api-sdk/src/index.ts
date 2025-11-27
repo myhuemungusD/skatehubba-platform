@@ -1,18 +1,18 @@
-import axios, { AxiosInstance } from 'axios';
-import { z } from 'zod';
-import { 
-  loginSchema, 
-  registerSchema, 
-  type LoginInput, 
-  type RegisterInput 
-} from '@skatehubba/db';
-import type { 
-  Spot, 
-  Challenge, 
-  CheckIn, 
+import {
+  type LoginInput,
+  loginSchema,
+  type RegisterInput,
+  registerSchema,
+} from "@skatehubba/db";
+import type {
+  Challenge,
+  CheckIn,
+  SkateGame,
+  Spot,
   User,
-  SkateGame
-} from '@skatehubba/types';
+} from "@skatehubba/types";
+import axios, { type AxiosInstance } from "axios";
+import { z } from "zod";
 
 export class SkateHubbaClient {
   private client: AxiosInstance;
@@ -25,57 +25,65 @@ export class SkateHubbaClient {
   }
 
   setToken(token: string) {
-    this.client.defaults.headers['Authorization'] = `Bearer ${token}`;
+    this.client.defaults.headers["Authorization"] = `Bearer ${token}`;
   }
 
   get auth() {
     return {
       login: async (data: LoginInput) => {
         // Runtime validation
-        loginSchema.parse(data); 
-        return this.post<{ token: string; user: User }>('/auth/login', data);
+        loginSchema.parse(data);
+        return this.post<{ token: string; user: User }>("/auth/login", data);
       },
       register: async (data: RegisterInput) => {
         registerSchema.parse(data);
-        return this.post<{ token: string; user: User }>('/auth/register', data);
+        return this.post<{ token: string; user: User }>("/auth/register", data);
       },
-      me: () => this.get<User>('/auth/me'),
+      me: () => this.get<User>("/auth/me"),
     };
   }
 
   get spots() {
     return {
-      list: (params?: any, signal?: AbortSignal) => this.get<Spot[]>('/spots', { params, signal }),
-      get: (id: string, signal?: AbortSignal) => this.get<Spot>(`/spots/${id}`, { signal }),
-      create: (data: Omit<Spot, 'id' | 'createdAt' | 'createdBy'>) => 
-        this.post<Spot>('/spots', data),
+      list: (params?: any, signal?: AbortSignal) =>
+        this.get<Spot[]>("/spots", { params, signal }),
+      get: (id: string, signal?: AbortSignal) =>
+        this.get<Spot>(`/spots/${id}`, { signal }),
+      create: (data: Omit<Spot, "id" | "createdAt" | "createdBy">) =>
+        this.post<Spot>("/spots", data),
     };
   }
 
   get challenges() {
     return {
-      list: () => this.get<Challenge[]>('/challenges'),
-      create: (data: Omit<Challenge, 'id' | 'ts'>) => 
-        this.post<Challenge>('/challenges', data),
+      list: () => this.get<Challenge[]>("/challenges"),
+      create: (data: Omit<Challenge, "id" | "ts">) =>
+        this.post<Challenge>("/challenges", data),
     };
   }
 
   get checkins() {
     return {
-      create: (data: Omit<CheckIn, 'id' | 'ts'>) => 
-        this.post<CheckIn>('/checkins', data),
+      create: (data: Omit<CheckIn, "id" | "ts">) =>
+        this.post<CheckIn>("/checkins", data),
     };
   }
 
   get skate() {
     return {
       create: (data: { trickVideoUrl: string; opponentHandle?: string }) =>
-        this.post<SkateGame>('/skate/games', data),
+        this.post<SkateGame>("/skate/games", data),
       get: (id: string) => this.get<SkateGame>(`/skate/games/${id}`),
       join: (id: string) => this.post<SkateGame>(`/skate/games/${id}/join`, {}),
-      turn: (id: string, data: { action: 'attempt' | 'judge' | 'set'; videoUrl?: string; judgment?: 'landed' | 'bailed' }) =>
-        this.post<SkateGame>(`/skate/games/${id}/turn`, data),
-      leaderboard: () => this.get<User[]>('/skate/games/leaderboard'),
+      turn: (
+        id: string,
+        data: {
+          action: "attempt" | "judge" | "set";
+          videoUrl?: string;
+          judgment?: "landed" | "bailed";
+        },
+      ) => this.post<SkateGame>(`/skate/games/${id}/turn`, data),
+      leaderboard: () => this.get<User[]>("/skate/games/leaderboard"),
     };
   }
 
@@ -92,5 +100,5 @@ export class SkateHubbaClient {
 }
 
 // Singleton instance for easy import
-export const createClient = (url: string, token?: string) => new SkateHubbaClient(url, token);
-
+export const createClient = (url: string, token?: string) =>
+  new SkateHubbaClient(url, token);

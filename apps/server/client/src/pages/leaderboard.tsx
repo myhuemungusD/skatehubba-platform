@@ -1,11 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
-import { Link } from 'wouter';
-import Navigation from '../components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Trophy, Medal, TrendingUp, MapPin, Award, Crown } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-import { ProfileSearch } from '../components/search/ProfileSearch';
+import { useQuery } from "@tanstack/react-query";
+import { Award, Crown, MapPin, Medal, TrendingUp, Trophy } from "lucide-react";
+import { Link } from "wouter";
+import Navigation from "../components/Navigation";
+import { ProfileSearch } from "../components/search/ProfileSearch";
+import { Badge } from "../components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { useAuth } from "../hooks/useAuth";
 
 interface LeaderboardEntry {
   rank: number;
@@ -28,9 +34,9 @@ export default function LeaderboardPage() {
   const leaderboardData: LeaderboardEntry[] = [
     {
       rank: 1,
-      userId: '1',
-      username: '@tony_sk8',
-      displayName: 'Tony Martinez',
+      userId: "1",
+      username: "@tony_sk8",
+      displayName: "Tony Martinez",
       totalCheckIns: 342,
       spotsVisited: 89,
       tricksUnlocked: 127,
@@ -40,9 +46,9 @@ export default function LeaderboardPage() {
     },
     {
       rank: 2,
-      userId: '2',
-      username: '@sarah_shreds',
-      displayName: 'Sarah Chen',
+      userId: "2",
+      username: "@sarah_shreds",
+      displayName: "Sarah Chen",
       totalCheckIns: 298,
       spotsVisited: 76,
       tricksUnlocked: 104,
@@ -52,9 +58,9 @@ export default function LeaderboardPage() {
     },
     {
       rank: 3,
-      userId: '3',
-      username: '@mike_rails',
-      displayName: 'Mike Johnson',
+      userId: "3",
+      username: "@mike_rails",
+      displayName: "Mike Johnson",
       totalCheckIns: 256,
       spotsVisited: 65,
       tricksUnlocked: 98,
@@ -63,9 +69,9 @@ export default function LeaderboardPage() {
     },
     {
       rank: 4,
-      userId: '4',
-      username: '@emma_flip',
-      displayName: 'Emma Rodriguez',
+      userId: "4",
+      username: "@emma_flip",
+      displayName: "Emma Rodriguez",
       totalCheckIns: 234,
       spotsVisited: 58,
       tricksUnlocked: 87,
@@ -74,9 +80,9 @@ export default function LeaderboardPage() {
     },
     {
       rank: 5,
-      userId: '5',
-      username: '@alex_grind',
-      displayName: 'Alex Kim',
+      userId: "5",
+      username: "@alex_grind",
+      displayName: "Alex Kim",
       totalCheckIns: 221,
       spotsVisited: 54,
       tricksUnlocked: 79,
@@ -85,9 +91,9 @@ export default function LeaderboardPage() {
     },
     {
       rank: 6,
-      userId: '6',
-      username: '@chris_pop',
-      displayName: 'Chris Taylor',
+      userId: "6",
+      username: "@chris_pop",
+      displayName: "Chris Taylor",
       totalCheckIns: 198,
       spotsVisited: 49,
       tricksUnlocked: 73,
@@ -96,9 +102,9 @@ export default function LeaderboardPage() {
     },
     {
       rank: 7,
-      userId: '7',
-      username: '@jordan_kick',
-      displayName: 'Jordan Lee',
+      userId: "7",
+      username: "@jordan_kick",
+      displayName: "Jordan Lee",
       totalCheckIns: 187,
       spotsVisited: 45,
       tricksUnlocked: 68,
@@ -107,9 +113,9 @@ export default function LeaderboardPage() {
     },
     {
       rank: 8,
-      userId: '8',
-      username: '@riley_manual',
-      displayName: 'Riley Brooks',
+      userId: "8",
+      username: "@riley_manual",
+      displayName: "Riley Brooks",
       totalCheckIns: 176,
       spotsVisited: 42,
       tricksUnlocked: 64,
@@ -121,13 +127,13 @@ export default function LeaderboardPage() {
   const getRankColor = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'from-yellow-500 to-yellow-600';
+        return "from-yellow-500 to-yellow-600";
       case 2:
-        return 'from-gray-300 to-gray-400';
+        return "from-gray-300 to-gray-400";
       case 3:
-        return 'from-orange-600 to-orange-700';
+        return "from-orange-600 to-orange-700";
       default:
-        return 'from-gray-600 to-gray-700';
+        return "from-gray-600 to-gray-700";
     }
   };
 
@@ -149,9 +155,9 @@ export default function LeaderboardPage() {
       className="min-h-screen bg-[#181818]"
       style={{
         backgroundImage: `url('/attached_assets/graffwallskateboardrack_1754296307132.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
       }}
     >
       <Navigation />
@@ -162,8 +168,10 @@ export default function LeaderboardPage() {
               <Trophy className="w-10 h-10 text-[#ff6a00]" />
               Legendary Spot Leaderboard
             </h1>
-            <p className="text-gray-300 mb-4">Top skaters ranked by check-ins, spots, and tricks unlocked</p>
-            
+            <p className="text-gray-300 mb-4">
+              Top skaters ranked by check-ins, spots, and tricks unlocked
+            </p>
+
             {/* Profile Search */}
             <div className="mt-6">
               <ProfileSearch />
@@ -183,18 +191,27 @@ export default function LeaderboardPage() {
                 </div>
                 <CardHeader className="relative z-10">
                   <div className="flex items-center justify-between mb-2">
-                    <Badge variant="outline" className="bg-white/20 text-white border-white/30">
+                    <Badge
+                      variant="outline"
+                      className="bg-white/20 text-white border-white/30"
+                    >
                       #{entry.rank}
                     </Badge>
                     {getRankIcon(entry.rank)}
                   </div>
                   <CardTitle className="text-xl">{entry.displayName}</CardTitle>
                   <CardDescription className="text-white/80 flex items-center gap-1">
-                    <Link href={`/skater/${entry.username.replace('@', '')}`} className="hover:text-orange-400 transition-colors cursor-pointer">
+                    <Link
+                      href={`/skater/${entry.username.replace("@", "")}`}
+                      className="hover:text-orange-400 transition-colors cursor-pointer"
+                    >
                       {entry.username}
                     </Link>
                     {entry.isPro && (
-                      <Badge variant="outline" className="bg-orange-500/30 text-white border-orange-400 text-xs ml-1">
+                      <Badge
+                        variant="outline"
+                        className="bg-orange-500/30 text-white border-orange-400 text-xs ml-1"
+                      >
                         PRO
                       </Badge>
                     )}
@@ -204,19 +221,27 @@ export default function LeaderboardPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-white/80">Points:</span>
-                      <span className="font-bold">{entry.points.toLocaleString()}</span>
+                      <span className="font-bold">
+                        {entry.points.toLocaleString()}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-white/80">Check-ins:</span>
-                      <span className="font-semibold">{entry.totalCheckIns}</span>
+                      <span className="font-semibold">
+                        {entry.totalCheckIns}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-white/80">Spots:</span>
-                      <span className="font-semibold">{entry.spotsVisited}</span>
+                      <span className="font-semibold">
+                        {entry.spotsVisited}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-white/80">Tricks:</span>
-                      <span className="font-semibold">{entry.tricksUnlocked}</span>
+                      <span className="font-semibold">
+                        {entry.tricksUnlocked}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1 text-orange-300">
                       <TrendingUp className="w-4 h-4" />
@@ -243,39 +268,54 @@ export default function LeaderboardPage() {
                     key={entry.userId}
                     className={`flex items-center gap-4 p-4 rounded-lg transition-all ${
                       entry.rank <= 3
-                        ? 'bg-gradient-to-r from-orange-500/20 to-transparent border border-orange-500/30'
-                        : 'bg-neutral-900/50 hover:bg-neutral-800/50 border border-gray-700'
+                        ? "bg-gradient-to-r from-orange-500/20 to-transparent border border-orange-500/30"
+                        : "bg-neutral-900/50 hover:bg-neutral-800/50 border border-gray-700"
                     }`}
                     data-testid={`row-leaderboard-${entry.rank}`}
                   >
                     <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 text-white font-bold">
-                      {entry.rank <= 3 ? getRankIcon(entry.rank) : `#${entry.rank}`}
+                      {entry.rank <= 3
+                        ? getRankIcon(entry.rank)
+                        : `#${entry.rank}`}
                     </div>
 
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <Link href={`/skater/${entry.username.replace('@', '')}`}>
-                          <h3 className="text-[#fafafa] font-semibold hover:text-orange-400 transition-colors cursor-pointer">{entry.displayName}</h3>
+                        <Link
+                          href={`/skater/${entry.username.replace("@", "")}`}
+                        >
+                          <h3 className="text-[#fafafa] font-semibold hover:text-orange-400 transition-colors cursor-pointer">
+                            {entry.displayName}
+                          </h3>
                         </Link>
                         {entry.isPro && (
-                          <Badge variant="outline" className="bg-orange-500/20 text-orange-400 border-orange-500/30 text-xs">
+                          <Badge
+                            variant="outline"
+                            className="bg-orange-500/20 text-orange-400 border-orange-500/30 text-xs"
+                          >
                             PRO
                           </Badge>
                         )}
                       </div>
-                      <Link href={`/skater/${entry.username.replace('@', '')}`}>
-                        <p className="text-sm text-gray-400 hover:text-orange-400 transition-colors cursor-pointer">{entry.username}</p>
+                      <Link href={`/skater/${entry.username.replace("@", "")}`}>
+                        <p className="text-sm text-gray-400 hover:text-orange-400 transition-colors cursor-pointer">
+                          {entry.username}
+                        </p>
                       </Link>
                     </div>
 
                     <div className="hidden md:flex items-center gap-6 text-sm">
                       <div className="text-center">
                         <p className="text-gray-400">Points</p>
-                        <p className="text-[#fafafa] font-semibold">{entry.points.toLocaleString()}</p>
+                        <p className="text-[#fafafa] font-semibold">
+                          {entry.points.toLocaleString()}
+                        </p>
                       </div>
                       <div className="text-center">
                         <p className="text-gray-400">Check-ins</p>
-                        <p className="text-[#fafafa] font-semibold">{entry.totalCheckIns}</p>
+                        <p className="text-[#fafafa] font-semibold">
+                          {entry.totalCheckIns}
+                        </p>
                       </div>
                       <div className="text-center">
                         <p className="text-gray-400">Spots</p>

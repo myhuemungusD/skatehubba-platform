@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface SpotAccess {
   spotId: string;
@@ -52,7 +52,10 @@ export const useSpotAccess = create<SpotAccessState>()(
           delete newAccesses[spotId];
           return {
             spotAccesses: newAccesses,
-            currentCheckIn: state.currentCheckIn?.spotId === spotId ? null : state.currentCheckIn,
+            currentCheckIn:
+              state.currentCheckIn?.spotId === spotId
+                ? null
+                : state.currentCheckIn,
           };
         });
       },
@@ -72,19 +75,20 @@ export const useSpotAccess = create<SpotAccessState>()(
           });
           return {
             spotAccesses: validAccesses,
-            currentCheckIn: state.currentCheckIn && state.currentCheckIn.expiresAt > now 
-              ? state.currentCheckIn 
-              : null,
+            currentCheckIn:
+              state.currentCheckIn && state.currentCheckIn.expiresAt > now
+                ? state.currentCheckIn
+                : null,
           };
         });
       },
     }),
     {
-      name: 'spot-access-storage',
+      name: "spot-access-storage",
       partialize: (state) => ({
         spotAccesses: state.spotAccesses,
         currentCheckIn: state.currentCheckIn,
       }),
-    }
-  )
+    },
+  ),
 );

@@ -47,12 +47,8 @@
           "name": "auth_sessions_user_id_custom_users_id_fk",
           "tableFrom": "auth_sessions",
           "tableTo": "custom_users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -62,9 +58,7 @@
         "auth_sessions_token_unique": {
           "name": "auth_sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       }
     },
@@ -123,12 +117,8 @@
           "name": "challenges_created_by_users_id_fk",
           "tableFrom": "challenges",
           "tableTo": "users",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -179,12 +169,8 @@
           "name": "check_ins_uid_users_id_fk",
           "tableFrom": "check_ins",
           "tableTo": "users",
-          "columnsFrom": [
-            "uid"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["uid"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -192,12 +178,8 @@
           "name": "check_ins_spot_id_spots_id_fk",
           "tableFrom": "check_ins",
           "tableTo": "spots",
-          "columnsFrom": [
-            "spot_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["spot_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -312,16 +294,12 @@
         "custom_users_email_unique": {
           "name": "custom_users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "custom_users_firebase_uid_unique": {
           "name": "custom_users_firebase_uid_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "firebase_uid"
-          ]
+          "columns": ["firebase_uid"]
         }
       }
     },
@@ -386,9 +364,7 @@
         "donations_payment_intent_id_unique": {
           "name": "donations_payment_intent_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "payment_intent_id"
-          ]
+          "columns": ["payment_intent_id"]
         }
       }
     },
@@ -533,12 +509,8 @@
           "name": "spots_created_by_users_id_fk",
           "tableFrom": "spots",
           "tableTo": "users",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -601,9 +573,7 @@
         "subscribers_email_unique": {
           "name": "subscribers_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       }
     },
@@ -796,9 +766,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       }
     }

@@ -5,7 +5,9 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -33,7 +35,9 @@
       "schema": "src/schema.ts",
       "validations": "src/validations.ts"
     },
-    "format": ["esm"],
+    "format": [
+      "esm"
+    ],
     "dts": true,
     "clean": true,
     "sourcemap": true,

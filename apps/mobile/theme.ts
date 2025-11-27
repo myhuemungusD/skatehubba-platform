@@ -1,1 +1,1 @@
-export { SKATE } from '@skatehubba/ui';
+export { SKATE } from "@skatehubba/ui";

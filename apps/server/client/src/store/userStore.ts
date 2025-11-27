@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { User } from 'firebase/auth';
+import type { User } from "firebase/auth";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface UserState {
   user: User | null;
@@ -24,8 +24,8 @@ export const useUserStore = create<UserState>()(
       clearUser: () => set({ user: null, isLoading: false, error: null }),
     }),
     {
-      name: 'user-storage',
+      name: "user-storage",
       partialize: (state) => ({ user: state.user }),
-    }
-  )
+    },
+  ),
 );

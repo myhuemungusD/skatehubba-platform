@@ -1,22 +1,28 @@
-import { useState, useRef, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
-import { useToast } from '../hooks/use-toast';
-import { apiRequest } from '../lib/queryClient';
-import { Badge } from './ui/badge';
+import { useMutation } from "@tanstack/react-query";
+import { Loader2, MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useToast } from "../hooks/use-toast";
+import { apiRequest } from "../lib/queryClient";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Input } from "./ui/input";
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
 }
 
 interface ChatResponse {
   ok: boolean;
   reply: {
-    role: 'assistant';
+    role: "assistant";
     content: string;
   };
   error?: string;
@@ -26,16 +32,17 @@ export function AISkateChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
-      role: 'assistant',
-      content: "Yo! I'm Beagle, your AI skate buddy! 🛹 Ask me anything about tricks, spots, or the app!",
+      role: "assistant",
+      content:
+        "Yo! I'm Beagle, your AI skate buddy! 🛹 Ask me anything about tricks, spots, or the app!",
     },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -44,10 +51,10 @@ export function AISkateChat() {
 
   const chatMutation = useMutation({
     mutationFn: async (userMessage: string) => {
-      const response = await apiRequest('POST', '/api/ai/chat', {
+      const response = await apiRequest("POST", "/api/ai/chat", {
         messages: [
           ...messages.slice(-10), // Last 10 messages for context
-          { role: 'user', content: userMessage },
+          { role: "user", content: userMessage },
         ],
       });
       return (await response.json()) as ChatResponse;
@@ -57,17 +64,17 @@ export function AISkateChat() {
         setMessages((prev) => [...prev, data.reply]);
       } else {
         toast({
-          title: 'Chat Error',
-          description: data.error || 'Failed to get response from Beagle.',
-          variant: 'destructive',
+          title: "Chat Error",
+          description: data.error || "Failed to get response from Beagle.",
+          variant: "destructive",
         });
       }
     },
     onError: (error: any) => {
       toast({
-        title: 'Chat Error',
-        description: error.message || 'Failed to send message.',
-        variant: 'destructive',
+        title: "Chat Error",
+        description: error.message || "Failed to send message.",
+        variant: "destructive",
       });
     },
   });
@@ -76,17 +83,17 @@ export function AISkateChat() {
     if (!input.trim()) return;
 
     const userMessage: Message = {
-      role: 'user',
+      role: "user",
       content: input,
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    setInput("");
     chatMutation.mutate(input);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -105,7 +112,10 @@ export function AISkateChat() {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 w-96 h-[600px] shadow-2xl bg-[#232323] border-gray-700 flex flex-col z-50" data-testid="card-chat">
+    <Card
+      className="fixed bottom-6 right-6 w-96 h-[600px] shadow-2xl bg-[#232323] border-gray-700 flex flex-col z-50"
+      data-testid="card-chat"
+    >
       <CardHeader className="border-b border-gray-700 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -115,7 +125,10 @@ export function AISkateChat() {
             <div>
               <CardTitle className="text-white text-lg flex items-center gap-2">
                 Beagle AI
-                <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+                <Badge
+                  variant="outline"
+                  className="bg-green-500/20 text-green-400 border-green-500/30 text-xs"
+                >
                   ONLINE
                 </Badge>
               </CardTitle>
@@ -140,14 +153,14 @@ export function AISkateChat() {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             data-testid={`message-${message.role}-${index}`}
           >
             <div
               className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                message.role === 'user'
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-neutral-800 text-gray-200 border border-gray-700'
+                message.role === "user"
+                  ? "bg-orange-500 text-white"
+                  : "bg-neutral-800 text-gray-200 border border-gray-700"
               }`}
             >
               <p className="text-sm whitespace-pre-wrap">{message.content}</p>

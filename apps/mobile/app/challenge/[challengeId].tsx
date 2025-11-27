@@ -1,6 +1,6 @@
-import React from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChallengeScreen } from '../../../src/screens/ChallengeScreen';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
+import { ChallengeScreen } from "../../../src/screens/ChallengeScreen";
 
 export default function ChallengeRoute() {
   const params = useLocalSearchParams();

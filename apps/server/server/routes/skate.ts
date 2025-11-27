@@ -1,67 +1,88 @@
-import express from 'express';
-import { db, eq, and, sql } from '../db';
-import { skateGames, users } from '@skatehubba/db';
-import { v4 as uuidv4 } from 'uuid';
-import { redis, saveGameToRedis, getGameFromRedis, deleteGameFromRedis, acquireGameLock } from '../redis';
+import { skateGames, users } from "@skatehubba/db";
+import express from "express";
+import { v4 as uuidv4 } from "uuid";
+import { and, db, eq, sql } from "../db";
+import {
+  acquireGameLock,
+  deleteGameFromRedis,
+  getGameFromRedis,
+  redis,
+  saveGameToRedis,
+} from "../redis";
 
 const router = express.Router();
 
 // Prepared Statements for "Speed Wobble" Tuning
-const getGameByIdStmt = db.select().from(skateGames).where(eq(skateGames.id, sql.placeholder('id'))).prepare('get_game_by_id');
-const getUserByHandleStmt = db.select().from(users).where(eq(users.displayName, sql.placeholder('handle'))).prepare('get_user_by_handle');
+const getGameByIdStmt = db
+  .select()
+  .from(skateGames)
+  .where(eq(skateGames.id, sql.placeholder("id")))
+  .prepare("get_game_by_id");
+const getUserByHandleStmt = db
+  .select()
+  .from(users)
+  .where(eq(users.displayName, sql.placeholder("handle")))
+  .prepare("get_user_by_handle");
 
 // Create a new SKATE game
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { trickVideoUrl, opponentHandle } = req.body;
     // In a real app, we'd get the user ID from the auth token
     // For now, we'll assume it's passed in the body or header for testing
     // or use a mock user if not authenticated (but we should be authenticated)
-    
+
     // Mock auth for now - in production use req.user.id
-    const challengerId = req.headers['x-user-id'] as string; 
-    
+    const challengerId = req.headers["x-user-id"] as string;
+
     if (!challengerId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
     let opponentId = null;
     if (opponentHandle) {
       // Find opponent by handle (assuming handle is stored in users table, maybe displayName or a new field)
       // The schema has displayName, let's use that or email for now
-      const [opponent] = await getUserByHandleStmt.execute({ handle: opponentHandle });
+      const [opponent] = await getUserByHandleStmt.execute({
+        handle: opponentHandle,
+      });
       if (opponent) {
         opponentId = opponent.id;
       }
     }
 
-    const [game] = await db.insert(skateGames).values({
-      challengerId,
-      opponentId,
-      status: 'pending',
-      letters: { challenger: '', opponent: '' },
-      currentTurnId: challengerId, // Initially challenger's turn to wait for opponent? Or just set state.
-      currentTurnType: 'setTrick',
-      currentTrickVideoUrl: trickVideoUrl,
-      rounds: [{
-        setBy: challengerId,
-        trickVideoUrl,
-        attempts: []
-      }],
-    }).returning();
+    const [game] = await db
+      .insert(skateGames)
+      .values({
+        challengerId,
+        opponentId,
+        status: "pending",
+        letters: { challenger: "", opponent: "" },
+        currentTurnId: challengerId, // Initially challenger's turn to wait for opponent? Or just set state.
+        currentTurnType: "setTrick",
+        currentTrickVideoUrl: trickVideoUrl,
+        rounds: [
+          {
+            setBy: challengerId,
+            trickVideoUrl,
+            attempts: [],
+          },
+        ],
+      })
+      .returning();
 
     // ⚡️ Cache the new game in Redis for the "Hot" loop
     await saveGameToRedis(game.id, game);
 
     res.status(201).json(game);
   } catch (error) {
-    console.error('Error creating game:', error);
-    res.status(500).json({ error: 'Failed to create game' });
+    console.error("Error creating game:", error);
+    res.status(500).json({ error: "Failed to create game" });
   }
 });
 
 // Get game by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     // ⚡️ Try Redis first (Hot Path)
     const cachedGame = await getGameFromRedis(req.params.id);
@@ -72,24 +93,24 @@ router.get('/:id', async (req, res) => {
     // Fallback to Postgres (Cold Path)
     const [game] = await getGameByIdStmt.execute({ id: req.params.id });
     if (!game) {
-      return res.status(404).json({ error: 'Game not found' });
+      return res.status(404).json({ error: "Game not found" });
     }
-    
+
     // Cache it for next time
     await saveGameToRedis(game.id, game);
-    
+
     res.json(game);
   } catch (error) {
-    console.error('Error fetching game:', error);
-    res.status(500).json({ error: 'Failed to fetch game' });
+    console.error("Error fetching game:", error);
+    res.status(500).json({ error: "Failed to fetch game" });
   }
 });
 
 // Join game
-router.post('/:id/join', async (req, res) => {
+router.post("/:id/join", async (req, res) => {
   try {
-    const userId = req.headers['x-user-id'] as string;
-    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    const userId = req.headers["x-user-id"] as string;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
     // Try Redis first
     let game = await getGameFromRedis(req.params.id);
@@ -97,20 +118,21 @@ router.post('/:id/join', async (req, res) => {
       const [dbGame] = await getGameByIdStmt.execute({ id: req.params.id });
       game = dbGame;
     }
-    
-    if (!game) return res.status(404).json({ error: 'Game not found' });
+
+    if (!game) return res.status(404).json({ error: "Game not found" });
 
     if (game.opponentId && game.opponentId !== userId) {
-      return res.status(403).json({ error: 'Game is full' });
+      return res.status(403).json({ error: "Game is full" });
     }
 
     // If joining, and trick is already set, it becomes the joiner's turn to match
-    const updatedGame = await db.update(skateGames)
+    const updatedGame = await db
+      .update(skateGames)
       .set({
         opponentId: userId,
-        status: 'active',
+        status: "active",
         currentTurnId: userId,
-        currentTurnType: 'attemptMatch'
+        currentTurnType: "attemptMatch",
       })
       .where(eq(skateGames.id, req.params.id))
       .returning();
@@ -120,22 +142,22 @@ router.post('/:id/join', async (req, res) => {
 
     res.json(updatedGame[0]);
   } catch (error) {
-    console.error('Error joining game:', error);
-    res.status(500).json({ error: 'Failed to join game' });
+    console.error("Error joining game:", error);
+    res.status(500).json({ error: "Failed to join game" });
   }
 });
 
 // Submit turn (attempt match, judge, etc.)
-router.post('/:id/turn', async (req, res) => {
+router.post("/:id/turn", async (req, res) => {
   let releaseLock: (() => Promise<void>) | null = null;
   try {
-    const userId = req.headers['x-user-id'] as string;
+    const userId = req.headers["x-user-id"] as string;
     const { action, videoUrl, judgment } = req.body; // action: 'attempt', 'judge', 'set'
-    
+
     // 🔒 Acquire Lock to prevent race conditions
     releaseLock = await acquireGameLock(req.params.id);
     if (!releaseLock) {
-      return res.status(429).json({ error: 'Game is busy, please retry' });
+      return res.status(429).json({ error: "Game is busy, please retry" });
     }
 
     // ⚡️ Get from Redis (Hot Path)
@@ -144,39 +166,42 @@ router.post('/:id/turn', async (req, res) => {
       const [dbGame] = await getGameByIdStmt.execute({ id: req.params.id });
       game = dbGame;
     }
-    
-    if (!game) return res.status(404).json({ error: 'Game not found' });
+
+    if (!game) return res.status(404).json({ error: "Game not found" });
 
     // Basic state machine logic
     let updates: any = {};
     const rounds = game.rounds as any[];
 
-    if (action === 'attempt') {
+    if (action === "attempt") {
       // User is attempting to match the current trick
       updates = {
         pendingAttemptVideoUrl: videoUrl,
-        currentTurnType: 'judgeAttempt',
+        currentTurnType: "judgeAttempt",
         // Turn passes back to the person who set the trick to judge it
-        currentTurnId: game.currentTurnId === game.challengerId ? game.opponentId : game.challengerId
+        currentTurnId:
+          game.currentTurnId === game.challengerId
+            ? game.opponentId
+            : game.challengerId,
       };
       // Actually, if I am attempting, the other person set it. So turn goes to them to judge.
       // If I am challenger, opponent set it. If I attempt, turn goes to opponent to judge.
       // Wait, if I am challenger, and it's my turn to attempt, then opponent must have set it.
       // So currentTurnId was ME. Now it becomes OPPONENT.
-      const otherPlayerId = userId === game.challengerId ? game.opponentId : game.challengerId;
+      const otherPlayerId =
+        userId === game.challengerId ? game.opponentId : game.challengerId;
       updates.currentTurnId = otherPlayerId;
-
-    } else if (action === 'judge') {
+    } else if (action === "judge") {
       // User is judging the attempt
-      const isLanded = judgment === 'landed';
+      const isLanded = judgment === "landed";
       const currentRound = rounds[rounds.length - 1];
-      
+
       // Add attempt to history
       currentRound.attempts.push({
         uid: userId === game.challengerId ? game.opponentId : game.challengerId, // The person who attempted
         videoUrl: game.pendingAttemptVideoUrl,
         result: judgment,
-        judgedAt: new Date().toISOString()
+        judgedAt: new Date().toISOString(),
       });
 
       if (isLanded) {
@@ -186,11 +211,11 @@ router.post('/:id/turn', async (req, res) => {
         // A sets. B matches. A sets again.
         // A sets. B misses. B gets letter. A sets again.
         // A misses setting. B sets.
-        
+
         // Wait, if I judged "landed", it means they matched.
         // So I (the setter) set again.
         updates = {
-          currentTurnType: 'setTrick',
+          currentTurnType: "setTrick",
           pendingAttemptVideoUrl: null,
           currentTrickVideoUrl: null, // Clear for new trick
           // currentTurnId stays with ME (the judge/setter)
@@ -198,21 +223,28 @@ router.post('/:id/turn', async (req, res) => {
       } else {
         // Match failed (Bailed).
         // Attempter gets a letter.
-        const attempterId = userId === game.challengerId ? game.opponentId : game.challengerId;
+        const attempterId =
+          userId === game.challengerId ? game.opponentId : game.challengerId;
         const isAttempterChallenger = attempterId === game.challengerId;
-        
-        const letters = game.letters as { challenger: string, opponent: string };
-        const currentLetters = isAttempterChallenger ? letters.challenger : letters.opponent;
+
+        const letters = game.letters as {
+          challenger: string;
+          opponent: string;
+        };
+        const currentLetters = isAttempterChallenger
+          ? letters.challenger
+          : letters.opponent;
         const nextLetter = "SKATE"[currentLetters.length];
-        
+
         const newLetters = {
           ...letters,
-          [isAttempterChallenger ? 'challenger' : 'opponent']: currentLetters + nextLetter
+          [isAttempterChallenger ? "challenger" : "opponent"]:
+            currentLetters + nextLetter,
         };
 
         updates = {
           letters: newLetters,
-          currentTurnType: 'setTrick',
+          currentTurnType: "setTrick",
           pendingAttemptVideoUrl: null,
           currentTrickVideoUrl: null,
           // Setter sets again? Yes, usually.
@@ -220,9 +252,9 @@ router.post('/:id/turn', async (req, res) => {
 
         // Check Game Over
         if ((currentLetters + nextLetter).length >= 5) {
-          updates.status = 'completed';
+          updates.status = "completed";
           updates.winnerId = userId; // The judge (setter) wins
-          
+
           // Update stats
           // Winner gets a win
           await db.execute(sql`
@@ -248,19 +280,22 @@ router.post('/:id/turn', async (req, res) => {
         }
       }
       updates.rounds = rounds;
-
-    } else if (action === 'set') {
+    } else if (action === "set") {
       // User is setting a new trick
       updates = {
         currentTrickVideoUrl: videoUrl,
-        currentTurnType: 'attemptMatch',
+        currentTurnType: "attemptMatch",
         // Turn passes to other player to match
-        currentTurnId: userId === game.challengerId ? game.opponentId : game.challengerId,
-        rounds: [...rounds, {
-          setBy: userId,
-          trickVideoUrl: videoUrl,
-          attempts: []
-        }]
+        currentTurnId:
+          userId === game.challengerId ? game.opponentId : game.challengerId,
+        rounds: [
+          ...rounds,
+          {
+            setBy: userId,
+            trickVideoUrl: videoUrl,
+            attempts: [],
+          },
+        ],
       };
     }
 
@@ -272,41 +307,40 @@ router.post('/:id/turn', async (req, res) => {
     await saveGameToRedis(game.id, game);
 
     // If Game Over, Flush to Postgres (Cold Path)
-    if (updates.status === 'completed') {
-      await db.update(skateGames)
-        .set(game)
-        .where(eq(skateGames.id, game.id));
-      
+    if (updates.status === "completed") {
+      await db.update(skateGames).set(game).where(eq(skateGames.id, game.id));
+
       await deleteGameFromRedis(game.id);
     }
 
     res.json(game);
   } catch (error) {
-    console.error('Error submitting turn:', error);
-    res.status(500).json({ error: 'Failed to submit turn' });
+    console.error("Error submitting turn:", error);
+    res.status(500).json({ error: "Failed to submit turn" });
   } finally {
     if (releaseLock) await releaseLock();
   }
 });
 
 // Get leaderboard
-router.get('/leaderboard', async (req, res) => {
+router.get("/leaderboard", async (req, res) => {
   try {
     // Query users sorted by stats->>'skateWins' descending
     // Note: JSONB querying syntax depends on dialect, but Drizzle has helpers or raw SQL
-    const leaderboard = await db.select({
-      id: users.id,
-      displayName: users.displayName,
-      stats: users.stats
-    })
-    .from(users)
-    .orderBy(sql`${users.stats}->>'skateWins' DESC`)
-    .limit(50);
+    const leaderboard = await db
+      .select({
+        id: users.id,
+        displayName: users.displayName,
+        stats: users.stats,
+      })
+      .from(users)
+      .orderBy(sql`${users.stats}->>'skateWins' DESC`)
+      .limit(50);
 
     res.json(leaderboard);
   } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-    res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    console.error("Error fetching leaderboard:", error);
+    res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 });
 

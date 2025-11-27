@@ -3,16 +3,20 @@
  * This file contains legacy route definitions kept for reference only
  */
 
-import express, { type Request, type Response, type NextFunction } from "express";
-import { z } from "zod";
 import crypto from "crypto";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import validator from "validator";
-import { env } from './config/env';
+import type { z } from "zod";
+import { env } from "./config/env";
 
 // Security validation functions
 export const sanitizeString = (str: string): string => {
   const sanitized = validator.escape(str.trim());
-  return sanitized.replace(/['\\';|*%<>{}[\]()]/g, '');
+  return sanitized.replace(/['\\';|*%<>{}[\]()]/g, "");
 };
 
 export const validateId = (id: string): boolean => {
@@ -20,14 +24,20 @@ export const validateId = (id: string): boolean => {
 };
 
 export const validateUserId = (userId: string): boolean => {
-  return validator.isLength(userId, { min: 1, max: 100 }) && 
-         validator.matches(userId, /^[a-zA-Z0-9_-]+$/);
+  return (
+    validator.isLength(userId, { min: 1, max: 100 }) &&
+    validator.matches(userId, /^[a-zA-Z0-9_-]+$/)
+  );
 };
 
 // Per-user rate limiting store
 const userRateLimits = new Map();
 
-export const createUserRateLimit = (userId: string, maxRequests: number, windowMs: number) => {
+export const createUserRateLimit = (
+  userId: string,
+  maxRequests: number,
+  windowMs: number,
+) => {
   const now = Date.now();
   const userKey = `${userId}_${Math.floor(now / windowMs)}`;
 
@@ -43,19 +53,29 @@ export const createUserRateLimit = (userId: string, maxRequests: number, windowM
 };
 
 // Admin API key middleware with timing attack protection
-export const requireApiKey = (req: Request, res: Response, next: NextFunction) => {
-  const apiKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '');
+export const requireApiKey = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const apiKey =
+    req.headers["x-api-key"] ||
+    req.headers["authorization"]?.replace("Bearer ", "");
 
   if (!env.ADMIN_API_KEY) {
     return res.status(500).json({ error: "Admin API key not configured" });
   }
 
-  if (!apiKey || typeof apiKey !== 'string' || apiKey.length !== env.ADMIN_API_KEY.length) {
+  if (
+    !apiKey ||
+    typeof apiKey !== "string" ||
+    apiKey.length !== env.ADMIN_API_KEY.length
+  ) {
     return res.status(401).json({ error: "Invalid or missing API key" });
   }
 
-  const providedKey = Buffer.from(apiKey, 'utf8');
-  const validKey = Buffer.from(env.ADMIN_API_KEY, 'utf8');
+  const providedKey = Buffer.from(apiKey, "utf8");
+  const validKey = Buffer.from(env.ADMIN_API_KEY, "utf8");
 
   if (!crypto.timingSafeEqual(providedKey, validKey)) {
     return res.status(401).json({ error: "Invalid or missing API key" });
@@ -65,14 +85,19 @@ export const requireApiKey = (req: Request, res: Response, next: NextFunction) =
 };
 
 // Request validation middleware
-export const validateRequest = (schema: z.ZodSchema) => 
-  (req: Request & { validatedBody?: any }, res: Response, next: NextFunction) => {
+export const validateRequest =
+  (schema: z.ZodSchema) =>
+  (
+    req: Request & { validatedBody?: any },
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const result = schema.safeParse(req.body);
       if (!result.success) {
-        return res.status(400).json({ 
-          error: "Invalid request data", 
-          details: result.error.errors 
+        return res.status(400).json({
+          error: "Invalid request data",
+          details: result.error.errors,
         });
       }
       req.validatedBody = result.data;
@@ -82,4 +107,10 @@ export const validateRequest = (schema: z.ZodSchema) =>
     }
   };
 
-export default { sanitizeString, validateId, validateUserId, requireApiKey, validateRequest };
+export default {
+  sanitizeString,
+  validateId,
+  validateUserId,
+  requireApiKey,
+  validateRequest,
+};

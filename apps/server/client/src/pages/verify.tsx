@@ -1,11 +1,17 @@
+import { sendEmailVerification } from "firebase/auth";
+import { AlertCircle, CheckCircle2, Mail } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { sendEmailVerification } from "firebase/auth";
-import { auth } from "../lib/firebase";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { useToast } from "../hooks/use-toast";
-import { Mail, CheckCircle2, AlertCircle } from "lucide-react";
+import { auth } from "../lib/firebase";
 
 export default function VerifyPage() {
   const [, setLocation] = useLocation();
@@ -20,7 +26,7 @@ export default function VerifyPage() {
       toast({
         title: "Error",
         description: "No user found. Please sign up first.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -30,20 +36,20 @@ export default function VerifyPage() {
       await sendEmailVerification(currentUser);
       toast({
         title: "Verification email sent! 📧",
-        description: "Check your inbox and spam folder."
+        description: "Check your inbox and spam folder.",
       });
     } catch (error: any) {
-      if (error.code === 'auth/too-many-requests') {
+      if (error.code === "auth/too-many-requests") {
         toast({
           title: "Too many requests",
           description: "Please wait a few minutes before trying again.",
-          variant: "destructive"
+          variant: "destructive",
         });
       } else {
         toast({
           title: "Failed to send email",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } finally {
@@ -65,10 +71,13 @@ export default function VerifyPage() {
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
               <Mail className="h-6 w-6 text-orange-500" />
-              <CardTitle className="text-2xl text-white">Verify Your Email</CardTitle>
+              <CardTitle className="text-2xl text-white">
+                Verify Your Email
+              </CardTitle>
             </div>
             <CardDescription className="text-gray-400">
-              We sent a verification link to <span className="text-white font-semibold">{userEmail}</span>
+              We sent a verification link to{" "}
+              <span className="text-white font-semibold">{userEmail}</span>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -76,22 +85,34 @@ export default function VerifyPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-white font-medium">Step 1: Check your inbox</p>
-                  <p className="text-gray-400 text-sm">Look for an email from Firebase</p>
+                  <p className="text-white font-medium">
+                    Step 1: Check your inbox
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Look for an email from Firebase
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-white font-medium">Step 2: Click the verification link</p>
-                  <p className="text-gray-400 text-sm">This will verify your account</p>
+                  <p className="text-white font-medium">
+                    Step 2: Click the verification link
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    This will verify your account
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-white font-medium">Step 3: Return and sign in</p>
-                  <p className="text-gray-400 text-sm">Come back to this page to continue</p>
+                  <p className="text-white font-medium">
+                    Step 3: Return and sign in
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Come back to this page to continue
+                  </p>
                 </div>
               </div>
             </div>
@@ -100,8 +121,12 @@ export default function VerifyPage() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-orange-400 font-medium">Can't find the email?</p>
-                  <p className="text-gray-400 text-sm">Check your spam folder or request a new one below</p>
+                  <p className="text-orange-400 font-medium">
+                    Can't find the email?
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Check your spam folder or request a new one below
+                  </p>
                 </div>
               </div>
             </div>

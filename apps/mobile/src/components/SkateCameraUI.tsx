@@ -5,14 +5,15 @@
  * Manages the 15-second timer, recording state, and "SEND IT?" prompt.
  */
 
-import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import auth from '@react-native-firebase/auth';
+import type React from 'react';
+import { useCallback, useState } from 'react';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRecordingTimer } from '../hooks/useRecordingTimer';
 import { setCooldown } from '../services/CooldownService';
 import { createSubmission } from '../services/V2SubmissionService';
-import { uploadSubmissionVideo, UploadProgress } from '../services/VideoUploadService';
-import { GameLength, MAX_RECORDING_SECONDS } from '../types/v2-core-loop';
-import auth from '@react-native-firebase/auth';
+import { UploadProgress, uploadSubmissionVideo } from '../services/VideoUploadService';
+import { type GameLength, MAX_RECORDING_SECONDS } from '../types/v2-core-loop';
 
 interface SkateCameraUIProps {
   /** Path to the recorded video file (from camera library) */

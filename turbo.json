@@ -6,7 +6,14 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "build/**"],
-      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json", "tsconfig.json"]
+      "inputs": [
+        "**/*.tsx",
+        "**/*.ts",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.json",
+        "tsconfig.json"
+      ]
     },
     "@skatehubba/db#build": {
       "outputs": ["dist/**"]
@@ -16,11 +23,25 @@
       "persistent": true
     },
     "lint": {
-      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json", ".eslintrc.js"],
+      "inputs": [
+        "**/*.tsx",
+        "**/*.ts",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.json",
+        ".eslintrc.js"
+      ],
       "outputs": []
     },
     "typecheck": {
-      "inputs": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "**/*.json", "tsconfig.json"],
+      "inputs": [
+        "**/*.tsx",
+        "**/*.ts",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.json",
+        "tsconfig.json"
+      ],
       "outputs": []
     },
     "test": {

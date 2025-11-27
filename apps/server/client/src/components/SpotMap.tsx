@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface Spot {
   id: string;
@@ -14,7 +14,12 @@ interface SpotMapProps {
   onMapClick?: (lat: number, lng: number) => void;
 }
 
-export function SpotMap({ spots, userLocation, onSpotClick, onMapClick }: SpotMapProps) {
+export function SpotMap({
+  spots,
+  userLocation,
+  onSpotClick,
+  onMapClick,
+}: SpotMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,18 +27,18 @@ export function SpotMap({ spots, userLocation, onSpotClick, onMapClick }: SpotMa
 
     // Simple placeholder map - replace with real map library (Mapbox, Google Maps, etc.)
     // For now, just showing a grid with spots
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = mapRef.current.clientWidth;
     canvas.height = mapRef.current.clientHeight;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     if (ctx) {
       // Draw background
-      ctx.fillStyle = '#1a1a1a';
+      ctx.fillStyle = "#1a1a1a";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw grid
-      ctx.strokeStyle = '#333';
+      ctx.strokeStyle = "#333";
       for (let i = 0; i < canvas.width; i += 50) {
         ctx.beginPath();
         ctx.moveTo(i, 0);
@@ -49,7 +54,7 @@ export function SpotMap({ spots, userLocation, onSpotClick, onMapClick }: SpotMa
 
       // Draw user location
       if (userLocation) {
-        ctx.fillStyle = '#3b82f6';
+        ctx.fillStyle = "#3b82f6";
         ctx.beginPath();
         ctx.arc(canvas.width / 2, canvas.height / 2, 8, 0, 2 * Math.PI);
         ctx.fill();
@@ -59,8 +64,8 @@ export function SpotMap({ spots, userLocation, onSpotClick, onMapClick }: SpotMa
       spots.forEach((spot, i) => {
         const x = (canvas.width / (spots.length + 1)) * (i + 1);
         const y = canvas.height / 2 + (Math.random() - 0.5) * 200;
-        
-        ctx.fillStyle = '#f97316';
+
+        ctx.fillStyle = "#f97316";
         ctx.beginPath();
         ctx.arc(x, y, 6, 0, 2 * Math.PI);
         ctx.fill();
@@ -77,7 +82,7 @@ export function SpotMap({ spots, userLocation, onSpotClick, onMapClick }: SpotMa
   }, [spots, userLocation]);
 
   return (
-    <div 
+    <div
       ref={mapRef}
       className="w-full h-full bg-zinc-900 rounded-lg relative overflow-hidden"
       onClick={(e) => {
@@ -90,7 +95,8 @@ export function SpotMap({ spots, userLocation, onSpotClick, onMapClick }: SpotMa
       }}
     >
       <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-2 rounded text-sm">
-        {spots.length} spots • {userLocation ? 'Location active' : 'Enable location'}
+        {spots.length} spots •{" "}
+        {userLocation ? "Location active" : "Enable location"}
       </div>
     </div>
   );

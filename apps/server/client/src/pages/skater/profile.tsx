@@ -1,38 +1,40 @@
-import { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'wouter';
-import { useQuery } from '@tanstack/react-query';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ChallengeButton } from '@/components/skater/ChallengeButton';
-import { ClosetGrid } from '@/components/skater/ClosetGrid';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
-import Navigation from '@/components/Navigation';
-import type { UserProfile, ClosetItem } from '@shared/schema';
+import type { ClosetItem, UserProfile } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "wouter";
+import Navigation from "@/components/Navigation";
+import { ChallengeButton } from "@/components/skater/ChallengeButton";
+import { ClosetGrid } from "@/components/skater/ClosetGrid";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SkaterProfile() {
   const params = useParams();
-  const handle = params.handle || '';
+  const handle = params.handle || "";
   const { user } = useAuth();
   const { toast } = useToast();
 
   const { data: profile, isLoading: profileLoading } = useQuery<UserProfile>({
-    queryKey: ['/api/profiles', handle],
+    queryKey: ["/api/profiles", handle],
     enabled: !!handle,
   });
 
-  const { data: closetItems = [], isLoading: closetLoading } = useQuery<ClosetItem[]>({
-    queryKey: ['/api/profiles', handle, 'closet'],
+  const { data: closetItems = [], isLoading: closetLoading } = useQuery<
+    ClosetItem[]
+  >({
+    queryKey: ["/api/profiles", handle, "closet"],
     enabled: !!handle,
   });
 
   useEffect(() => {
     if (!profileLoading && !profile) {
       toast({
-        title: 'Skater not found',
+        title: "Skater not found",
         description: `@${handle} isn't in the system yet.`,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   }, [profileLoading, profile, handle, toast]);
@@ -64,7 +66,9 @@ export default function SkaterProfile() {
         <Navigation />
         <div className="mx-auto w-full max-w-6xl px-4 pt-8">
           <Card className="bg-gray-900 border-gray-700 p-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-2">Profile Not Found</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Profile Not Found
+            </h2>
             <p className="text-neutral-400">@{handle} doesn't exist yet.</p>
           </Card>
         </div>
@@ -97,7 +101,7 @@ export default function SkaterProfile() {
                 />
               ) : (
                 <div className="grid h-full w-full place-items-center bg-neutral-900 text-neutral-400 text-xl">
-                  {profile.displayName?.charAt(0)?.toUpperCase() ?? 'S'}
+                  {profile.displayName?.charAt(0)?.toUpperCase() ?? "S"}
                 </div>
               )}
             </div>
@@ -111,7 +115,10 @@ export default function SkaterProfile() {
               <p className="text-success/90" data-testid="profile-handle">
                 @{handle}
               </p>
-              <p className="text-sm text-neutral-300" data-testid="profile-stats">
+              <p
+                className="text-sm text-neutral-300"
+                data-testid="profile-stats"
+              >
                 {profile.stance} • {profile.homeSpot} • W/L {profile.wins ?? 0}/
                 {profile.losses ?? 0}
               </p>
@@ -120,17 +127,23 @@ export default function SkaterProfile() {
 
           {/* Challenge */}
           {canChallenge ? (
-            <ChallengeButton challengedId={profile.id} challengedHandle={handle} />
+            <ChallengeButton
+              challengedId={profile.id}
+              challengedHandle={handle}
+            />
           ) : (
             <Button variant="secondary" disabled className="opacity-60">
-              {user ? 'Your Profile' : 'Sign in to Challenge'}
+              {user ? "Your Profile" : "Sign in to Challenge"}
             </Button>
           )}
         </div>
 
         {/* Bio */}
         {profile.bio && (
-          <p className="mt-4 max-w-3xl text-neutral-200" data-testid="profile-bio">
+          <p
+            className="mt-4 max-w-3xl text-neutral-200"
+            data-testid="profile-bio"
+          >
             {profile.bio}
           </p>
         )}

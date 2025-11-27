@@ -1,7 +1,7 @@
-import { Button } from "../components/ui/button";
-import Background from "../components/BackgroundCarousel";
 import { useEffect } from "react";
+import Background from "../components/BackgroundCarousel";
 import EmailSignup from "../components/EmailSignup";
+import { Button } from "../components/ui/button";
 
 const SkateHubbaLogo = () => (
   <div className="relative">
@@ -19,18 +19,41 @@ const SkateHubbaLogo = () => (
         stroke="#fafafa"
         strokeWidth="2"
       />
-      <circle cx="25" cy="52.5" r="8" fill="#181818" stroke="currentColor" strokeWidth="2"/>
-      <circle cx="75" cy="52.5" r="8" fill="#181818" stroke="currentColor" strokeWidth="2"/>
-      <rect x="22" y="48" width="6" height="9" fill="#666" rx="1"/>
-      <rect x="72" y="48" width="6" height="9" fill="#666" rx="1"/>
-      <text x="50" y="55" textAnchor="middle" fontSize="8" fill="#fafafa" fontWeight="bold">SH</text>
+      <circle
+        cx="25"
+        cy="52.5"
+        r="8"
+        fill="#181818"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <circle
+        cx="75"
+        cy="52.5"
+        r="8"
+        fill="#181818"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <rect x="22" y="48" width="6" height="9" fill="#666" rx="1" />
+      <rect x="72" y="48" width="6" height="9" fill="#666" rx="1" />
+      <text
+        x="50"
+        y="55"
+        textAnchor="middle"
+        fontSize="8"
+        fill="#fafafa"
+        fontWeight="bold"
+      >
+        SH
+      </text>
     </svg>
   </div>
 );
 
 export default function Landing() {
   useEffect(() => {
-    const donate = document.getElementById('donate');
+    const donate = document.getElementById("donate");
     if (donate) document.body.appendChild(donate);
   }, []);
   return (
@@ -44,9 +67,9 @@ export default function Landing() {
               <span className="text-xl font-bold">SkateHubba</span>
             </div>
             <div className="flex items-center space-x-8">
-              <Button 
+              <Button
                 onClick={() => {
-                  window.location.href = '/donate';
+                  window.location.href = "/donate";
                 }}
                 className="bg-success hover:bg-success-hover text-white px-6 py-2 rounded-lg font-semibold"
                 data-testid="button-donate-nav"
@@ -65,13 +88,19 @@ export default function Landing() {
             <div className="mb-8">
               <SkateHubbaLogo />
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight" data-testid="text-hero-title">
+            <h1
+              className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
+              data-testid="text-hero-title"
+            >
               SkateHubba
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
+            <p
+              className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto"
+              data-testid="text-hero-subtitle"
+            >
               Own your tricks. Play SKATE anywhere.
             </p>
-            
+
             {/* Beta Signup Form - Now Powered by Ultimate Component */}
             <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-8 border border-orange-400/30 max-w-md mx-auto">
               <h3 className="text-2xl font-bold text-white mb-4 text-center">
@@ -88,7 +117,10 @@ export default function Landing() {
         {/* Features Section */}
         <section className="py-20 px-6 bg-black/60">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-4" data-testid="text-features-title">
+            <h2
+              className="text-4xl font-bold mb-4"
+              data-testid="text-features-title"
+            >
               Why Skaters Choose SkateHubba
             </h2>
             <p className="text-lg text-gray-300 max-w-2xl mx-auto">
@@ -107,8 +139,8 @@ export default function Landing() {
               Help us build the future of skateboarding social connection
             </p>
             <div className="flex justify-center">
-              <Button 
-                onClick={() => window.location.href = '/donate'}
+              <Button
+                onClick={() => (window.location.href = "/donate")}
                 className="bg-success hover:bg-success-hover text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 data-testid="button-donate-cta"
               >
@@ -125,7 +157,9 @@ export default function Landing() {
               <SkateHubbaLogo />
               <span className="text-xl font-bold">SkateHubba</span>
             </div>
-            <p className="text-gray-400">The ultimate skateboarding social platform</p>
+            <p className="text-gray-400">
+              The ultimate skateboarding social platform
+            </p>
           </div>
         </footer>
       </div>

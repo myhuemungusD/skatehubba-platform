@@ -1,11 +1,12 @@
 // Legacy EmailSignup - now powered by UltimateEmailSignup
-import UltimateEmailSignup from './UltimateEmailSignup';
-import { trackButtonClick } from '../lib/analytics';
+
+import { trackButtonClick } from "../lib/analytics";
+import UltimateEmailSignup from "./UltimateEmailSignup";
 
 export default function EmailSignup() {
   const handleSuccess = (data: any) => {
     // Track using existing analytics
-    trackButtonClick('email_signup', 'landing_page');
+    trackButtonClick("email_signup", "landing_page");
   };
 
   return (

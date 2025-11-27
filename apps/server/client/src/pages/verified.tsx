@@ -1,6 +1,6 @@
+import { CheckCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { CheckCircle } from "lucide-react";
 import { Card, CardContent } from "../components/ui/card";
 
 export default function VerifiedPage() {
@@ -16,7 +16,9 @@ export default function VerifiedPage() {
       <Card className="bg-[#232323] border-gray-700 w-full max-w-md">
         <CardContent className="pt-6 text-center">
           <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">Email Verified! ✅</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">
+            Email Verified! ✅
+          </h1>
           <p className="text-gray-400">
             Your email has been successfully verified. You can now sign in.
           </p>

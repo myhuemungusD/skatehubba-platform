@@ -1,10 +1,13 @@
-import { Resend } from 'resend';
-import { env } from '../config/env';
+import { Resend } from "resend";
+import { env } from "../config/env";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 // Email templates
-const getVerificationEmailTemplate = (name: string, verificationUrl: string) => `
+const getVerificationEmailTemplate = (
+  name: string,
+  verificationUrl: string,
+) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -105,22 +108,26 @@ const getPasswordResetEmailTemplate = (name: string, resetUrl: string) => `
 `;
 
 const getBaseUrl = (): string => {
-  if (env.NODE_ENV === 'production') {
-    return env.PRODUCTION_URL || 'https://skatehubba.com';
+  if (env.NODE_ENV === "production") {
+    return env.PRODUCTION_URL || "https://skatehubba.com";
   }
-  return 'http://localhost:5000';
+  return "http://localhost:5000";
 };
 
 // Send verification email
-export async function sendVerificationEmail(email: string, token: string, name: string): Promise<void> {
+export async function sendVerificationEmail(
+  email: string,
+  token: string,
+  name: string,
+): Promise<void> {
   const baseUrl = getBaseUrl();
   const verificationUrl = `${baseUrl}/verify-email?token=${token}`;
 
   if (resend) {
     await resend.emails.send({
-      from: 'SkateHubba <hello@skatehubba.com>',
+      from: "SkateHubba <hello@skatehubba.com>",
       to: email,
-      subject: 'Verify your SkateHubba account 🛹',
+      subject: "Verify your SkateHubba account 🛹",
       html: getVerificationEmailTemplate(name, verificationUrl),
     });
   } else {
@@ -132,15 +139,19 @@ export async function sendVerificationEmail(email: string, token: string, name: 
 }
 
 // Send password reset email
-export async function sendPasswordResetEmail(email: string, token: string, name: string): Promise<void> {
+export async function sendPasswordResetEmail(
+  email: string,
+  token: string,
+  name: string,
+): Promise<void> {
   const baseUrl = getBaseUrl();
   const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
   if (resend) {
     await resend.emails.send({
-      from: 'SkateHubba <hello@skatehubba.com>',
+      from: "SkateHubba <hello@skatehubba.com>",
       to: email,
-      subject: 'Reset your SkateHubba password',
+      subject: "Reset your SkateHubba password",
       html: getPasswordResetEmailTemplate(name, resetUrl),
     });
   } else {

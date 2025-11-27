@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
+import { useState } from "react";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from './ui/dialog';
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './ui/select';
+} from "./ui/select";
+import { Textarea } from "./ui/textarea";
 
 interface AddSpotDialogProps {
   open: boolean;
@@ -34,12 +34,17 @@ interface AddSpotDialogProps {
   }) => void;
 }
 
-export function AddSpotDialog({ open, onOpenChange, location, onSubmit }: AddSpotDialogProps) {
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [type, setType] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [description, setDescription] = useState('');
+export function AddSpotDialog({
+  open,
+  onOpenChange,
+  location,
+  onSubmit,
+}: AddSpotDialogProps) {
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [type, setType] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,11 +61,11 @@ export function AddSpotDialog({ open, onOpenChange, location, onSubmit }: AddSpo
     });
 
     // Reset form
-    setName('');
-    setAddress('');
-    setType('');
-    setDifficulty('');
-    setDescription('');
+    setName("");
+    setAddress("");
+    setType("");
+    setDifficulty("");
+    setDescription("");
     onOpenChange(false);
   };
 
@@ -70,7 +75,8 @@ export function AddSpotDialog({ open, onOpenChange, location, onSubmit }: AddSpo
         <DialogHeader>
           <DialogTitle>Add New Skate Spot</DialogTitle>
           <DialogDescription>
-            Share a new spot with the community. Make sure you're at the location!
+            Share a new spot with the community. Make sure you're at the
+            location!
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -150,7 +156,11 @@ export function AddSpotDialog({ open, onOpenChange, location, onSubmit }: AddSpo
           )}
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={!location}>

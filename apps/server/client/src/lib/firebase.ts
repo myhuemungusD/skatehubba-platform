@@ -1,11 +1,15 @@
-import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
-import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { initializeApp } from "firebase/app";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import {
+  browserLocalPersistence,
+  getAuth,
+  setPersistence,
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { env } from '../config/env';
+import { env } from "../config/env";
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.fetch = window.fetch.bind(window);
 }
 
@@ -16,7 +20,7 @@ const firebaseConfig = {
   storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: env.VITE_FIREBASE_APP_ID,
-  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID
+  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -29,32 +33,36 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // Set explicit persistence to avoid Safari/iframe issues
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   setPersistence(auth, browserLocalPersistence).catch(console.warn);
 }
 
 let appCheck: any = null;
-if (env.PROD && typeof window !== 'undefined' && env.VITE_RECAPTCHA_SITE_KEY) {
+if (env.PROD && typeof window !== "undefined" && env.VITE_RECAPTCHA_SITE_KEY) {
   try {
     appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider(env.VITE_RECAPTCHA_SITE_KEY),
-      isTokenAutoRefreshEnabled: true
+      isTokenAutoRefreshEnabled: true,
     });
   } catch (error) {
-    console.warn('App Check initialization failed:', error);
+    console.warn("App Check initialization failed:", error);
   }
 }
 
 let analytics: any = null;
-if (typeof window !== 'undefined' && 
-    window.location.protocol === "https:" && 
-    !env.DEV) {
-  isSupported().then((ok) => {
-    if (ok) {
-      analytics = getAnalytics(app);
-      console.log('Firebase Analytics initialized');
-    }
-  }).catch(() => {});
+if (
+  typeof window !== "undefined" &&
+  window.location.protocol === "https:" &&
+  !env.DEV
+) {
+  isSupported()
+    .then((ok) => {
+      if (ok) {
+        analytics = getAnalytics(app);
+        console.log("Firebase Analytics initialized");
+      }
+    })
+    .catch(() => {});
 }
 
 export { app, auth, db, analytics };

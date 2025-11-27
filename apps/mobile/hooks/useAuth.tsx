@@ -1,6 +1,12 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, type User } from "firebase/auth";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
   user: User | null;
@@ -8,7 +14,10 @@ interface AuthContextType {
 }
 
 // Create the context with safe defaults
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+});
 
 // The Provider Component (Wrap your app in this if needed, or just use the hook)
 export function AuthProvider({ children }: { children: ReactNode }) {

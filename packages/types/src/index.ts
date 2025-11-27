@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const SpotSchema = z.object({
   id: z.string(),
@@ -14,7 +14,7 @@ export const SpotSchema = z.object({
 export const ChallengeSchema = z.object({
   id: z.string(),
   createdBy: z.string(),
-  status: z.enum(['pending', 'accepted', 'completed', 'expired']),
+  status: z.enum(["pending", "accepted", "completed", "expired"]),
   rules: z.object({
     oneTake: z.boolean(),
     durationSec: z.number(),
@@ -36,14 +36,14 @@ export type Spot = z.infer<typeof SpotSchema>;
 export type Challenge = z.infer<typeof ChallengeSchema>;
 export type CheckIn = z.infer<typeof CheckInSchema>;
 
-export type SkateLetter = 'S' | 'K' | 'A' | 'T' | 'E';
-export type TurnType = 'setTrick' | 'attemptMatch' | 'judgeAttempt';
+export type SkateLetter = "S" | "K" | "A" | "T" | "E";
+export type TurnType = "setTrick" | "attemptMatch" | "judgeAttempt";
 
 export interface SkateGame {
   id: string;
   challengerId: string;
   opponentId: string | null;
-  status: 'pending' | 'active' | 'completed' | 'forfeit';
+  status: "pending" | "active" | "completed" | "forfeit";
   letters: {
     challenger: string;
     opponent: string;
@@ -58,7 +58,7 @@ export interface SkateGame {
     attempts: {
       uid: string;
       videoUrl: string;
-      result: 'landed' | 'bailed' | 'pending';
+      result: "landed" | "bailed" | "pending";
       judgedAt?: string;
     }[];
   }[];
@@ -73,7 +73,7 @@ export interface User {
   displayName?: string;
   photoURL?: string;
   handle: string;
-  stance: 'regular' | 'goofy';
+  stance: "regular" | "goofy";
   sponsors: string[];
   stats: {
     wins: number;
@@ -89,10 +89,9 @@ export interface User {
 
 export interface Item {
   id: string;
-  type: 'deck' | 'top' | 'bottom' | 'shoes';
+  type: "deck" | "top" | "bottom" | "shoes";
   name: string;
   equipped: boolean;
   price?: number;
   imageUrl?: string;
 }
-

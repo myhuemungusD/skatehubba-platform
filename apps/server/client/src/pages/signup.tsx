@@ -1,11 +1,17 @@
+import { AlertCircle, Lock, Mail } from "lucide-react";
 import { useState } from "react";
-import { registerUser } from "../lib/auth";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import { useToast } from "../hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Link } from "wouter";
-import { Mail, Lock, AlertCircle } from "lucide-react";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { useToast } from "../hooks/use-toast";
+import { registerUser } from "../lib/auth";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -16,19 +22,19 @@ export default function SignupPage() {
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       await registerUser(email, password);
-      toast({ 
-        title: "Verification Email Sent! 📧", 
-        description: "Check your email to verify your account." 
+      toast({
+        title: "Verification Email Sent! 📧",
+        description: "Check your email to verify your account.",
       });
       window.location.href = "/verify";
     } catch (err: any) {
-      toast({ 
-        title: "Registration Failed", 
+      toast({
+        title: "Registration Failed",
         description: err.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -48,7 +54,9 @@ export default function SignupPage() {
 
         <Card className="bg-[#232323] border-gray-700">
           <CardHeader>
-            <CardTitle className="text-2xl text-white">Create Account</CardTitle>
+            <CardTitle className="text-2xl text-white">
+              Create Account
+            </CardTitle>
             <CardDescription className="text-gray-400">
               Sign up to start your skating journey
             </CardDescription>
@@ -58,9 +66,12 @@ export default function SignupPage() {
               <div className="flex items-start gap-2">
                 <AlertCircle className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-blue-400 font-medium text-sm">Email Verification Required</p>
+                  <p className="text-blue-400 font-medium text-sm">
+                    Email Verification Required
+                  </p>
                   <p className="text-gray-400 text-xs mt-1">
-                    You'll need to verify your email before signing in. Check your inbox after signup!
+                    You'll need to verify your email before signing in. Check
+                    your inbox after signup!
                   </p>
                 </div>
               </div>
@@ -110,7 +121,11 @@ export default function SignupPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-400">
                 Already have an account?{" "}
-                <Link href="/signin" className="text-orange-400 hover:text-orange-300 font-semibold" data-testid="link-to-signin">
+                <Link
+                  href="/signin"
+                  className="text-orange-400 hover:text-orange-300 font-semibold"
+                  data-testid="link-to-signin"
+                >
                   Sign In
                 </Link>
               </p>
@@ -118,7 +133,10 @@ export default function SignupPage() {
 
             <div className="mt-4 text-center">
               <Link href="/">
-                <span className="text-gray-400 hover:text-white cursor-pointer inline-block" data-testid="link-back-home">
+                <span
+                  className="text-gray-400 hover:text-white cursor-pointer inline-block"
+                  data-testid="link-back-home"
+                >
                   ← Back to Home
                 </span>
               </Link>

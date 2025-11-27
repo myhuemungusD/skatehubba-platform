@@ -1,6 +1,6 @@
+import * as dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
 import { z } from "zod";
-import * as dotenv from "dotenv";
 
 // 1. Load Environment Variables
 // Ensure environment variables are loaded for Drizzle Kit to access them.
@@ -19,13 +19,13 @@ const env = envSchema.parse(process.env);
 
 export default defineConfig({
   // --- Core Configuration ---
-  
+
   // 1. Specifies the location of your database schema definition file(s).
   // This points to the single source of truth for your DB structure.
   schema: "./src/schema.ts",
 
   // 2. Specifies the output directory for generated migration files.
-  out: "./drizzle", 
+  out: "./drizzle",
 
   // 3. The database type used in your project.
   dialect: "postgresql",
@@ -33,14 +33,14 @@ export default defineConfig({
   // 4. Database connection credentials for Drizzle Kit.
   dbCredentials: {
     // Safely use the validated DATABASE_URL from the parsed environment object.
-    url: env.DATABASE_URL, 
+    url: env.DATABASE_URL,
   },
-  
+
   // --- Advanced Options (Senior Standards) ---
 
-  // 5. Strict Mode: Ensures migrations are safer by checking for 
+  // 5. Strict Mode: Ensures migrations are safer by checking for
   // potential issues like schema drift. Highly recommended.
-  strict: true, 
+  strict: true,
 
   // 6. Verbose Output: Prints detailed information about the Drizzle Kit
   // process, useful for debugging complex schema changes.
@@ -48,5 +48,5 @@ export default defineConfig({
 
   // 7. Schema Filtering (Optional, but good for cleanliness)
   // If you use multiple schemas/prefixes, this keeps Drizzle Kit focused.
-  // tablesFilter: ["skatehubba_*"], 
+  // tablesFilter: ["skatehubba_*"],
 });

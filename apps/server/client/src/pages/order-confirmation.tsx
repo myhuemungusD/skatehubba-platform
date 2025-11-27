@@ -1,6 +1,6 @@
-import { Link } from "wouter";
-import { CheckCircle, Package, ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle, Package } from "lucide-react";
 import { useEffect } from "react";
+import { Link } from "wouter";
 import { useCart } from "../lib/cart/store";
 
 export default function OrderConfirmation() {
@@ -14,7 +14,10 @@ export default function OrderConfirmation() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <div className="mx-auto max-w-2xl p-6">
-        <div className="text-center py-20" data-testid="order-confirmation-success">
+        <div
+          className="text-center py-20"
+          data-testid="order-confirmation-success"
+        >
           <div className="mb-8">
             <CheckCircle className="w-24 h-24 mx-auto text-success mb-6" />
             <h1 className="text-4xl font-bold mb-4">Order Confirmed! 🎉</h1>

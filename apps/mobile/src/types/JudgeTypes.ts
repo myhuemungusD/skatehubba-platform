@@ -1,11 +1,11 @@
 /**
  * JudgeTypes.ts
- * 
+ *
  * Defines the contract for the Judging System.
  * Re-exports core types from v2-core-loop to ensure consistency.
  */
 
-import { Submission, VoteType } from './v2-core-loop';
+import type { Submission, VoteType } from "./v2-core-loop";
 
 export type { Submission, VoteType };
 

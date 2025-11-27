@@ -1,8 +1,8 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from "@neondatabase/serverless";
 import * as schema from "@skatehubba/db";
-import { eq, and, or, sql } from 'drizzle-orm';
-import { env } from './config/env';
+import { and, eq, or, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/neon-http";
+import { env } from "./config/env";
 
 const sqlClient = neon(env.DATABASE_URL);
 export const db = drizzle(sqlClient, { schema });
@@ -28,32 +28,32 @@ export async function initializeDatabase() {
           title: "Welcome to SkateHubba",
           description: "Learn the basics of navigating the skate community",
           type: "intro" as const,
-          content: { 
-            text: "Welcome to SkateHubba! Tap anywhere to check out spots, join challenges, and connect with skaters worldwide." 
+          content: {
+            text: "Welcome to SkateHubba! Tap anywhere to check out spots, join challenges, and connect with skaters worldwide.",
           },
           order: 1,
-          isActive: true
+          isActive: true,
         },
         {
           title: "Find Skate Spots",
           description: "Discover and check-in to nearby skate spots",
           type: "feature" as const,
-          content: { 
-            text: "Use the map to find skate spots near you. Check in within 30m to unlock tricks and earn rewards!" 
+          content: {
+            text: "Use the map to find skate spots near you. Check in within 30m to unlock tricks and earn rewards!",
           },
           order: 2,
-          isActive: true
+          isActive: true,
         },
         {
           title: "Join S.K.A.T.E. Challenges",
           description: "Compete in one-take video challenges",
           type: "feature" as const,
-          content: { 
-            text: "Challenge friends to a game of S.K.A.T.E.! Record your trick, send it, and see if they can match it." 
+          content: {
+            text: "Challenge friends to a game of S.K.A.T.E.! Record your trick, send it, and see if they can match it.",
           },
           order: 3,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       for (const step of defaultSteps) {
         await db.insert(schema.tutorialSteps).values(step);
@@ -64,7 +64,7 @@ export async function initializeDatabase() {
     }
   } catch (error) {
     console.error("❌ Database initialization failed:", error);
-    if (env.NODE_ENV !== 'production') {
+    if (env.NODE_ENV !== "production") {
       throw error;
     }
   }

@@ -1,24 +1,34 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import Navigation from '../components/Navigation';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { MapPin, Navigation as NavigationIcon, X, AlertCircle, Plus } from 'lucide-react';
-import { useGeolocation } from '../hooks/useGeolocation';
-import { calculateDistance, formatDistance, getProximity } from '../lib/distance';
-import { ARCheckInButton } from '../components/ARCheckInButton';
-import { ARTrickViewer } from '../components/ARTrickViewer';
-import { SpotMap } from '../components/SpotMap';
-import { AddSpotDialog } from '../components/AddSpotDialog';
-import { useToast } from '../hooks/use-toast';
+import { useQuery } from "@tanstack/react-query";
+import {
+  AlertCircle,
+  MapPin,
+  Navigation as NavigationIcon,
+  Plus,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { AddSpotDialog } from "../components/AddSpotDialog";
+import { ARCheckInButton } from "../components/ARCheckInButton";
+import { ARTrickViewer } from "../components/ARTrickViewer";
+import Navigation from "../components/Navigation";
+import { SpotMap } from "../components/SpotMap";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '../components/ui/sheet';
+} from "../components/ui/sheet";
+import { useToast } from "../hooks/use-toast";
+import { useGeolocation } from "../hooks/useGeolocation";
+import {
+  calculateDistance,
+  formatDistance,
+  getProximity,
+} from "../lib/distance";
 
 interface SkateSpot {
   id: string;
@@ -37,73 +47,80 @@ export default function MapPage() {
   const { toast } = useToast();
   const [selectedSpot, setSelectedSpot] = useState<SkateSpot | null>(null);
   const [addSpotMode, setAddSpotMode] = useState(false);
-  const [newSpotLocation, setNewSpotLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [newSpotLocation, setNewSpotLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const geolocation = useGeolocation(true);
 
   // Fetch spots from database
   const { data: dbSpots = [] } = useQuery({
-    queryKey: ['/api/spots'],
+    queryKey: ["/api/spots"],
   });
 
   const spots: SkateSpot[] = [
     {
-      id: 'spot-1',
-      name: 'Downtown Rails',
-      address: '123 Main St, Downtown',
-      type: 'Rails',
-      difficulty: 'Intermediate',
+      id: "spot-1",
+      name: "Downtown Rails",
+      address: "123 Main St, Downtown",
+      type: "Rails",
+      difficulty: "Intermediate",
       checkins: 247,
-      recentUsers: ['Mike', 'Sarah', 'Tony'],
+      recentUsers: ["Mike", "Sarah", "Tony"],
       lat: 40.7128,
-      lng: -74.0060,
-      description: 'Perfect flat rails with smooth run-up. Popular spot for technical tricks.',
+      lng: -74.006,
+      description:
+        "Perfect flat rails with smooth run-up. Popular spot for technical tricks.",
     },
     {
-      id: 'spot-2',
-      name: 'City Plaza Stairs',
-      address: '456 Plaza Blvd',
-      type: 'Stairs',
-      difficulty: 'Advanced',
+      id: "spot-2",
+      name: "City Plaza Stairs",
+      address: "456 Plaza Blvd",
+      type: "Stairs",
+      difficulty: "Advanced",
       checkins: 189,
-      recentUsers: ['Jake', 'Emma'],
+      recentUsers: ["Jake", "Emma"],
       lat: 40.7589,
       lng: -73.9851,
-      description: '12-stair set with handrails on both sides. Requires commitment.',
+      description:
+        "12-stair set with handrails on both sides. Requires commitment.",
     },
     {
-      id: 'spot-3',
-      name: 'Riverside Park',
-      address: '789 River Rd',
-      type: 'Park',
-      difficulty: 'Beginner',
+      id: "spot-3",
+      name: "Riverside Park",
+      address: "789 River Rd",
+      type: "Park",
+      difficulty: "Beginner",
       checkins: 512,
-      recentUsers: ['Alex', 'Chris', 'Jordan', 'Pat'],
+      recentUsers: ["Alex", "Chris", "Jordan", "Pat"],
       lat: 40.7829,
       lng: -73.9654,
-      description: 'Smooth concrete park with multiple features. Great for beginners and practice.',
+      description:
+        "Smooth concrete park with multiple features. Great for beginners and practice.",
     },
     {
-      id: 'spot-4',
-      name: 'Industrial Ledges',
-      address: '321 Warehouse Ave',
-      type: 'Ledges',
-      difficulty: 'Intermediate',
+      id: "spot-4",
+      name: "Industrial Ledges",
+      address: "321 Warehouse Ave",
+      type: "Ledges",
+      difficulty: "Intermediate",
       checkins: 156,
-      recentUsers: ['Riley', 'Sam'],
+      recentUsers: ["Riley", "Sam"],
       lat: 40.7489,
-      lng: -73.9680,
-      description: 'Variety of ledge heights with perfect wax. Watch for security.',
+      lng: -73.968,
+      description:
+        "Variety of ledge heights with perfect wax. Watch for security.",
     },
   ];
 
   // Calculate distances and add to spots
-  const spotsWithDistance = spots.map(spot => {
+  const spotsWithDistance = spots.map((spot) => {
     if (geolocation.latitude !== null && geolocation.longitude !== null) {
       const distance = calculateDistance(
         geolocation.latitude,
         geolocation.longitude,
         spot.lat,
-        spot.lng
+        spot.lng,
       );
       return { ...spot, distance, proximity: getProximity(distance) };
     }
@@ -112,18 +129,19 @@ export default function MapPage() {
 
   // Show toast for geolocation errors
   useEffect(() => {
-    if (geolocation.status === 'denied') {
+    if (geolocation.status === "denied") {
       toast({
-        title: 'Location Access Denied',
-        description: 'Enable location permissions to see nearby spots and check in.',
-        variant: 'destructive',
+        title: "Location Access Denied",
+        description:
+          "Enable location permissions to see nearby spots and check in.",
+        variant: "destructive",
         duration: 8000,
       });
-    } else if (geolocation.status === 'error' && geolocation.error) {
+    } else if (geolocation.status === "error" && geolocation.error) {
       toast({
-        title: 'Location Error',
+        title: "Location Error",
         description: geolocation.error,
-        variant: 'destructive',
+        variant: "destructive",
         duration: 5000,
       });
     }
@@ -131,45 +149,64 @@ export default function MapPage() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Beginner':
-        return 'bg-success/20 text-success border-success/30';
-      case 'Intermediate':
-        return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
-      case 'Advanced':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case "Beginner":
+        return "bg-success/20 text-success border-success/30";
+      case "Intermediate":
+        return "bg-orange-500/20 text-orange-400 border-orange-500/30";
+      case "Advanced":
+        return "bg-red-500/20 text-red-400 border-red-500/30";
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
   };
 
-  const getProximityBadge = (proximity: 'here' | 'nearby' | 'far' | null, distance: number | null) => {
+  const getProximityBadge = (
+    proximity: "here" | "nearby" | "far" | null,
+    distance: number | null,
+  ) => {
     if (!proximity || distance === null) return null;
-    
-    if (proximity === 'here') {
-      return <Badge className="bg-success/20 text-success border-success/30">✓ Check-in Available</Badge>;
-    } else if (proximity === 'nearby') {
-      return <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">{formatDistance(distance)} away</Badge>;
+
+    if (proximity === "here") {
+      return (
+        <Badge className="bg-success/20 text-success border-success/30">
+          ✓ Check-in Available
+        </Badge>
+      );
+    } else if (proximity === "nearby") {
+      return (
+        <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+          {formatDistance(distance)} away
+        </Badge>
+      );
     } else {
-      return <Badge variant="outline" className="text-gray-400">{formatDistance(distance)} away</Badge>;
+      return (
+        <Badge variant="outline" className="text-gray-400">
+          {formatDistance(distance)} away
+        </Badge>
+      );
     }
   };
 
   return (
     <div className="h-screen flex flex-col bg-[#181818]">
       <Navigation />
-      
+
       {/* Full-screen map */}
       <div className="flex-1 relative">
         <SpotMap
           spots={spotsWithDistance}
           userLocation={
             geolocation.latitude !== null && geolocation.longitude !== null
-              ? { lat: geolocation.latitude, lng: geolocation.longitude, accuracy: geolocation.accuracy }
+              ? {
+                  lat: geolocation.latitude,
+                  lng: geolocation.longitude,
+                  accuracy: geolocation.accuracy,
+                }
               : null
           }
           selectedSpotId={selectedSpot?.id || null}
           onSelectSpot={(spotId) => {
-            const spot = spots.find(s => s.id === spotId);
+            const spot = spots.find((s) => s.id === spotId);
             setSelectedSpot(spot || null);
           }}
           addSpotMode={addSpotMode}
@@ -183,9 +220,9 @@ export default function MapPage() {
           <Button
             onClick={() => setAddSpotMode(!addSpotMode)}
             className={`shadow-lg ${
-              addSpotMode 
-                ? 'bg-red-500 hover:bg-red-600' 
-                : 'bg-[#ff6a00] hover:bg-[#ff6a00]/90'
+              addSpotMode
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-[#ff6a00] hover:bg-[#ff6a00]/90"
             } text-white font-semibold h-14 px-6`}
             data-testid="button-add-spot-mode"
           >
@@ -224,23 +261,31 @@ export default function MapPage() {
                     <MapPin className="w-6 h-6 text-[#ff6a00]" />
                     Skate Spots
                   </h1>
-                  {geolocation.status === 'ready' && (
+                  {geolocation.status === "ready" && (
                     <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
                       <NavigationIcon className="w-3 h-3" />
-                      {spotsWithDistance.filter(s => s.proximity === 'here').length} spots in check-in range
+                      {
+                        spotsWithDistance.filter((s) => s.proximity === "here")
+                          .length
+                      }{" "}
+                      spots in check-in range
                     </p>
                   )}
-                  {geolocation.status === 'locating' && (
-                    <p className="text-sm text-gray-400">Finding your location...</p>
+                  {geolocation.status === "locating" && (
+                    <p className="text-sm text-gray-400">
+                      Finding your location...
+                    </p>
                   )}
-                  {(geolocation.status === 'denied' || geolocation.status === 'error') && (
+                  {(geolocation.status === "denied" ||
+                    geolocation.status === "error") && (
                     <p className="text-sm text-red-400 flex items-center gap-1 mt-1">
                       <AlertCircle className="w-3 h-3" />
                       Location unavailable
                     </p>
                   )}
                 </div>
-                {(geolocation.status === 'denied' || geolocation.status === 'error') && (
+                {(geolocation.status === "denied" ||
+                  geolocation.status === "error") && (
                   <Button
                     onClick={geolocation.retry}
                     variant="outline"
@@ -258,8 +303,14 @@ export default function MapPage() {
       </div>
 
       {/* Bottom sheet for spot details */}
-      <Sheet open={selectedSpot !== null} onOpenChange={(open) => !open && setSelectedSpot(null)}>
-        <SheetContent side="bottom" className="bg-black/95 border-gray-600 backdrop-blur-md h-[70vh]">
+      <Sheet
+        open={selectedSpot !== null}
+        onOpenChange={(open) => !open && setSelectedSpot(null)}
+      >
+        <SheetContent
+          side="bottom"
+          className="bg-black/95 border-gray-600 backdrop-blur-md h-[70vh]"
+        >
           {selectedSpot && (
             <>
               <SheetHeader>
@@ -273,15 +324,26 @@ export default function MapPage() {
                       {selectedSpot.address}
                     </SheetDescription>
                     <div className="flex gap-2 mt-3">
-                      <Badge variant="outline" className={getDifficultyColor(selectedSpot.difficulty)}>
+                      <Badge
+                        variant="outline"
+                        className={getDifficultyColor(selectedSpot.difficulty)}
+                      >
                         {selectedSpot.difficulty}
                       </Badge>
-                      <Badge variant="outline" className="bg-neutral-800/50 text-gray-300 border-gray-600">
+                      <Badge
+                        variant="outline"
+                        className="bg-neutral-800/50 text-gray-300 border-gray-600"
+                      >
                         {selectedSpot.type}
                       </Badge>
                       {(() => {
-                        const spotWithDistance = spotsWithDistance.find(s => s.id === selectedSpot.id);
-                        return getProximityBadge(spotWithDistance?.proximity || null, spotWithDistance?.distance || null);
+                        const spotWithDistance = spotsWithDistance.find(
+                          (s) => s.id === selectedSpot.id,
+                        );
+                        return getProximityBadge(
+                          spotWithDistance?.proximity || null,
+                          spotWithDistance?.distance || null,
+                        );
                       })()}
                     </div>
                   </div>
@@ -299,7 +361,9 @@ export default function MapPage() {
 
               <div className="mt-6 space-y-6 overflow-y-auto max-h-[calc(70vh-200px)]">
                 <div>
-                  <h3 className="text-[#fafafa] font-semibold mb-2">Description</h3>
+                  <h3 className="text-[#fafafa] font-semibold mb-2">
+                    Description
+                  </h3>
                   <p className="text-gray-300">{selectedSpot.description}</p>
                 </div>
 
@@ -308,11 +372,15 @@ export default function MapPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-400">Total Check-ins</p>
-                      <p className="text-[#fafafa] font-semibold text-lg">{selectedSpot.checkins}</p>
+                      <p className="text-[#fafafa] font-semibold text-lg">
+                        {selectedSpot.checkins}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-400">Recently Active</p>
-                      <p className="text-[#fafafa] font-semibold text-lg">{selectedSpot.recentUsers.length} skaters</p>
+                      <p className="text-[#fafafa] font-semibold text-lg">
+                        {selectedSpot.recentUsers.length} skaters
+                      </p>
                     </div>
                   </div>
                 </div>

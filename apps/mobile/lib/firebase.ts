@@ -1,7 +1,23 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider as GoogleAuthProviderClass } from 'firebase/auth';
-import { getFirestore, collection, addDoc, doc, getDoc, setDoc, serverTimestamp as serverTimestampFunc } from 'firebase/firestore';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getApp, getApps, initializeApp } from "firebase/app";
+import {
+  GoogleAuthProvider as GoogleAuthProviderClass,
+  getAuth,
+} from "firebase/auth";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  serverTimestamp as serverTimestampFunc,
+  setDoc,
+} from "firebase/firestore";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 
 // 1. Your web-compatible configuration
 // (Ensure these variables are in your .env file)

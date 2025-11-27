@@ -1,5 +1,5 @@
-import { CheckCircle2, XCircle, AlertCircle, Info, X } from "lucide-react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
+import { AlertCircle, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import { cn } from "../lib/utils";
 
 interface EnhancedToastProps {
@@ -42,11 +42,11 @@ const variantConfig = {
   },
 };
 
-export function EnhancedToast({ 
-  title, 
-  description, 
+export function EnhancedToast({
+  title,
+  description,
   variant = "default",
-  onClose 
+  onClose,
 }: EnhancedToastProps) {
   const config = variantConfig[variant];
   const Icon = config.icon;
@@ -59,13 +59,13 @@ export function EnhancedToast({
         "data-[swipe=end]:animate-out",
         "data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full",
         "data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
-        config.bgClass
+        config.bgClass,
       )}
     >
       <Icon className={cn("h-5 w-5 mt-0.5 shrink-0", config.iconClass)} />
-      
+
       <div className="flex-1 grid gap-1">
-        <ToastPrimitives.Title 
+        <ToastPrimitives.Title
           className={cn("text-sm font-semibold", config.titleClass)}
         >
           {title}
@@ -81,7 +81,7 @@ export function EnhancedToast({
         onClick={onClose}
         className={cn(
           "rounded-md p-1 text-gray-400 opacity-70 transition-all hover:opacity-100 hover:bg-white/10",
-          "focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white/20"
+          "focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white/20",
         )}
       >
         <X className="h-4 w-4" />
