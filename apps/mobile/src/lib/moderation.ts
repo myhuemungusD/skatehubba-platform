@@ -1,10 +1,4 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 import { db } from "./firebase";
 
 export async function reportContent(
@@ -15,14 +9,14 @@ export async function reportContent(
   reportedUserId?: string,
 ) {
   try {
-    await addDoc(collection(db, "reports"), {
+    await db.collection("reports").add({
       reporterUid,
       contentId,
       contentType,
       reason,
       reportedUserId,
       status: "pending",
-      createdAt: serverTimestamp(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
     });
     return true;
   } catch (error) {
@@ -34,9 +28,9 @@ export async function reportContent(
 export async function blockUser(blockerUid: string, blockedUid: string) {
   try {
     // Add to a subcollection of blocked users for the blocker
-    await setDoc(doc(db, "users", blockerUid, "blocked", blockedUid), {
+    await db.collection("users").doc(blockerUid).collection("blocked").doc(blockedUid).set({
       blockedUid,
-      createdAt: serverTimestamp(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
     });
     return true;
   } catch (error) {

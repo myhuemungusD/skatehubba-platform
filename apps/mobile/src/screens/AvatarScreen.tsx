@@ -1,4 +1,3 @@
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -46,17 +45,15 @@ export default function AvatarScreen() {
       return;
     }
 
-    const userRef = doc(db, "users", authUser.uid);
+    const userRef = db.collection("users").doc(authUser.uid);
 
-    const unsubscribe = onSnapshot(
-      userRef,
-      async (docSnap) => {
-        if (docSnap.exists()) {
+    const unsubscribe = userRef.onSnapshot(async (docSnap) => {
+        if (docSnap.exists) {
           setProfile(docSnap.data() as UserProfile);
         } else {
           try {
             // Create profile if it doesn't exist
-            await setDoc(userRef, DEFAULT_PROFILE);
+            await userRef.set(DEFAULT_PROFILE);
             // No need to setProfile here, the snapshot will fire again immediately after writing!
           } catch (err) {
             console.error("Error creating profile:", err);

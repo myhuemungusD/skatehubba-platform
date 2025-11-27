@@ -3,7 +3,6 @@
 import { joinSkateChallenge, submitTurnResult } from "@skatehubba/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Button, Text, View } from "react-native";
 import { VideoRecorder } from "@/components/skate/VideoRecorder";
@@ -23,7 +22,7 @@ export default function SkateGameScreen() {
   // This ensures the screen updates INSTANTLY when the other player moves.
   useEffect(() => {
     if (!id) return;
-    const unsub = onSnapshot(doc(db, "skate_games", id), (doc) => {
+    const unsub = db.collection("skate_games").doc(id).onSnapshot((doc) => {
       setGameData(doc.data());
     });
     return () => unsub();

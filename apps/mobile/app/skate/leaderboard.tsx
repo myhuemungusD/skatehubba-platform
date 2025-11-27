@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { FlatList, Text, View } from "react-native";
 import { db } from "@/lib/firebase";
 import { SKATE } from "@/theme";
@@ -17,13 +16,10 @@ export default function SkateLeaderboard() {
   const { data: leaderboard } = useQuery({
     queryKey: ["skate-leaderboard"],
     queryFn: async () => {
-      const snap = await getDocs(
-        query(
-          collection(db, "users"),
-          orderBy("stats.skateWins", "desc"),
-          limit(50),
-        ),
-      );
+      const snap = await db.collection("users")
+        .orderBy("stats.skateWins", "desc")
+        .limit(50)
+        .get();
       return snap.docs.map((d) => ({ id: d.id, ...d.data() })) as User[];
     },
   });
