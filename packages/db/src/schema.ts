@@ -1,10 +1,11 @@
 import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, varchar, uuid, index, doublePrecision, pgEnum, geometry } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 
 export const challengeStatusEnum = pgEnum('challenge_status', ['pending', 'active', 'completed', 'disputed']);
 export const feedbackStatusEnum = pgEnum('feedback_status', ['new', 'in-progress', 'resolved', 'closed']);
 export const skateGameStatusEnum = pgEnum('skate_game_status', ['pending', 'in-progress', 'completed', 'cancelled']);
+export const spotTypeEnum = pgEnum('spot_type', ['street', 'park', 'diy', 'gap']);
 
 export const users = pgTable('users', {
   // 1. PRIMARY KEY: Use the Firebase UID (varchar) as the primary key.
@@ -13,6 +14,7 @@ export const users = pgTable('users', {
   
   // 2. Auth Details (Maintained by Firebase, but stored for server checks)
   email: text('email').notNull().unique(),
+  username: text("username").unique(),
   
   // Basic Profile Fields
   displayName: text('display_name'),
@@ -21,7 +23,8 @@ export const users = pgTable('users', {
   lastName: varchar("last_name", { length: 256 }),
   profileImageUrl: varchar("profile_image_url", { length: 1024 }),
   city: text('city'),
-  stance: text('stance').default('regular'),
+  stance: text('stance', { enum: ["regular", "goofy"] }).default('regular'),
+  bio: text('bio'),
 
   // Onboarding & Stats remain the same
   onboardingCompleted: boolean("onboarding_completed").default(false),
@@ -41,8 +44,18 @@ export const users = pgTable('users', {
 export const spots = pgTable('spots', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
-  // ⚡️ This is the Pro move. efficient geospatial indexing.
-  location: geometry("location", { type: "point", mode: "xy", srid: 4326 }), 
+  description: text('description'),
+  
+  // ⚡️ THE PRO MOVE: PostGIS Geometry Column
+  // type: 'point' -> It's a single dot on the map
+  // srid: 4326    -> The standard GPS coordinate system (WGS 84)
+  location: geometry("location", { type: "point", mode: "xy", srid: 4326 }).notNull(),
+  
+  // Skater Specific Data
+  bustFactor: integer("bust_factor").default(0), // 0 = Chill, 10 = Instant Kickout
+  hasLights: boolean("has_lights").default(false), // For night sessions
+  spotType: spotTypeEnum("spot_type").notNull(),
+
   createdBy: varchar('created_by', { length: 128 }).notNull().references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (table) => {
@@ -51,9 +64,17 @@ export const spots = pgTable('spots', {
     createdByIdx: index('spots_created_by_idx').on(table.createdBy),
     
     // 2. Optimization for Range Queries (e.g., finding spots in a square bounding box)
-    locationIdx: index('spots_location_idx').on(table.location).using('gist'),
+    // 🚀 SPATIAL INDEX: This makes map searches 1000x faster
+    spatialIndex: index("spatial_idx").using("gist", table.location),
   }
 });
+
+export const spotsRelations = relations(spots, ({ one }) => ({
+  author: one(users, {
+    fields: [spots.createdBy],
+    references: [users.id],
+  }),
+}));
 
 export const challenges = pgTable('challenges', {
   id: uuid('id').primaryKey().defaultRandom(),
