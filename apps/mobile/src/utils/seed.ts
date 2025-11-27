@@ -1,4 +1,3 @@
-import { doc, writeBatch } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import type { SkateSpot, UserProfile } from "../types/schema";
 
@@ -79,18 +78,18 @@ const SEED_USER: UserProfile = {
 
 // --- 2. THE UPLOAD FUNCTION ---
 export const seedDatabase = async () => {
-  const batch = writeBatch(db);
+  const batch = db.batch();
 
   console.log("🌱 Starting Seed Process...");
 
   // A. Add Spots
   SEED_SPOTS.forEach((spot) => {
-    const spotRef = doc(db, "spots", spot.id);
+    const spotRef = db.collection("spots").doc(spot.id);
     batch.set(spotRef, spot);
   });
 
   // B. Add User
-  const userRef = doc(db, "users", SEED_USER.uid);
+  const userRef = db.collection("users").doc(SEED_USER.uid);
   batch.set(userRef, SEED_USER);
 
   // C. Commit the Batch

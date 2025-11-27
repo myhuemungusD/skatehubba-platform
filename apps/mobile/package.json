@@ -26,6 +26,7 @@
     "@reactvision/react-viro": "^2.44.2",
     "@rnmapbox/maps": "^10.1.0",
     "@skatehubba/firebase": "workspace:*",
+    "@skatehubba/api-sdk": "workspace:*",
     "@skatehubba/gameundici": "workspace:*",
     "@skatehubba/types": "workspace:*",
     "@skatehubba/ui": "workspace:*",
