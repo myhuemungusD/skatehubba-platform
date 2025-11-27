@@ -10,6 +10,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { useRecordingTimer } from '../hooks/useRecordingTimer';
 import { setCooldown } from '../services/CooldownService';
 import { createSubmission } from '../services/V2SubmissionService';
+import { uploadSubmissionVideo, UploadProgress } from '../services/VideoUploadService';
 import { GameLength, MAX_RECORDING_SECONDS } from '../types/v2-core-loop';
 import auth from '@react-native-firebase/auth';
 
@@ -43,6 +44,7 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
   const [showPrompt, setShowPrompt] = useState(false);
   const [finalDuration, setFinalDuration] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Callback for when the 15-second timer runs out
   const onTimerEnd = useCallback(() => {
@@ -92,6 +94,27 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
 
   // --- Prompt Action Handlers ---
 
+  import { uploadSubmissionVideo, UploadProgress } from '../services/UploadService';
+
+// ... imports
+
+export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
+  videoFilePath,
+  gameLength,
+  challengeId,
+  onStartRecording,
+  onStopRecording,
+  onVideoSent,
+  onVideoDeleted,
+}) => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [finalDuration, setFinalDuration] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  // ... existing code ...
+
   /**
    * Handle the "SEND" action.
    * Uploads the video and creates a submission for judging.
@@ -103,13 +126,19 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
     }
 
     setIsUploading(true);
+    setUploadProgress(0);
 
     try {
-      // TODO: Upload video to Firebase Storage and get the public URL
-      // For now, using the local path as a placeholder
-      const videoURL = videoFilePath; // Replace with actual upload logic
+      // 1. Upload video to Firebase Storage
+      const videoURL = await uploadSubmissionVideo(
+        videoFilePath, 
+        challengeId,
+        (progress: UploadProgress) => {
+          setUploadProgress(progress.progress);
+        }
+      );
 
-      // Create the submission
+      // 2. Create the submission with the real URL
       await createSubmission({
         challengeId,
         gameLength,
@@ -128,8 +157,21 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
       alert(error.message || 'Failed to send submission');
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
     }
   }, [videoFilePath, challengeId, gameLength, finalDuration, resetTimer, onVideoSent]);
+
+  // ... existing code ...
+
+              <TouchableOpacity 
+                style={[styles.sendButton, isUploading && styles.buttonDisabled]} 
+                onPress={handleSend}
+                disabled={isUploading}
+              >
+                <Text style={styles.sendText}>
+                  {isUploading ? `SENDING ${Math.round(uploadProgress * 100)}%` : 'SEND'}
+                </Text>
+              </TouchableOpacity>
 
   /**
    * Handle the "DELETE" action.
@@ -201,6 +243,14 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
             <Text style={styles.promptMessage}>
               This is your one chance. You recorded a {finalDuration}s clip.
             </Text>
+            
+            {/* Progress Bar */}
+            {isUploading && (
+              <View style={styles.progressContainer}>
+                <View style={[styles.progressBar, { width: `${uploadProgress * 100}%` }]} />
+                <Text style={styles.progressText}>{Math.round(uploadProgress * 100)}%</Text>
+              </View>
+            )}
             
             <View style={styles.promptActions}>
               <TouchableOpacity 
@@ -312,6 +362,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
     marginBottom: 25,
+  },
+  progressContainer: {
+    width: '100%',
+    height: 20,
+    backgroundColor: '#eee',
+    borderRadius: 10,
+    marginBottom: 20,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#007aff',
+  },
+  progressText: {
+    position: 'absolute',
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 12,
+    lineHeight: 20,
+    color: '#000',
+    fontWeight: 'bold',
   },
   promptActions: {
     flexDirection: 'row',

@@ -19,6 +19,7 @@
     "@react-native-firebase/app": "^23.5.0",
     "@react-native-firebase/app-check": "^23.5.0",
     "@react-native-firebase/firestore": "^23.5.0",
+    "@react-native-firebase/storage": "^23.5.0",
     "@react-native-google-signin/google-signin": "^16.0.0",
     "@reactvision/react-viro": "^2.44.2",
     "@rnmapbox/maps": "^10.1.0",
