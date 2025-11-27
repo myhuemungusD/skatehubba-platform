@@ -83,11 +83,11 @@ declare const resetPasswordSchema: z.ZodObject<{
     token: z.ZodString;
     password: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    token: string;
     password: string;
+    token: string;
 }, {
-    token: string;
     password: string;
+    token: string;
 }>;
 type RegisterInput = z.infer<typeof registerSchema>;
 type LoginInput = z.infer<typeof loginSchema>;
