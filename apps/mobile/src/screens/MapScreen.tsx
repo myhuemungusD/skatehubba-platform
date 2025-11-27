@@ -115,7 +115,7 @@ export default function MapScreen() {
               <Ionicons name="location" size={20} color="white" />
             </View>
 
-            <Callout tooltip onPress={() => router.push(`/spot/${feature.id}`)}>
+            <Callout tooltip onPress={() => router.push(`/spot/${feature.id}` as any)}>
               <View style={styles.calloutBubble}>
                 <Text style={styles.calloutTitle}>
                   {feature.properties.name}

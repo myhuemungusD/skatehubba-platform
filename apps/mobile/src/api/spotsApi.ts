@@ -1,5 +1,5 @@
 import type { Spot } from "@skatehubba/types";
-import { getClient } from "../../lib/client";
+import { getClient } from "../lib/client";
 
 // Define the required interface for fetching a list of spots
 export interface SpotListParams {

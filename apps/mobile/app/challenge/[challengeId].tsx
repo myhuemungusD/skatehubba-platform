@@ -18,7 +18,7 @@ export default function ChallengeRoute() {
     // Remember the fix I mentioned earlier: Pass the params!
     navigate: (screen: string, navParams?: any) => {
       router.push({
-        pathname: screen.startsWith('/') ? screen : `/${screen.toLowerCase()}`,
+        pathname: (screen.startsWith('/') ? screen : `/${screen.toLowerCase()}`) as any,
         params: navParams
       });
     },

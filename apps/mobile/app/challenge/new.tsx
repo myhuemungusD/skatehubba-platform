@@ -107,7 +107,7 @@ export default function NewChallengeScreen() {
       }
 
       setUploading(false);
-      router.replace("/(tabs)/feed"); // Go back to feed after upload
+      router.replace("/(tabs)/feed" as any); // Go back to feed after upload
     } catch (error) {
       console.error("Upload failed", error);
       setUploading(false);
