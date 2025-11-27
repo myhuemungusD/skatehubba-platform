@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-native",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "outDir": "dist",
     "rootDir": "src"
