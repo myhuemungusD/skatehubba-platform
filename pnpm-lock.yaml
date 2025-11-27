@@ -165,6 +165,9 @@ importers:
       '@rnmapbox/maps':
         specifier: ^10.1.0
         version: 10.2.7(expo@52.0.47(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      '@skatehubba/api-sdk':
+        specifier: workspace:*
+        version: link:../../packages/api-sdk
       '@skatehubba/firebase':
         specifier: workspace:*
         version: link:../../packages/firebase
