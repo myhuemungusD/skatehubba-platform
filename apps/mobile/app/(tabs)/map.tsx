@@ -123,9 +123,8 @@ export default function MapScreen() {
       </Reanimated.View>
       <ImageBackground
         source={require("../../assets/bg/hubbagraffwall.webp")}
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill, { opacity: 0.15 }]}
         blurRadius={3}
-        opacity={0.15}
       />
     </View>
   );

@@ -8,15 +8,14 @@ import Reanimated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { Camera, useCameraDevices } from "react-native-vision-camera";
+import { Camera, useCameraDevice } from "react-native-vision-camera";
 import { db, storage } from "@/lib/firebase";
 import { SKATE } from "@/theme";
 
 export default function NewChallenge() {
   const [isRecording, setIsRecording] = useState(false);
   const [countdown, setCountdown] = useState(15);
-  const devices = useCameraDevices();
-  const device = devices.back; // TODO: Fix for Vision Camera V3/V4
+  const device = useCameraDevice('back');
   const camera = useRef<Camera>(null);
   const progress = useSharedValue(0);
   const mutation = useMutation({
@@ -36,7 +35,7 @@ export default function NewChallenge() {
   const startRecording = async () => {
     if (camera.current) {
       setIsRecording(true);
-      Haptics.impactAsync("heavy");
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       const interval = setInterval(() => {
         setCountdown((c) => {
           if (c <= 1) {
@@ -48,8 +47,10 @@ export default function NewChallenge() {
         });
       }, 1000);
       camera.current.startRecording({
-        maxDuration: 15.0,
-        maxFileSize: 8 * 1024 * 1024,
+        onRecordingFinished: (video) => {
+            console.log(video);
+        },
+        onRecordingError: (error) => console.error(error),
         videoBitRate: 5000000,
       });
       progress.value = withTiming(1, { duration: 15000 });

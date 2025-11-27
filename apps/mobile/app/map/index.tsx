@@ -28,7 +28,9 @@ export default function MapScreen() {
             key={spot.id}
             id={spot.id}
             coordinate={[spot.geo.lng, spot.geo.lat]}
-          />
+          >
+            <View style={{ width: 20, height: 20, backgroundColor: 'red', borderRadius: 10 }} />
+          </MapboxGL.PointAnnotation>
         ))}
       </MapboxGL.MapView>
     </View>

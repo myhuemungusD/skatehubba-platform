@@ -25,8 +25,8 @@
     "@react-native-google-signin/google-signin": "^16.0.0",
     "@reactvision/react-viro": "^2.44.2",
     "@rnmapbox/maps": "^10.1.0",
-    "@skatehubba/firebase": "workspace:*",
     "@skatehubba/api-sdk": "workspace:*",
+    "@skatehubba/firebase": "workspace:*",
     "@skatehubba/gameundici": "workspace:*",
     "@skatehubba/types": "workspace:*",
     "@skatehubba/ui": "workspace:*",
@@ -61,6 +61,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~19.1.10",
+    "babel-plugin-module-resolver": "^5.0.2",
     "detox": "^20.0.0",
     "jest": "^29.7.0",
     "jest-expo": "~54.0.13",
