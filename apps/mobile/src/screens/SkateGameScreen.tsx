@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 // --- 1. IMPORT THE SCHEMA ---
-import type { GameSession } from "../types/schema";
+import type { GameSession } from "@/types/schema";
 
 const MAX_LETTERS = ["S", "K", "A", "T", "E"];
 

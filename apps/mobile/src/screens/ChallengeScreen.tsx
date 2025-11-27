@@ -16,9 +16,9 @@ import {
   useMicrophonePermission,
   type VideoFile,
 } from "react-native-vision-camera";
-import { GameLengthSelector } from "../components/GameLengthSelector";
-import { SkateCameraUI } from "../components/SkateCameraUI";
-import type { GameLength } from "../types/v2-core-loop";
+import { GameLengthSelector } from "@/components/GameLengthSelector";
+import { SkateCameraUI } from "@/components/SkateCameraUI";
+import type { GameLength } from "@/types/v2-core-loop";
 
 // Assuming standard navigation props
 export const ChallengeScreen = ({ route, navigation }: any) => {

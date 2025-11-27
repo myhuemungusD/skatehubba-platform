@@ -49,3 +49,26 @@ export function checkWinner(state: GameState): "A" | "B" | "draw" | null {
   if (state.playerB.length === 5) return "A";
   return null;
 }
+
+export type GameAction =
+  | { type: "LAND_TRICK"; player: "A" | "B" }
+  | { type: "MISS_TRICK"; player: "A" | "B" }
+  | { type: "RESET" };
+
+export function reduceGame(state: GameState, action: GameAction): GameState {
+  switch (action.type) {
+    case "LAND_TRICK":
+      // Logic: If you land, you keep turn (if setting) or survive (if copying)
+      // For this basic engine, we'll just switch turn for now
+      return switchTurn(state);
+    case "MISS_TRICK":
+      // Logic: If you miss, you might get a letter
+      // We'll add a letter to the player who missed
+      const stateWithLetter = addLetter(state, action.player);
+      return switchTurn(stateWithLetter);
+    case "RESET":
+      return initializeGame();
+    default:
+      return state;
+  }
+}

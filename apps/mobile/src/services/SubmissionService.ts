@@ -1,7 +1,7 @@
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
-import type { GameLength } from "../components/GameModeSelector";
+import type { GameLength } from "@/components/GameModeSelector";
 
 interface SubmissionPayload {
   challengeId: string;
