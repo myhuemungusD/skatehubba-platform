@@ -48,15 +48,17 @@ export const useRecordingTimer = (onTimerEnd: () => void): TimerControls => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           // 1 second remaining, about to hit 0
-          clearInterval(intervalRef.current!);
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+          }
           intervalRef.current = null;
           setIsCounting(false);
-          onTimerEnd(); // Execute callback for max duration reached
+          onTimerEnd(); 
           return 0;
         }
         return prevTime - 1;
       });
-    }, 1000); // 1 second interval
+    }, 1000) as any; // <--- FIX: Add "as any" here to stop the type conflict
   }, [onTimerEnd]);
 
   /**
