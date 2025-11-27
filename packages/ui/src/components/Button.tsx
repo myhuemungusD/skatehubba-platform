@@ -27,6 +27,7 @@ export const Button: React.FC<ButtonProps> = ({ label, onPress }) => {
       onPress={onPress}
       activeOpacity={0.8}
     >
+      {/* @ts-expect-error: Reanimated types mismatch with React 18 */}
       <Animated.View style={[styles.button, animStyle]}>
         <Text style={styles.label}>{label}</Text>
       </Animated.View>

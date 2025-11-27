@@ -21,9 +21,12 @@ export const ARPreview: React.FC<ARPreviewProps> = ({ trickId }) => {
   const [arActive, setArActive] = useState(false);
 
   const InitialScene = () => (
+    // @ts-expect-error: Viro types mismatch with React 18
     <ViroARScene>
+      {/* @ts-expect-error: Viro types mismatch with React 18 */}
       <ViroAmbientLight color="#ffffff" />
       {/* 3D Path Visualization */}
+      {/* @ts-expect-error: Viro types mismatch with React 18 */}
       <Viro3DObject
         source={{ uri: trick?.arModelUrl }} // e.g., glb of the ollie path from assets
         position={[0, 0, -1]}
@@ -43,6 +46,7 @@ export const ARPreview: React.FC<ARPreviewProps> = ({ trickId }) => {
     <View style={styles.container}>
       <Text style={styles.title}>{trick?.name} AR Preview</Text>
       {arActive ? (
+        // @ts-expect-error: Viro types mismatch with React 18
         <ViroARSceneNavigator
           autofocus={true}
           initialScene={{ scene: InitialScene }}
