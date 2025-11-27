@@ -2,8 +2,13 @@ import express from 'express';
 import { db, eq, and, sql } from '../db';
 import { skateGames, users } from '@skatehubba/db';
 import { v4 as uuidv4 } from 'uuid';
+import { redis, saveGameToRedis, getGameFromRedis, deleteGameFromRedis } from '../redis';
 
 const router = express.Router();
+
+// Prepared Statements for "Speed Wobble" Tuning
+const getGameByIdStmt = db.select().from(skateGames).where(eq(skateGames.id, sql.placeholder('id'))).prepare('get_game_by_id');
+const getUserByHandleStmt = db.select().from(users).where(eq(users.displayName, sql.placeholder('handle'))).prepare('get_user_by_handle');
 
 // Create a new SKATE game
 router.post('/', async (req, res) => {
@@ -24,7 +29,7 @@ router.post('/', async (req, res) => {
     if (opponentHandle) {
       // Find opponent by handle (assuming handle is stored in users table, maybe displayName or a new field)
       // The schema has displayName, let's use that or email for now
-      const [opponent] = await db.select().from(users).where(eq(users.displayName, opponentHandle));
+      const [opponent] = await getUserByHandleStmt.execute({ handle: opponentHandle });
       if (opponent) {
         opponentId = opponent.id;
       }
@@ -45,6 +50,9 @@ router.post('/', async (req, res) => {
       }],
     }).returning();
 
+    // ⚡️ Cache the new game in Redis for the "Hot" loop
+    await saveGameToRedis(game.id, game);
+
     res.status(201).json(game);
   } catch (error) {
     console.error('Error creating game:', error);
@@ -55,10 +63,21 @@ router.post('/', async (req, res) => {
 // Get game by ID
 router.get('/:id', async (req, res) => {
   try {
-    const [game] = await db.select().from(skateGames).where(eq(skateGames.id, req.params.id));
+    // ⚡️ Try Redis first (Hot Path)
+    const cachedGame = await getGameFromRedis(req.params.id);
+    if (cachedGame) {
+      return res.json(cachedGame);
+    }
+
+    // Fallback to Postgres (Cold Path)
+    const [game] = await getGameByIdStmt.execute({ id: req.params.id });
     if (!game) {
       return res.status(404).json({ error: 'Game not found' });
     }
+    
+    // Cache it for next time
+    await saveGameToRedis(game.id, game);
+    
     res.json(game);
   } catch (error) {
     console.error('Error fetching game:', error);
@@ -72,7 +91,13 @@ router.post('/:id/join', async (req, res) => {
     const userId = req.headers['x-user-id'] as string;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-    const [game] = await db.select().from(skateGames).where(eq(skateGames.id, req.params.id));
+    // Try Redis first
+    let game = await getGameFromRedis(req.params.id);
+    if (!game) {
+      const [dbGame] = await getGameByIdStmt.execute({ id: req.params.id });
+      game = dbGame;
+    }
+    
     if (!game) return res.status(404).json({ error: 'Game not found' });
 
     if (game.opponentId && game.opponentId !== userId) {
@@ -90,6 +115,9 @@ router.post('/:id/join', async (req, res) => {
       .where(eq(skateGames.id, req.params.id))
       .returning();
 
+    // Update Redis
+    await saveGameToRedis(req.params.id, updatedGame[0]);
+
     res.json(updatedGame[0]);
   } catch (error) {
     console.error('Error joining game:', error);
@@ -103,7 +131,13 @@ router.post('/:id/turn', async (req, res) => {
     const userId = req.headers['x-user-id'] as string;
     const { action, videoUrl, judgment } = req.body; // action: 'attempt', 'judge', 'set'
     
-    const [game] = await db.select().from(skateGames).where(eq(skateGames.id, req.params.id));
+    // ⚡️ Get from Redis (Hot Path)
+    let game = await getGameFromRedis(req.params.id);
+    if (!game) {
+      const [dbGame] = await getGameByIdStmt.execute({ id: req.params.id });
+      game = dbGame;
+    }
+    
     if (!game) return res.status(404).json({ error: 'Game not found' });
 
     // Basic state machine logic
@@ -223,12 +257,23 @@ router.post('/:id/turn', async (req, res) => {
       };
     }
 
-    const [updated] = await db.update(skateGames)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(skateGames.id, req.params.id))
-      .returning();
+    // Apply updates to game object
+    Object.assign(game, updates);
+    game.updatedAt = new Date();
 
-    res.json(updated);
+    // ⚡️ Save to Redis (Hot Path)
+    await saveGameToRedis(game.id, game);
+
+    // If Game Over, Flush to Postgres (Cold Path)
+    if (updates.status === 'completed') {
+      await db.update(skateGames)
+        .set(game)
+        .where(eq(skateGames.id, game.id));
+      
+      await deleteGameFromRedis(game.id);
+    }
+
+    res.json(game);
   } catch (error) {
     console.error('Error processing turn:', error);
     res.status(500).json({ error: 'Failed to process turn' });

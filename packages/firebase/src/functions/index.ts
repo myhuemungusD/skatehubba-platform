@@ -1,17 +1,42 @@
 import { onCall, onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import * as functions from 'firebase-functions';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as admin from 'firebase-admin';
 import * as dayjs from 'dayjs';
+import { Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { users } from '@skatehubba/db';
 
 admin.initializeApp();
 const db = admin.firestore();
 const storage = admin.storage();
 
 const genAI = new GoogleGenerativeAI(defineSecret('GEMINI_KEY').value!);
+const databaseUrl = defineSecret('DATABASE_URL');
 
 const systemPrompt = `You are Heshur, an old-soul skate guru. Gritty but kind. Offer specific skate advice, spot tips, trick progressions. No toxicity. Always steer back to skating.`;
+
+// ⚡️ TRIGGER: Runs automatically when a user signs up in the App
+export const onUserCreate = functions.auth.user().onCreate(async (user) => {
+  const client = new Pool({ connectionString: databaseUrl.value() });
+  const sqlDb = drizzle(client);
+  
+  try {
+    await sqlDb.insert(users).values({
+      id: user.uid, // KEEP THIS SAME ID! Critical for joins later.
+      email: user.email || `${user.uid}@placeholder.com`,
+      displayName: user.displayName || `skater_${user.uid.slice(0, 5)}`,
+      createdAt: new Date(),
+      stance: "regular", // Default value
+    });
+    console.log(`✅ Synced user ${user.uid} to Postgres`);
+  } catch (error) {
+    console.error("❌ Failed to sync user:", error);
+    // In a real pro app, you'd send this to Sentry/Datadog
+  }
+});
 
 export const heshurChat = onCall(async (request) => {
   if (!request.auth) throw new Error('Unauthenticated');
