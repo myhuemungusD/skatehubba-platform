@@ -6,7 +6,9 @@
  * trying the same challenge again.
  */
 
-import firestore from "@react-native-firebase/firestore";
+import firestore, {
+  FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
 import { COOLDOWN_HOURS } from "../types/v2-core-loop";
 
 /**
@@ -59,7 +61,7 @@ export const isUserOnCooldown = async (userId: string): Promise<boolean> => {
       return false;
     }
 
-    const cooldownUntil = userData.cooldownUntil as firestore.Timestamp;
+    const cooldownUntil = userData.cooldownUntil as FirebaseFirestoreTypes.Timestamp;
     const now = firestore.Timestamp.now();
 
     return cooldownUntil.toMillis() > now.toMillis();
@@ -89,7 +91,7 @@ export const getCooldownRemaining = async (userId: string): Promise<number> => {
       return 0;
     }
 
-    const cooldownUntil = userData.cooldownUntil as firestore.Timestamp;
+    const cooldownUntil = userData.cooldownUntil as FirebaseFirestoreTypes.Timestamp;
     const now = firestore.Timestamp.now();
     const remaining = cooldownUntil.toMillis() - now.toMillis();
 

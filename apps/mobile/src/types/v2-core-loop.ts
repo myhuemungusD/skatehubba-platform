@@ -11,7 +11,11 @@ import type { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 export type GameLength = "SKATE" | "SK8";
 
 // --- Submission Status ---
-export type SubmissionStatus = "PENDING" | "RESOLVED" | "DISPUTE";
+export type SubmissionStatus =
+  | "PENDING"
+  | "RESOLVED"
+  | "DISPUTE"
+  | "UNDER_REVIEW";
 
 // --- Vote Types ---
 export type VoteType = "LANDED" | "LETTER" | "DISPUTE";

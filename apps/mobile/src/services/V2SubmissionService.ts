@@ -3,7 +3,17 @@
  * Optimized for Scale and UX Flow
  */
 
-// ... imports remain the same
+import auth from "@react-native-firebase/auth";
+import firestore, {
+  FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
+import { VoteType } from "../types/JudgeTypes";
+import {
+  RESOLUTION_THRESHOLD,
+  ResolvedOutcome,
+  Submission,
+  SubmissionStatus,
+} from "../types/v2-core-loop";
 
 // ADDED: A limit for disputes so clips don't live forever
 const DISPUTE_THRESHOLD = 5;
