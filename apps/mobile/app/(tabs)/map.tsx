@@ -1,13 +1,7 @@
 import MapboxGL from "@rnmapbox/maps";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Location from "expo-location";
-import {
-  addDoc,
-  collection,
-  getDocs,
-  query,
-  serverTimestamp,
-} from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import {
   ImageBackground,
@@ -64,8 +58,7 @@ export default function MapScreen() {
   const { data: spots = [] } = useQuery({
     queryKey: ["spots"],
     queryFn: async () => {
-      const q = query(collection(db, "spots"));
-      const snap = await getDocs(q);
+      const snap = await db.collection("spots").get();
       return snap.docs.map(
         (doc) => ({ id: doc.id, ...doc.data(), geo: doc.data().geo }) as any,
       );
@@ -79,10 +72,10 @@ export default function MapScreen() {
       if (!spot) throw new Error("Spot not found");
       const dist = haversine(userLocation, spot.geo);
       if (dist > 60) throw new Error("Too far (60m geo-fence)");
-      await addDoc(collection(db, "checkins"), {
+      await db.collection("checkins").add({
         uid: user?.uid,
         spotId,
-        ts: serverTimestamp(),
+        ts: firestore.FieldValue.serverTimestamp(),
         proofVideoUrl: null,
       });
     },

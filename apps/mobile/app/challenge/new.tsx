@@ -2,10 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { ResizeMode, Video } from "expo-av"; // ✅ FIXED: Added ResizeMode
 import { CameraView, useCameraPermissions } from "expo-camera"; // ✅ FIXED: New Architecture Camera
 import { useRouter } from "expo-router";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 
 // Firebase Imports
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -66,7 +65,9 @@ export default function NewChallengeScreen() {
         const video = await cameraRef.current.recordAsync({
           maxDuration: RECORD_DURATION,
         });
-        setVideoUri(video.uri);
+        if (video) {
+            setVideoUri(video.uri);
+        }
         setIsRecording(false);
       } catch (e) {
         console.error("Recording failed", e);
@@ -89,22 +90,18 @@ export default function NewChallengeScreen() {
     setUploading(true);
 
     try {
-      // A. Create Blob from URI
-      const response = await fetch(videoUri);
-      const blob = await response.blob();
-
       // B. Upload to Storage
       const filename = `challenges/${user.uid}/${Date.now()}.mp4`;
-      const storageRef = ref(storage, filename);
-      await uploadBytes(storageRef, blob);
-      const downloadURL = await getDownloadURL(storageRef);
+      const storageRef = storage.ref(filename);
+      await storageRef.putFile(videoUri);
+      const downloadURL = await storageRef.getDownloadURL();
 
       // C. Save Metadata to Firestore (if db is set up)
       if (db) {
-        await addDoc(collection(db, "challenges"), {
+        await db.collection("challenges").add({
           videoUrl: downloadURL,
           userId: user.uid,
-          createdAt: serverTimestamp(),
+          createdAt: firestore.FieldValue.serverTimestamp(),
           status: "pending_review",
         });
       }

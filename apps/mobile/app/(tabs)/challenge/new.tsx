@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
+import firestore from "@react-native-firebase/firestore";
 import { useRef, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Reanimated, {
@@ -17,19 +16,19 @@ export default function NewChallenge() {
   const [isRecording, setIsRecording] = useState(false);
   const [countdown, setCountdown] = useState(15);
   const devices = useCameraDevices();
-  const device = devices.back;
+  const device = devices.back; // TODO: Fix for Vision Camera V3/V4
   const camera = useRef<Camera>(null);
   const progress = useSharedValue(0);
   const mutation = useMutation({
-    mutationFn: async (clipBlob: Blob) => {
-      const refPath = ref(storage, `clips/${Date.now()}.mp4`);
-      await uploadBytes(refPath, clipBlob);
-      await addDoc(collection(db, "challenges"), {
+    mutationFn: async (clip: any) => {
+      const ref = storage.ref(`clips/${Date.now()}.mp4`);
+      await ref.putFile(clip.path);
+      await db.collection("challenges").add({
         createdBy: "uid",
         status: "pending",
         rules: { oneTake: true, durationSec: 15 },
-        clipA: refPath.fullPath,
-        ts: serverTimestamp(),
+        clipA: ref.fullPath,
+        ts: firestore.FieldValue.serverTimestamp(),
       });
     },
   });
