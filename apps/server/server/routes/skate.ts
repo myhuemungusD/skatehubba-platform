@@ -2,7 +2,7 @@ import express from 'express';
 import { db, eq, and, sql } from '../db';
 import { skateGames, users } from '@skatehubba/db';
 import { v4 as uuidv4 } from 'uuid';
-import { redis, saveGameToRedis, getGameFromRedis, deleteGameFromRedis } from '../redis';
+import { redis, saveGameToRedis, getGameFromRedis, deleteGameFromRedis, acquireGameLock } from '../redis';
 
 const router = express.Router();
 
@@ -127,10 +127,17 @@ router.post('/:id/join', async (req, res) => {
 
 // Submit turn (attempt match, judge, etc.)
 router.post('/:id/turn', async (req, res) => {
+  let releaseLock: (() => Promise<void>) | null = null;
   try {
     const userId = req.headers['x-user-id'] as string;
     const { action, videoUrl, judgment } = req.body; // action: 'attempt', 'judge', 'set'
     
+    // 🔒 Acquire Lock to prevent race conditions
+    releaseLock = await acquireGameLock(req.params.id);
+    if (!releaseLock) {
+      return res.status(429).json({ error: 'Game is busy, please retry' });
+    }
+
     // ⚡️ Get from Redis (Hot Path)
     let game = await getGameFromRedis(req.params.id);
     if (!game) {
@@ -275,8 +282,10 @@ router.post('/:id/turn', async (req, res) => {
 
     res.json(game);
   } catch (error) {
-    console.error('Error processing turn:', error);
-    res.status(500).json({ error: 'Failed to process turn' });
+    console.error('Error submitting turn:', error);
+    res.status(500).json({ error: 'Failed to submit turn' });
+  } finally {
+    if (releaseLock) await releaseLock();
   }
 });
 

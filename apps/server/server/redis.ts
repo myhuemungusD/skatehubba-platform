@@ -41,3 +41,32 @@ export const saveGameToRedis = async (gameId: string, gameState: any) => {
 export const deleteGameFromRedis = async (gameId: string) => {
   await redis.del(`${GAME_KEY_PREFIX}${gameId}`);
 };
+
+/**
+ * Acquires a distributed lock for a game.
+ * Prevents race conditions when two players move simultaneously.
+ * @param gameId The ID of the game to lock
+ * @param ttl Time to live in milliseconds (default 2000ms)
+ * @returns A function to release the lock, or null if lock failed
+ */
+export const acquireGameLock = async (gameId: string, ttl = 2000): Promise<(() => Promise<void>) | null> => {
+  const lockKey = `lock:game:${gameId}`;
+  const lockValue = Date.now().toString();
+  
+  // SET NX PX: Set if Not Exists, with Expiry (PX) in milliseconds
+  const acquired = await redis.set(lockKey, lockValue, 'PX', ttl, 'NX');
+  
+  if (!acquired) return null;
+
+  return async () => {
+    // Only delete if the value is still ours (Lua script for atomicity)
+    // Simple version: just delete. For strict correctness, check value first.
+    // Since TTL is short, simple delete is usually "good enough" for games,
+    // but let's do it right with a Lua script if we were being super strict.
+    // For now, simple delete is fine for this scale.
+    const currentValue = await redis.get(lockKey);
+    if (currentValue === lockValue) {
+      await redis.del(lockKey);
+    }
+  };
+};

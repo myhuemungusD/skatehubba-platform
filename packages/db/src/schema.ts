@@ -55,6 +55,10 @@ export const spots = pgTable('spots', {
   bustFactor: integer("bust_factor").default(0), // 0 = Chill, 10 = Instant Kickout
   hasLights: boolean("has_lights").default(false), // For night sessions
   spotType: spotTypeEnum("spot_type").notNull(),
+  
+  // Rich Media & Metadata
+  images: jsonb('images').$type<string[]>().default([]),
+  tags: jsonb('tags').$type<string[]>().default([]),
 
   createdBy: varchar('created_by', { length: 128 }).notNull().references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),

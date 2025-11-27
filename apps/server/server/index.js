@@ -4,6 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import { v4 as uuidv4 } from 'uuid';
 import skateRoutes from './routes/skate.ts';
+import spotRoutes from './routes/spots.ts';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -68,6 +69,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Mount SKATE routes
 app.use('/api/skate/games', skateRoutes);
+app.use('/api/spots', spotRoutes);
 
 // Request ID middleware for tracing & correlation
 app.use((req, res, next) => {
