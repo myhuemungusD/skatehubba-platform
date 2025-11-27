@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@skatehubba/db": "workspace:*",
     "@skatehubba/types": "workspace:*",
     "dayjs": "^1.11.19",
     "firebase": "^10.8.0",

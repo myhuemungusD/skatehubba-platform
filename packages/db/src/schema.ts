@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, varchar, uuid, index, doublePrecision, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, varchar, uuid, index, doublePrecision, pgEnum, geometry } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
 
@@ -21,6 +21,7 @@ export const users = pgTable('users', {
   lastName: varchar("last_name", { length: 256 }),
   profileImageUrl: varchar("profile_image_url", { length: 1024 }),
   city: text('city'),
+  stance: text('stance').default('regular'),
 
   // Onboarding & Stats remain the same
   onboardingCompleted: boolean("onboarding_completed").default(false),
@@ -40,18 +41,17 @@ export const users = pgTable('users', {
 export const spots = pgTable('spots', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
-  // New Columns: Dedicated Lat/Lng for faster indexing and queries
-  latitude: doublePrecision('latitude').notNull(),
-  longitude: doublePrecision('longitude').notNull(),
+  // ⚡️ This is the Pro move. efficient geospatial indexing.
+  location: geometry("location", { type: "point", mode: "xy", srid: 4326 }), 
   createdBy: varchar('created_by', { length: 128 }).notNull().references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (table) => {
   return {
     // 1. Crucial Index for User Lookups
-    createdBy: index('spots_created_by_idx').on(table.createdBy),
+    createdByIdx: index('spots_created_by_idx').on(table.createdBy),
     
     // 2. Optimization for Range Queries (e.g., finding spots in a square bounding box)
-    latLngIdx: index('spots_lat_lng_idx').on(table.latitude, table.longitude),
+    locationIdx: index('spots_location_idx').on(table.location).using('gist'),
   }
 });
 
