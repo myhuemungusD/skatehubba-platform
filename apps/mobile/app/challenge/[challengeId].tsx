@@ -2,13 +2,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 // Fix: Adjust path to reach src/screens
 import { ChallengeScreen } from "@/screens/ChallengeScreen";
 
-// Fix: Define the expected params to prevent TypeScript errors
+// Fix: Expo Router params MUST be strings. No undefined allowed in the definition.
 type ChallengeParams = {
-  challengeId?: string;
-  [key: string]: string | string[] | undefined;
+  challengeId: string;
 };
 
 export default function ChallengeRoute() {
+  // Fix: Pass the strict type to the hook
   const params = useLocalSearchParams<ChallengeParams>();
   const router = useRouter();
 
