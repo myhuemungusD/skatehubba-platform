@@ -38,6 +38,7 @@ export default function ProfileScreen() {
       // 1. Check the 'isJudge' flag on the user profile
       const userDoc = await firestore().collection("users").doc(uid).get();
 
+      // @ts-expect-error - exists is a property in RNFirebase but TS might think it's a function from web SDK
       if (userDoc.exists && userDoc.data()?.isJudge === true) {
         // Authorized: Enter the Chamber
         // @ts-expect-error - Navigation types not fully defined in this snippet

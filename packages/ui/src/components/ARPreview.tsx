@@ -4,11 +4,12 @@ import {
   ViroARScene,
   ViroARSceneNavigator,
 } from "@reactvision/react-viro";
-import { Button, SKATE } from "@skatehubba/ui";
 import * as Haptics from "expo-haptics";
 import type React from "react";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { SKATE } from "../theme";
+import { Button } from "./Button";
 
 interface ARPreviewProps {
   trickId: string;
