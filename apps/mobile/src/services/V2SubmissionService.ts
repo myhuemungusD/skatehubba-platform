@@ -9,6 +9,7 @@ import firestore, {
 } from "@react-native-firebase/firestore";
 import { VoteType } from "../types/JudgeTypes";
 import {
+  CreateSubmissionPayload,
   RESOLUTION_THRESHOLD,
   ResolvedOutcome,
   Submission,
@@ -120,4 +121,31 @@ export const getPendingSubmissions = async (
     console.error("Error fetching pending submissions:", error);
     throw new Error("Failed to fetch pending submissions");
   }
+};
+
+/**
+ * Create a new submission
+ */
+export const createSubmission = async (
+  payload: CreateSubmissionPayload,
+): Promise<void> => {
+  const userId = auth().currentUser?.uid;
+  if (!userId) throw new Error("User must be authenticated");
+
+  await firestore().collection("submissions").add({
+    userId,
+    challengeId: payload.challengeId,
+    gameLength: payload.gameLength,
+    videoURL: payload.videoURL,
+    duration: payload.duration,
+    status: "PENDING",
+    submittedAt: firestore.FieldValue.serverTimestamp(),
+    judging: {
+      landedVotes: 0,
+      letterVotes: 0,
+      disputeVotes: 0,
+      judgesVoted: [],
+    },
+    resolvedOutcome: null,
+  });
 };

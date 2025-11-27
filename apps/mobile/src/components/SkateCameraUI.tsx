@@ -12,6 +12,7 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRecordingTimer } from '../hooks/useRecordingTimer';
 import { setCooldown } from '../services/CooldownService';
 import { createSubmission } from '../services/V2SubmissionService';
+import { UploadProgress, uploadSubmissionVideo } from '../services/UploadService';
 import { type GameLength, MAX_RECORDING_SECONDS } from '../types/v2-core-loop';
 
 interface SkateCameraUIProps {
@@ -41,10 +42,10 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
   onVideoDeleted,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [_showPrompt, setShowPrompt] = useState(false);
-  const [_finalDuration, setFinalDuration] = useState(0);
-  const [_isUploading, _setIsUploading] = useState(false);
-  const [_uploadProgress, _setUploadProgress] = useState(0);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [finalDuration, setFinalDuration] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Callback for when the 15-second timer runs out
   const onTimerEnd = useCallback(() => {
@@ -94,34 +95,13 @@ export const SkateCameraUI: React.FC<SkateCameraUIProps> = ({
 
   // --- Prompt Action Handlers ---
 
-  import { uploadSubmissionVideo, UploadProgress } from '../services/UploadService';
-
-// ... imports
-
-export const _SkateCameraUI: React.FC<SkateCameraUIProps> = ({
-  videoFilePath,
-  gameLength,
-  challengeId,
-  onStartRecording,
-  onStopRecording,
-  onVideoSent,
-  onVideoDeleted,
-}) => {
-  const [isRecording, _setIsRecording] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(false);
-  const [finalDuration, _setFinalDuration] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-
-  // ... existing code ...
-
   /**
    * Handle the "SEND" action.
    * Uploads the video and creates a submission for judging.
    */
   const handleSend = useCallback(async () => {
     if (!videoFilePath) {
-      console.error('No video file path available');
+      console.error("No video file path available");
       return;
     }
 
@@ -131,11 +111,11 @@ export const _SkateCameraUI: React.FC<SkateCameraUIProps> = ({
     try {
       // 1. Upload video to Firebase Storage
       const videoURL = await uploadSubmissionVideo(
-        videoFilePath, 
+        videoFilePath,
         challengeId,
         (progress: UploadProgress) => {
           setUploadProgress(progress.progress);
-        }
+        },
       );
 
       // 2. Create the submission with the real URL
@@ -146,32 +126,27 @@ export const _SkateCameraUI: React.FC<SkateCameraUIProps> = ({
         duration: finalDuration,
       });
 
-      console.log('Submission created successfully');
+      console.log("Submission created successfully");
       setShowPrompt(false);
       resetTimer();
-      
+
       // Notify parent component
       onVideoSent?.();
     } catch (error: any) {
-      console.error('Error sending submission:', error);
-      alert(error.message || 'Failed to send submission');
+      console.error("Error sending submission:", error);
+      alert(error.message || "Failed to send submission");
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
     }
-  }, [videoFilePath, challengeId, gameLength, finalDuration, onVideoSent]);
-
-  // ... existing code ...
-
-              <TouchableOpacity 
-                style={[styles.sendButton, isUploading && styles.buttonDisabled]} 
-                onPress={handleSend}
-                disabled={isUploading}
-              >
-                <Text style={styles.sendText}>
-                  {isUploading ? `SENDING ${Math.round(uploadProgress * 100)}%` : 'SEND'}
-                </Text>
-              </TouchableOpacity>
+  }, [
+    videoFilePath,
+    challengeId,
+    gameLength,
+    finalDuration,
+    onVideoSent,
+    resetTimer,
+  ]);
 
   /**
    * Handle the "DELETE" action.
@@ -179,27 +154,27 @@ export const _SkateCameraUI: React.FC<SkateCameraUIProps> = ({
    */
   const handleDelete = useCallback(async () => {
     const userId = auth().currentUser?.uid;
-    
+
     if (!userId) {
-      console.error('No authenticated user');
+      console.error("No authenticated user");
       return;
     }
 
     try {
       // Set the cooldown
       await setCooldown(userId, challengeId);
-      
-      console.log('Cooldown set. User cannot attempt again for 24 hours.');
+
+      console.log("Cooldown set. User cannot attempt again for 24 hours.");
       setShowPrompt(false);
       resetTimer();
-      
+
       // Notify parent component
       onVideoDeleted?.();
     } catch (error) {
-      console.error('Error setting cooldown:', error);
-      alert('Failed to set cooldown');
+      console.error("Error setting cooldown:", error);
+      alert("Failed to set cooldown");
     }
-  }, [challengeId, onVideoDeleted]);
+  }, [challengeId, onVideoDeleted, resetTimer]);
 
   return (
     <View style={styles.container}>
