@@ -51,7 +51,6 @@ export default function NewChallenge() {
             console.log(video);
         },
         onRecordingError: (error) => console.error(error),
-        videoBitRate: 5000000,
       });
       progress.value = withTiming(1, { duration: 15000 });
     }

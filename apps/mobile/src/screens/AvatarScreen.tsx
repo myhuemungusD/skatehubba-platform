@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: "40%" // Push buttons down visually
+    paddingTop: "40%", // Push buttons down visually
     zIndex: 10,
   },
   column: {

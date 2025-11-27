@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
@@ -167,7 +167,7 @@ export default function ProfileScreen() {
               end={{ x: 1, y: 0 }}
               style={styles.judgeGradient}
             >
-              <Ionicons
+              <MaterialIcons
                 name="gavel"
                 size={24}
                 color="#FFF"
