@@ -2,14 +2,8 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import type { User } from "firebase/auth";
-import {
-  onAuthStateChanged,
-  signInWithCredential,
-  signOut,
-} from "firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import type { StateCreator } from "zustand";
-import { auth, GoogleAuthProvider } from "../../../lib/firebase";
 import type { GlobalState } from "../types";
 
 const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
@@ -25,12 +19,12 @@ if (WEB_CLIENT_ID) {
 }
 
 export interface AuthSlice {
-  user: User | null;
+  user: FirebaseAuthTypes.User | null;
   loading: boolean;
   error: string | null;
 
   initAuthListener: () => () => void;
-  signInWithGoogle: () => Promise<User | null>;
+  signInWithGoogle: () => Promise<FirebaseAuthTypes.User | null>;
   signOut: () => Promise<void>;
 }
 
@@ -44,7 +38,7 @@ export const createAuthSlice: StateCreator<GlobalState, [], [], AuthSlice> = (
   error: null,
 
   initAuthListener: () => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = auth().onAuthStateChanged((user) => {
       set((state: GlobalState) => ({
         ...state,
         user,
@@ -76,12 +70,12 @@ export const createAuthSlice: StateCreator<GlobalState, [], [], AuthSlice> = (
       }
 
       const { accessToken } = await GoogleSignin.getTokens();
-      const googleCredential = GoogleAuthProvider.credential(
+      const googleCredential = auth.GoogleAuthProvider.credential(
         idToken,
         accessToken,
       );
 
-      const userCredential = await signInWithCredential(auth, googleCredential);
+      const userCredential = await auth().signInWithCredential(googleCredential);
 
       set((state: GlobalState) => ({
         ...state,
@@ -108,13 +102,11 @@ export const createAuthSlice: StateCreator<GlobalState, [], [], AuthSlice> = (
 
   signOut: async () => {
     try {
-      set((state: GlobalState) => ({ ...state, loading: true }));
+      await auth().signOut();
       await GoogleSignin.signOut();
-      await signOut(auth);
-      set((state: GlobalState) => ({ ...state, user: null, loading: false }));
+      set((state: GlobalState) => ({ ...state, user: null, error: null }));
     } catch (error) {
-      console.error("Sign out error:", error);
-      set((state: GlobalState) => ({ ...state, loading: false }));
+      console.error("Sign Out Error:", error);
     }
   },
 });

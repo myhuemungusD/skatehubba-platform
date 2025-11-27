@@ -1,4 +1,4 @@
-import { useAuth } from "../src/store/useStore";
+import { useAuth } from "@/store/useStore";
 
 // Re-export the hook from the new store location for backward compatibility
 export const useAuthStore = useAuth;

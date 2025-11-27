@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useAuthStore } from "../lib/auth";
-import { SKATE } from "../theme";
+import { useAuthStore } from "@/lib/auth";
+import { SKATE } from "@/theme";
 
 export default function MapScreen() {
   const { user, signOut } = useAuthStore();

@@ -33,7 +33,7 @@ export default function NewSkateChallenge() {
     },
   });
 
-  if (createGame.isLoading) {
+  if (createGame.isPending) {
     return (
       <View
         style={{

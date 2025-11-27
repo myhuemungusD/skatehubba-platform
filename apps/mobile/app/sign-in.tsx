@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuthStore } from "../lib/auth";
-import { SKATE } from "../theme";
+import { useAuthStore } from "@/lib/auth";
+import { SKATE } from "@/theme";
 
 export default function SignIn() {
   const [loading, setLoading] = useState(false);

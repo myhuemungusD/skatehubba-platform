@@ -10,8 +10,8 @@ import Reanimated, {
   withTiming,
 } from "react-native-reanimated";
 import { Camera, useCameraDevices } from "react-native-vision-camera";
-import { db, storage } from "../../../firebase";
-import { SKATE } from "../../../theme";
+import { db, storage } from "@/lib/firebase";
+import { SKATE } from "@/theme";
 
 export default function NewChallenge() {
   const [isRecording, setIsRecording] = useState(false);

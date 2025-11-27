@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { FlatList, Text, View } from "react-native";
-import { db } from "../../lib/firebase";
-import { SKATE } from "../../theme";
+import { db } from "@/lib/firebase";
+import { SKATE } from "@/theme";
 
 interface User {
   id: string;

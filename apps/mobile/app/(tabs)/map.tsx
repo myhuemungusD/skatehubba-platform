@@ -17,9 +17,9 @@ import {
   View,
 } from "react-native";
 import Reanimated, { FadeIn } from "react-native-reanimated";
-import { db } from "../../firebase";
-import { useAuth } from "../../hooks/useAuth";
-import { SKATE } from "../../theme";
+import { db } from "@/lib/firebase";
+import { useAuth } from "@/hooks/useAuth";
+import { SKATE } from "@/theme";
 
 MapboxGL.setAccessToken("pk.eyJ1IjoiZGVzaWdubWFpbmxpbmUiLCJhIjoiY29kZSJ9");
 

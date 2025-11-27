@@ -6,10 +6,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Button, Text, View } from "react-native";
-import { VideoRecorder } from "../../components/skate/VideoRecorder";
-import { useAuth } from "../../hooks/useAuth";
-import { db } from "../../lib/firebase";
-import { SKATE } from "../../theme";
+import { VideoRecorder } from "@/components/skate/VideoRecorder";
+import { useAuth } from "@/hooks/useAuth";
+import { db } from "@/lib/firebase";
+import { SKATE } from "@/theme";
 // import { submitTurnResult, joinSkateChallenge } from '../../../../packages/utils/src/api-sdk/skate';
 
 export default function SkateGameScreen() {

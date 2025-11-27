@@ -12,8 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuthStore } from "../../lib/auth";
-import { db } from "../../lib/firebase";
+import { useAuthStore } from "@/lib/auth";
+import { db } from "@/lib/firebase";
 
 const { width, height } = Dimensions.get("window");
 
