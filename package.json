@@ -13,23 +13,16 @@
     "node": ">=20.10.0"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "postinstall": "git diff --quiet pnpm-lock.yaml || echo '\n⚠️  WARNING: pnpm-lock.yaml has uncommitted changes!\n   Run: git add pnpm-lock.yaml && git commit -m \"chore: update lockfile\"\n'",
     "dev": "turbo dev --parallel",
-    "dev:web": "turbo dev --filter @skatehubba/web",
-    "dev:landing": "turbo dev --filter @skatehubba/landing",
-    "dev:mobile": "turbo dev --filter @skatehubba/mobile",
-    "dev:admin": "turbo dev --filter @skatehubba/admin",
-    "dev:all": "turbo dev --parallel",
     "build": "turbo build",
-    "start": "echo 'Server removed. Use Firebase Functions.'",
+    "clean": "turbo clean && rm -rf node_modules **/.next **/dist **/.turbo",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean": "turbo clean && rm -rf node_modules **/node_modules **/.next **/dist **/.turbo",
-    "android": "expo run:android",
-    "ios": "expo run:ios"
+    "android": "turbo run android --filter @skatehubba/mobile",
+    "ios": "turbo run ios --filter @skatehubba/mobile",
+    "start": "echo 'Server removed. Use Firebase Functions.'"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.7",
