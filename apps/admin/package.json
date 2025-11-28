@@ -9,9 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@skatehubba/ui": "workspace:*",
     "next": "14.2.32",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "react-native-web": "~0.19.10"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",

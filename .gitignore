@@ -9,3 +9,16 @@ build
 coverage
 .vercel
 *.log
+
+# Unity AR Build Outputs
+apps/ar/Build/
+apps/ar/Builds/
+apps/ar/*.apk
+apps/ar/*.aab
+apps/ar/*.ipa
+apps/ar/*.app
+apps/ar/Library/
+apps/ar/Temp/
+apps/ar/Obj/
+apps/ar/Logs/
+apps/ar/UserSettings/

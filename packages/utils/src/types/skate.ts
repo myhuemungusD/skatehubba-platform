@@ -1,14 +1,14 @@
 // packages/utils/src/types/skate.ts
-import { Timestamp } from 'firebase/firestore';
+import type { Timestamp } from "firebase/firestore";
 
-export type SkateLetter = 'S' | 'K' | 'A' | 'T' | 'E';
-export type TurnType = 'setTrick' | 'attemptMatch' | 'judgeAttempt';
+export type SkateLetter = "S" | "K" | "A" | "T" | "E";
+export type TurnType = "setTrick" | "attemptMatch" | "judgeAttempt";
 
 export interface SkateGame {
   id: string;
   challengerUid: string;
   opponentUid: string;
-  status: 'pending' | 'active' | 'completed' | 'forfeit';
+  status: "pending" | "active" | "completed" | "forfeit";
   letters: {
     challenger: string; // e.g. "", "S", "SK", "SKA", "SKAT" — max 4 letters
     opponent: string;
@@ -23,7 +23,7 @@ export interface SkateGame {
     attempts: {
       uid: string;
       videoUrl: string;
-      result: 'landed' | 'bailed' | 'pending';
+      result: "landed" | "bailed" | "pending";
       judgedAt?: Timestamp;
     }[];
   }[];

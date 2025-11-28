@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import type React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 interface VideoPlayerProps {
   url: string;
@@ -17,18 +17,18 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, style }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#111',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#111",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 12,
   },
   text: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   url: {
-    color: '#666',
+    color: "#666",
     fontSize: 10,
     marginTop: 4,
-  }
+  },
 });

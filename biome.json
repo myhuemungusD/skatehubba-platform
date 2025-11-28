@@ -1,14 +1,12 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.7/schema.json",
-  "files": {
-    "ignore": [
-      "**/.next",
-      "**/node_modules",
-      "**/dist",
-      "**/build"
-    ]
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -17,7 +15,9 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2
+    "indentStyle": "space"
+  },
+  "files": {
+    "ignoreUnknown": true
   }
 }

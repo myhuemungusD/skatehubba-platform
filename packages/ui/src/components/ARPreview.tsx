@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { ViroARSceneNavigator, ViroARScene, Viro3DObject, ViroAmbientLight } from '@reactvision/react-viro';
-import { useTrick } from '@skatehubba/utils';
-import { Button, SKATE } from '@skatehubba/ui';
-import * as Haptics from 'expo-haptics';
+import {
+  Viro3DObject,
+  ViroAmbientLight,
+  ViroARScene,
+  ViroARSceneNavigator,
+} from "@reactvision/react-viro";
+import * as Haptics from "expo-haptics";
+import type React from "react";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { SKATE } from "../theme";
+// import { useTrick } from '@skatehubba/utils';
+import { Button } from "./Button";
 
-interface ARPreviewProps { trickId: string; }
+interface ARPreviewProps {
+  trickId: string;
+}
 
 export const ARPreview: React.FC<ARPreviewProps> = ({ trickId }) => {
   // Mock useTrick hook for now if not fully implemented in utils
   // const { data: trick } = useTrick(trickId);
-  const trick = { name: 'Ollie', arModelUrl: 'https://example.com/ollie.glb' }; // Mock data
+  const trick = { name: "Ollie", arModelUrl: "https://example.com/ollie.glb" }; // Mock data
   const [arActive, setArActive] = useState(false);
 
   const InitialScene = () => (
@@ -50,6 +59,11 @@ export const ARPreview: React.FC<ARPreviewProps> = ({ trickId }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: SKATE.colors.ink },
-  title: { color: SKATE.colors.neon, fontSize: 20, textAlign: 'center', marginBottom: 16 },
+  title: {
+    color: SKATE.colors.neon,
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 16,
+  },
   arView: { flex: 1 },
 });

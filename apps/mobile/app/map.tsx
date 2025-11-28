@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
-import { useAuthStore } from '../lib/auth';
-import { useRouter } from 'expo-router';
-import { SKATE } from '../theme';
+import { useRouter } from "expo-router";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useAuthStore } from "../lib/auth";
+import { SKATE } from "../theme";
 
 export default function MapScreen() {
   const { user, signOut } = useAuthStore();
@@ -10,7 +10,7 @@ export default function MapScreen() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.replace('/sign-in');
+    router.replace("/sign-in");
   };
 
   return (
@@ -23,9 +23,11 @@ export default function MapScreen() {
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.welcome}>Welcome, {user?.displayName || 'Skater'}!</Text>
+        <Text style={styles.welcome}>
+          Welcome, {user?.displayName || "Skater"}!
+        </Text>
         <Text style={styles.email}>{user?.email}</Text>
-        
+
         <View style={styles.card}>
           <Text style={styles.cardTitle}>🗺️ Hubba Spots</Text>
           <Text style={styles.cardText}>
@@ -42,9 +44,7 @@ export default function MapScreen() {
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>🏆 Leaderboard</Text>
-          <Text style={styles.cardText}>
-            Compete with skaters worldwide
-          </Text>
+          <Text style={styles.cardText}>Compete with skaters worldwide</Text>
         </View>
       </View>
 
@@ -61,9 +61,9 @@ const styles = StyleSheet.create({
     backgroundColor: SKATE.colors.ink,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 2,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   logo: {
     color: SKATE.colors.neon,
     fontSize: 24,
-    fontWeight: '900',
+    fontWeight: "900",
   },
   signOutButton: {
     paddingHorizontal: 16,
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   signOutText: {
     color: SKATE.colors.blood,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   content: {
     flex: 1,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   welcome: {
     color: SKATE.colors.neon,
     fontSize: 28,
-    fontWeight: '900',
+    fontWeight: "900",
     marginBottom: 4,
   },
   email: {
@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: SKATE.colors.neon + '40',
+    borderColor: SKATE.colors.neon + "40",
   },
   cardTitle: {
     color: SKATE.colors.neon,
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 8,
   },
   cardText: {
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   footer: {
     color: SKATE.colors.paper,
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
     opacity: 0.5,
     padding: 20,
   },

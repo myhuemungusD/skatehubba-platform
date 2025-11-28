@@ -16,7 +16,7 @@ skatehubba-monorepo/
 │   └── studio/          ← Drizzle Studio dev tools
 │
 ├── packages/
-│   ├── gameundici/      ← Shared SKATE game engine & rules
+│   ├── skate-engine/    ← Shared SKATE game engine & rules
 │   ├── ui/              ← Shared UI components (React Native)
 │   ├── api-sdk/         ← TypeScript API client
 │   ├── firebase/        ← Firebase client + admin SDK
@@ -145,7 +145,7 @@ pnpm clean
 
 ## 📚 Packages Overview
 
-- **gameundici**: SKATE game logic & state management
+- **skate-engine**: SKATE game logic & state management
 - **ui**: Shared React Native components & theme
 - **api-sdk**: Type-safe API client for all apps
 - **firebase**: Firebase configuration & Cloud Functions

@@ -16,15 +16,13 @@
     "preinstall": "npx only-allow pnpm",
     "postinstall": "git diff --quiet pnpm-lock.yaml || echo '\n⚠️  WARNING: pnpm-lock.yaml has uncommitted changes!\n   Run: git add pnpm-lock.yaml && git commit -m \"chore: update lockfile\"\n'",
     "dev": "turbo dev --parallel",
-    "dev:server": "turbo dev --filter @skatehubba/server",
     "dev:web": "turbo dev --filter @skatehubba/web",
     "dev:landing": "turbo dev --filter @skatehubba/landing",
     "dev:mobile": "turbo dev --filter @skatehubba/mobile",
     "dev:admin": "turbo dev --filter @skatehubba/admin",
-    "dev:studio": "turbo dev --filter @skatehubba/studio",
     "dev:all": "turbo dev --parallel",
     "build": "turbo build",
-    "start": "NODE_ENV=production node apps/server/dist/server/index.js",
+    "start": "echo 'Server removed. Use Firebase Functions.'",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
@@ -35,10 +33,11 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "expo": "~51.0.28",
+    "firebase": "^12.6.0",
     "openai": "^6.8.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "expo": "~51.0.28",
     "react-native": "0.74.5"
   },
   "devDependencies": {
@@ -53,6 +52,11 @@
   },
   "pnpm": {
     "overrides": {
+      "react": "18.3.1",
+      "react-dom": "18.3.1",
+      "@types/react": "18.3.12",
+      "@types/react-dom": "18.3.0",
+      "react-native": "0.76.9",
       "dtrace-provider": "npm:@empty/package@latest",
       "detox@* > dtrace-provider": "npm:@empty/package@latest",
       "react-native-maps@* > react-native-gesture-handler@* > dtrace-provider": "npm:@empty/package@latest"

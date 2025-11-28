@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Stack, useRouter, useSegments } from 'expo-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuthStore } from '../lib/auth';
-import { Text, View, StyleSheet } from 'react-native';
-import { SKATE } from '../theme';
-import * as Linking from 'expo-linking';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/app-check';
-import '../src/lib/firebase'; // Initialize Firebase JS SDK
-import { initAnalytics } from '../src/utils/analytics';
+import firebase from "@react-native-firebase/app";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import * as Linking from "expo-linking";
+import { Stack, useRouter, useSegments } from "expo-router";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { useAuthStore } from "../lib/auth";
+import { SKATE } from "../theme";
+import "@react-native-firebase/app-check";
+import "../src/lib/firebase"; // Initialize Firebase JS SDK
+import { initAnalytics } from "../src/utils/analytics";
 
 // Initialize Observability
 initAnalytics();
@@ -31,7 +32,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
       // This activates Play Integrity (Android) and DeviceCheck/AppAttest (iOS)
       try {
         // For native providers (Play Integrity / DeviceCheck), the site key argument is ignored.
-        await firebase.appCheck().activate('ignored', true);
+        await firebase.appCheck().activate("ignored", true);
         console.log("App Check initialized successfully!");
       } catch (error) {
         console.error("App Check failed to initialize:", error);
@@ -43,17 +44,24 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading || hasNavigated) return;
 
-    const currentSegment = (segments[0] as string) ?? '';
-    const inAuthRoute = currentSegment === 'sign-in' || currentSegment === 'index' || currentSegment === '';
-    const inProtectedRoute = currentSegment === 'map' || currentSegment === '(tabs)';
+    const currentSegment = (segments[0] as string) ?? "";
+    const inAuthRoute =
+      currentSegment === "sign-in" ||
+      currentSegment === "index" ||
+      currentSegment === "";
+    const inProtectedRoute =
+      currentSegment === "map" || currentSegment === "(tabs)";
 
     if (!user && inProtectedRoute) {
-      console.log('🔒 No user, redirecting to sign-in from:', currentSegment);
-      router.replace('/sign-in');
+      console.log("🔒 No user, redirecting to sign-in from:", currentSegment);
+      router.replace("/sign-in");
       setHasNavigated(true);
     } else if (user && inAuthRoute) {
-      console.log('✅ User authenticated, redirecting to map from:', currentSegment);
-      router.replace('/map');
+      console.log(
+        "✅ User authenticated, redirecting to map from:",
+        currentSegment,
+      );
+      router.replace("/map");
       setHasNavigated(true);
     }
   }, [user, loading, segments, router, hasNavigated]);
@@ -95,12 +103,12 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     backgroundColor: SKATE.colors.ink,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     color: SKATE.colors.neon,
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
