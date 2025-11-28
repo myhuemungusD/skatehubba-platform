@@ -1,64 +1,141 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.7/schema.json",
-  "organizeImports": {
-    "enabled": true
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
   },
+  "files": {
+    "ignoreUnknown": true,
+    "ignore": [
+      "**/node_modules",
+      "**/dist",
+      "**/build",
+      "**/.expo",
+      "**/.next",
+      "**/.turbo",
+      "**/coverage",
+      "**/android",
+      "**/ios",
+      "**/public",
+      "**/*.d.ts"
+    ]
+  },
+  "organizeImports": {
+    "enabled": true,
+    "ignore": ["**/*.d.ts"]
+  },
+
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
-      "all": true,
+
       "correctness": {
         "noUnusedVariables": "error",
         "noUnusedImports": "error",
         "useExhaustiveDependencies": "error",
         "noUselessElse": "error",
-        "noConsoleLog": "warn"
+        "noConsoleLog": "error",
+        "noUnusedPrivateClassMembers": "error"
       },
+
       "complexity": {
+        "noForEach": "off",
         "noExcessiveCognitiveComplexity": "off",
-        "noBannedTypes": "error",
         "useLiteralKeys": "error"
       },
+
       "style": {
         "useBlockStatements": "error",
         "useCollapsedElseIf": "error",
-        "useConsistentArrayType": "error",
+        "useConsistentArrayType": { "level": "error", "fix": "explicit" },
         "useShorthandArrayType": "error",
         "useTemplate": "error",
         "noImplicitBoolean": "error",
-        "noNonNullAssertion": "warn",
-        "useSingleVarDeclarator": "error"
+        "noNonNullAssertion": "error",
+        "useFragmentSyntax": "error",
+        "useSingleVarDeclarator": "error",
+        "useShorthandAssign": "error"
       },
+
       "suspicious": {
         "noExplicitAny": "error",
         "noArrayIndexKey": "error",
         "noDebugger": "error",
-        "noDuplicateCase": "error"
+        "noDuplicateObjectKeys": "error",
+        "noRedeclare": "error"
       },
+
       "performance": {
         "noDelete": "error",
-        "noAccumulatingSpread": "warn"
+        "noAccumulatingSpread": "error"
       },
+
       "nursery": {
-        "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
-        "noUselessUndefinedInitialization": "error"
+        "noUselessUndefinedInitialization": "error",
+        "useGroupedTypeImport": "error",
+        "noInvalidUseBeforeDeclaration": "error"
+      },
+
+      "a11y": {
+        "useKeyWithClickEvents": "error",
+        "useValidAnchor": "error"
       }
     }
   },
+
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 100,
-    "quoteStyle": "single",
+    "lineEnding": "lf",
+    "ignore": ["**/*.json", "**/*.md", "**/*.toml", "**/*.yaml", "**/*.yml"],
+
     "trailingComma": "es5",
     "semicolons": "always",
-    "jsxQuoteStyle": "single"
+    "quoteStyle": "single",
+    "jsxQuoteStyle": "single",
+    "attributePosition": "auto",
+
+    "arrowParentheses": "asNeeded",
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "quoteProperties": "asNeeded"
   },
+
   "javascript": {
+    "globals": ["React", "ReactNative", "process", "global", "console", "module", "require"],
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": false
+    },
     "formatter": {
-      "quoteProperties": "asNeeded",
+      "semicolons": "always",
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "single",
+      "trailingComma": "es5",
       "arrowParentheses": "asNeeded",
-      "bracketSpacing":
+      "bracketSpacing": true,
+      "quoteProperties": "asNeeded"
+    }
+  },
+
+  "overrides": [
+    {
+      "include": ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"],
+      "linter": {
+        "rules": {
+          "correctness": { "noConsoleLog": "off" },
+          "style": { "noNonNullAssertion": "off" }
+        }
+      }
+    },
+    {
+      "include": ["*.d.ts"],
+      "linter": { "enabled": false },
+      "formatter": { "enabled": false }
+    }
+  ]
+}
