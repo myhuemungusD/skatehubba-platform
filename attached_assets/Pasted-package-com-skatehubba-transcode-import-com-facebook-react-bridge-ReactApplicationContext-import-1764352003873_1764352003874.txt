@@ -1,0 +1,91 @@
+package com.skatehubba.transcode
+
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.bridge.Arguments
+
+// ── Rust FFI Contract (Implemented in Rust's src/lib.rs) ────────────────
+external fun transcode_15s(inputPath: String, outputPath: String): Int
+external fun heshur_transcoder_version(): Int
+external fun heshur_transcoder_build_timestamp(): Long
+
+// ── Native Module Implementation ───────────────────────────────────────
+
+class VideoTranscodeModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+
+    private var isLibraryLoaded = false
+
+    init {
+        // CRITICAL: Load the shared object library built by Cargo NDK.
+        // The linker will resolve this to libvideo_transcode.so
+        try {
+            System.loadLibrary("video_transcode")
+            isLibraryLoaded = true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Log the failure to load the library (will likely be captured by Sentry/logcat)
+            isLibraryLoaded = false
+            System.err.println("FATAL: Failed to load Rust FFI library: libvideo_transcode.so")
+        }
+    }
+
+    override fun getName(): String {
+        // This is the name JavaScript calls: NativeModules.SkateHubbaTranscoder
+        return "SkateHubbaTranscoder"
+    }
+
+    // ── Exposed JS Methods ─────────────────────────────────────────────
+
+    /**
+     * Exposes the Rust version check to JavaScript (synchronously).
+     */
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun getTranscoderVersion(): Int {
+        if (!isLibraryLoaded) return 0
+        return heshur_transcoder_version()
+    }
+
+    /**
+     * Exposes the Rust build timestamp (synchronously).
+     */
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun getBuildTimestamp(): Double {
+        if (!isLibraryLoaded) return 0.0
+        // Convert Long (i64) to Double for safe passage over the JS bridge
+        return heshur_transcoder_build_timestamp().toDouble()
+    }
+
+    /**
+     * Exposes the main video transcoding function (asynchronously).
+     * This is the bridge's main entry point for video processing.
+     */
+    @ReactMethod
+    fun transcodeVideo(inputPath: String, outputPath: String, promise: Promise) {
+        if (!isLibraryLoaded) {
+            promise.reject("FFI_LOAD_ERROR", "Rust library not loaded. Check logcat.")
+            return
+        }
+
+        // Run the FFI call off the main thread to prevent UI freezing (ANR)
+        Thread {
+            try {
+                // Call the C function via JNI
+                val code = transcode_15s(inputPath, outputPath)
+
+                // Package the result to match the TypeScript TranscodeResult interface
+                val result: WritableMap = Arguments.createMap()
+                result.putInt("code", code)
+
+                // The runTranscode wrapper in TS will handle the interpretation of the code.
+                promise.resolve(result)
+
+            } catch (e: Exception) {
+                // Should only catch unexpected JVM errors, as Rust panics are caught internally (-99)
+                promise.reject("NATIVE_RUNTIME_ERROR", "Unhandled native runtime exception.", e)
+            }
+        }.start()
+    }
+}
