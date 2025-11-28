@@ -1,12 +1,75 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "SkateHubba Mobile App • React Native + Expo",
+
   "extends": "../../tsconfig.json",
+
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    /* Mobile-Specific */
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "jsx": "react-native",
+    "jsxImportSource": "react",
+    "target": "ES2022",
+    "lib": ["ES2023", "DOM"],
+
+    /* Build Outputs */
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../../.tsbuildinfo-mobile",
+
+    /* Strictness */
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    /* Performance & React Native Opts */
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+
+    /* Expo-Specific */
+    "types": [
+      "expo",
+      "@expo/vector-icons",
+      "react-native",
+      "@types/react-native"
+    ],
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@skatehubba/*": ["../../packages/*/src"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".expo/types/**/*.d.ts"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "dist",
+    "build",
+    ".expo",
+    ".next",
+    "**/.turbo",
+    "**/coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }
