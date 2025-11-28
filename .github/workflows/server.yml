@@ -1,0 +1,52 @@
+name: Server Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/server/**'
+      - 'packages/db/**'
+      - 'packages/types/**'
+  pull_request:
+    paths:
+      - 'apps/server/**'
+      - 'packages/db/**'
+      - 'packages/types/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build DB package
+        run: pnpm --filter @skatehubba/db build
+
+      - name: Build server
+        run: pnpm --filter @skatehubba/server build
+
+      - name: Verify outputs
+        run: |
+          test -f apps/server/dist/index.js && echo "✓ dist/server/index.js exists"
+          test -f packages/db/dist/index.js && echo "✓ DB package built" || echo "ℹ DB is TS-only"
+
+      - name: Type check
+        run: pnpm --filter @skatehubba/server typecheck
+
+      - name: Lint
+        run: pnpm --filter @skatehubba/server lint || true

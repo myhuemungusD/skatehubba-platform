@@ -1,0 +1,24 @@
+{
+  "name": "@skatehubba/server",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc --build",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@skatehubba/db": "workspace:*",
+    "@skatehubba/types": "workspace:*",
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.4",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0"
+  }
+}
