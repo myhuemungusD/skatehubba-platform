@@ -1,107 +1,109 @@
-import {
-  type Challenge,
-  type CheckIn,
-  type SkateGame,
-  type Spot,
+import React, { createContext, useContext, useMemo } from "react";
+import { type Functions, httpsCallable, getFunctions } from "firebase/functions";
+import { getApp } from "firebase/app";
+import type {
+  Challenge,
+  CheckIn,
+  SkateGame,
+  Spot,
 } from "@skatehubba/types";
-import { type Functions, httpsCallable } from "firebase/functions";
+
+// ==========================================
+// 1. THE CLIENT (The Engine)
+// ==========================================
 
 export class SkateHubbaClient {
-  private functions: Functions;
-
-  constructor(functions: Functions) {
-    this.functions = functions;
-  }
+  constructor(private functions: Functions) {}
 
   /**
-   * "The Pop" - A generic wrapper to handle the httpsCallable boilerplate safely.
-   * Prevents "Sketchy Landings" by enforcing return types.
+   * Generic wrapper to handle strictly typed Cloud Function calls.
+   * Prevents "as any" casting and standardizes error handling.
    */
-  private async call<TRequest, TResponse>(
-    name: string,
-    data?: TRequest
-  ): Promise<TResponse> {
-    const fn = httpsCallable<TRequest, TResponse>(this.functions, name);
-    const result = await fn(data);
-    return result.data;
+  private async call<Res, Req = unknown>(name: string, data?: Req): Promise<Res> {
+    const fn = httpsCallable<Req, Res>(this.functions, name);
+    try {
+      const response = await fn(data as Req);
+      return response.data;
+    } catch (error) {
+      console.error(`[SkateHubba API] Error calling ${name}:`, error);
+      throw error;
+    }
   }
 
-  // Use properties instead of getters to prevent "Speed Wobble" (re-renders)
+  // --- SPOTS ---
   public readonly spots = {
-    list: async (params?: Record<string, unknown>) => {
-      const res = await this.call<
-        Record<string, unknown> | undefined,
-        { spots: Spot[] }
-      >("getSpots", params || {});
-      return res.spots;
-    },
-    get: async (id: string) => {
-      const res = await this.call<{ spotId: string }, { spot: Spot }>(
-        "getSpot",
-        { spotId: id }
-      );
-      return res.spot;
-    },
-    create: async (data: Omit<Spot, "id" | "createdAt" | "createdBy">) => {
-      const res = await this.call<
-        Omit<Spot, "id" | "createdAt" | "createdBy">,
-        { spot: Spot }
-      >("createSpot", data);
-      return res.spot;
-    },
+    list: (params?: Record<string, unknown>) =>
+      this.call<{ spots: Spot[] }>("getSpots", params),
+
+    get: (id: string) =>
+      this.call<{ spot: Spot }, { spotId: string }>("getSpot", { spotId: id }),
+
+    create: (data: Omit<Spot, "id" | "createdAt" | "createdBy">) =>
+      this.call<{ spot: Spot }>("createSpot", data),
   };
 
+  // --- CHALLENGES (Video Submissions) ---
   public readonly challenges = {
-    list: async () => {
-      const res = await this.call<void, { challenges: Challenge[] }>(
-        "getChallenges"
-      );
-      return res.challenges;
-    },
-    create: async (data: Omit<Challenge, "id" | "ts">) => {
-      const res = await this.call<
-        Omit<Challenge, "id" | "ts">,
-        { challenge: Challenge }
-      >("createChallenge", data);
-      return res.challenge;
-    },
+    list: () =>
+      this.call<{ challenges: Challenge[] }>("getChallenges"),
+
+    create: (data: Omit<Challenge, "id" | "ts">) =>
+      this.call<{ challenge: Challenge }>("createChallenge", data),
   };
 
+  // --- CHECK-INS (Geo-fencing) ---
   public readonly checkins = {
-    create: async (data: Omit<CheckIn, "id" | "ts">) => {
-      const res = await this.call<
-        Omit<CheckIn, "id" | "ts">,
-        { checkin: CheckIn }
-      >("createCheckin", data);
-      return res.checkin;
-    },
+    create: (data: Omit<CheckIn, "id" | "ts">) =>
+      this.call<{ checkin: CheckIn }>("createCheckin", data),
   };
 
+  // --- GAME OF S.K.A.T.E. ---
   public readonly skate = {
-    create: async (data: { trickVideoUrl: string; opponentHandle?: string }) => {
-      const res = await this.call<
-        { trickVideoUrl: string; opponentHandle?: string },
-        { game: SkateGame }
-      >("createSkateGame", data);
-      return res.game;
-    },
-    get: async (id: string) => {
-      const res = await this.call<{ gameId: string }, { game: SkateGame }>(
-        "getSkateGame",
-        { gameId: id }
-      );
-      return res.game;
-    },
-    join: async (id: string) => {
-      const res = await this.call<{ gameId: string }, { game: SkateGame }>(
-        "joinSkateGame",
-        { gameId: id }
-      );
-      return res.game;
-    },
+    create: (data: { trickVideoUrl: string; opponentHandle?: string }) =>
+      this.call<{ game: SkateGame }>("createSkateGame", data),
+
+    get: (id: string) =>
+      this.call<{ game: SkateGame }, { gameId: string }>("getSkateGame", { gameId: id }),
+
+    join: (id: string) =>
+      this.call<{ game: SkateGame }, { gameId: string }>("joinSkateGame", { gameId: id }),
   };
 }
 
-export const createClient = (functions: Functions) =>
-  new SkateHubbaClient(functions);
-export * from './provider';
+export const createClient = (functions: Functions) => new SkateHubbaClient(functions);
+
+// ==========================================
+// 2. THE REACT CONTEXT (The Glue)
+// ==========================================
+
+const SkateHubbaContext = createContext<SkateHubbaClient | null>(null);
+
+/**
+ * Wraps your application to provide API access.
+ * Automatically connects to Firebase Functions.
+ */
+export function SkateHubbaProvider({
+  children,
+  region = "us-central1",
+}: {
+  children: React.ReactNode;
+  region?: string;
+}) {
+  const client = useMemo(() => {
+    // 1. Get the initialized Firebase App
+    const app = getApp(); 
+    // 2. Get the Functions instance
+    const functions = getFunctions(app, region);
+    
+    // 3. (Optional) Connect to Emulator if strictly in Dev Mode
+    // if (__DEV__) {
+    //   connectFunctionsEmulator(functions, "localhost", 5001);
+    // }
+
+    return createClient(functions);
+  }, [region]);
+
+  return (
+    <SkateHubbaContext.Provider value={client}>
+      {children}
+    </Sk

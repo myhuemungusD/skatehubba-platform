@@ -18,6 +18,18 @@
     "indentStyle": "space"
   },
   "files": {
-    "ignoreUnknown": true
+    "ignore": [
+      "**/node_modules",
+      "**/.next",
+      "**/dist",
+      "**/build",
+      "**/coverage",
+      "**/.turbo",
+      "**/*.min.js",
+      "**/*.d.ts",
+      "apps/ar/Build", 
+      "package-lock.json",
+      "pnpm-lock.yaml"
+    ]
   }
 }
