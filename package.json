@@ -107,7 +107,11 @@
           "expo": "*"
         }
       }
-    }
+    },
+    "allowedBuildScripts": [
+      "build",
+      "postinstall"
+    ]
   },
   "workspaces": [
     "apps/*",
