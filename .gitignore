@@ -9,6 +9,7 @@ build
 coverage
 .vercel
 *.log
+tsconfig.tsbuildinfo
 
 # Unity AR Build Outputs
 apps/ar/Build/
