@@ -3,9 +3,8 @@ import {
   type CheckIn,
   type SkateGame,
   type Spot,
-  type User,
 } from "@skatehubba/types";
-import { Functions, httpsCallable } from "firebase/functions";
+import { type Functions, httpsCallable } from "firebase/functions";
 
 export class SkateHubbaClient {
   private functions: Functions;
@@ -14,70 +13,94 @@ export class SkateHubbaClient {
     this.functions = functions;
   }
 
-  get spots() {
-    return {
-      list: async (params?: any, signal?: AbortSignal) => {
-        const fn = httpsCallable(this.functions, "getSpots");
-        const res = await fn(params || {});
-        return (res.data as any).spots as Spot[];
-      },
-      get: async (id: string, signal?: AbortSignal) => {
-        const fn = httpsCallable(this.functions, "getSpot");
-        const res = await fn({ spotId: id });
-        return (res.data as any).spot as Spot;
-      },
-      create: async (data: Omit<Spot, "id" | "createdAt" | "createdBy">) => {
-        const fn = httpsCallable(this.functions, "createSpot");
-        const res = await fn(data);
-        return (res.data as any).spot as Spot;
-      },
-    };
+  /**
+   * "The Pop" - A generic wrapper to handle the httpsCallable boilerplate safely.
+   * Prevents "Sketchy Landings" by enforcing return types.
+   */
+  private async call<TRequest, TResponse>(
+    name: string,
+    data?: TRequest
+  ): Promise<TResponse> {
+    const fn = httpsCallable<TRequest, TResponse>(this.functions, name);
+    const result = await fn(data);
+    return result.data;
   }
 
-  get challenges() {
-    return {
-      list: async () => {
-        const fn = httpsCallable(this.functions, "getChallenges");
-        const res = await fn();
-        return (res.data as any).challenges as Challenge[];
-      },
-      create: async (data: Omit<Challenge, "id" | "ts">) => {
-        const fn = httpsCallable(this.functions, "createChallenge");
-        const res = await fn(data);
-        return (res.data as any).challenge as Challenge;
-      },
-    };
-  }
+  // Use properties instead of getters to prevent "Speed Wobble" (re-renders)
+  public readonly spots = {
+    list: async (params?: Record<string, unknown>) => {
+      const res = await this.call<
+        Record<string, unknown> | undefined,
+        { spots: Spot[] }
+      >("getSpots", params || {});
+      return res.spots;
+    },
+    get: async (id: string) => {
+      const res = await this.call<{ spotId: string }, { spot: Spot }>(
+        "getSpot",
+        { spotId: id }
+      );
+      return res.spot;
+    },
+    create: async (data: Omit<Spot, "id" | "createdAt" | "createdBy">) => {
+      const res = await this.call<
+        Omit<Spot, "id" | "createdAt" | "createdBy">,
+        { spot: Spot }
+      >("createSpot", data);
+      return res.spot;
+    },
+  };
 
-  get checkins() {
-    return {
-      create: async (data: Omit<CheckIn, "id" | "ts">) => {
-        const fn = httpsCallable(this.functions, "createCheckin");
-        const res = await fn(data);
-        return (res.data as any).checkin as CheckIn;
-      },
-    };
-  }
+  public readonly challenges = {
+    list: async () => {
+      const res = await this.call<void, { challenges: Challenge[] }>(
+        "getChallenges"
+      );
+      return res.challenges;
+    },
+    create: async (data: Omit<Challenge, "id" | "ts">) => {
+      const res = await this.call<
+        Omit<Challenge, "id" | "ts">,
+        { challenge: Challenge }
+      >("createChallenge", data);
+      return res.challenge;
+    },
+  };
 
-  get skate() {
-    return {
-      create: async (data: { trickVideoUrl: string; opponentHandle?: string }) => {
-        const fn = httpsCallable(this.functions, "createSkateGame");
-        const res = await fn(data);
-        return (res.data as any).game as SkateGame;
-      },
-      get: async (id: string) => {
-        const fn = httpsCallable(this.functions, "getSkateGame");
-        const res = await fn({ gameId: id });
-        return (res.data as any).game as SkateGame;
-      },
-      join: async (id: string) => {
-        const fn = httpsCallable(this.functions, "joinSkateGame");
-        const res = await fn({ gameId: id });
-        return (res.data as any).game as SkateGame;
-      },
-    };
-  }
+  public readonly checkins = {
+    create: async (data: Omit<CheckIn, "id" | "ts">) => {
+      const res = await this.call<
+        Omit<CheckIn, "id" | "ts">,
+        { checkin: CheckIn }
+      >("createCheckin", data);
+      return res.checkin;
+    },
+  };
+
+  public readonly skate = {
+    create: async (data: { trickVideoUrl: string; opponentHandle?: string }) => {
+      const res = await this.call<
+        { trickVideoUrl: string; opponentHandle?: string },
+        { game: SkateGame }
+      >("createSkateGame", data);
+      return res.game;
+    },
+    get: async (id: string) => {
+      const res = await this.call<{ gameId: string }, { game: SkateGame }>(
+        "getSkateGame",
+        { gameId: id }
+      );
+      return res.game;
+    },
+    join: async (id: string) => {
+      const res = await this.call<{ gameId: string }, { game: SkateGame }>(
+        "joinSkateGame",
+        { gameId: id }
+      );
+      return res.game;
+    },
+  };
 }
 
-export const createClient = (functions: Functions) => new SkateHubbaClient(functions);
+export const createClient = (functions: Functions) =>
+  new SkateHubbaClient(functions);

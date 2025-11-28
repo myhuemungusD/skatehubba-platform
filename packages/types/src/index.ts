@@ -55,3 +55,42 @@ export const TrickSchema = z.object({
   description: z.string().optional(),
 });
 export type Trick = z.infer<typeof TrickSchema>;
+
+// --- SPOTS & CHALLENGES (Restored) ---
+export const SpotSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  geo: z.object({
+    lat: z.number(),
+    lng: z.number(),
+  }),
+  createdAt: z.string().datetime(),
+  createdBy: z.string(),
+});
+export type Spot = z.infer<typeof SpotSchema>;
+
+export const ChallengeSchema = z.object({
+  id: z.string(),
+  createdBy: z.string(),
+  status: z.enum(["pending", "accepted", "completed", "expired"]),
+  rules: z.object({
+    oneTake: z.boolean(),
+    durationSec: z.number(),
+  }),
+  clipA: z.string(),
+  clipB: z.string().optional(),
+  ts: z.string().datetime(),
+});
+export type Challenge = z.infer<typeof ChallengeSchema>;
+
+export const CheckInSchema = z.object({
+  id: z.string(),
+  uid: z.string(),
+  spotId: z.string(),
+  ts: z.string().datetime(),
+  proofVideoUrl: z.string().nullable(),
+});
+export type CheckIn = z.infer<typeof CheckInSchema>;
+
+// Alias for backward compatibility
+export type SkateGame = Game;
