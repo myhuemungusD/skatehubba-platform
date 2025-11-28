@@ -1,47 +1,123 @@
 {
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
   "language": "en",
-  "ignorePaths": [
-    "pnpm-lock.yaml",
-    "package-lock.json",
-    "yarn.lock",
-    "node_modules",
-    ".git",
-    "dist",
-    "build",
-    ".next",
-    ".expo",
-    "**/*.min.js",
-    "**/*.map"
+  "useGitignore": true,
+  "usePnps": true,
+  "enableFiletypes": ["*"],
+  "ignoreRegExpList": [
+    "/\\b([0-9a-f]{7,40}|[0-9a-zA-Z]{52})\\b/", // commit hashes, Firebase IDs, Sentry DSNs, etc.
+    "/\\d{10,}/",                                   // timestamps
+    "/base64:/",
+    "/data:[^,]+/"
   ],
+
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/.expo/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/android/**",
+    "**/ios/**",
+    "**/*.min.js",
+    "**/*.map",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+    "package-lock.json",
+    "CHANGELOG.md"
+  ],
+
   "words": [
+    // ── Project & Brand ─────────────────────────────────────
     "skatehubba",
     "skatehubbaweb",
+    "heshur",
     "myhuemungus",
-    "jsonb",
-    "varchar",
+    "myhuemungusd",
+
+    // ── Tech Stack ──────────────────────────────────────────
+    "biomejs",
     "drizzle",
-    "orm",
-    "pnpm",
-    "turborepo",
     "expo",
     "firestore",
-    "supa",
-    "zod",
-    "tflite",
-    "viro",
+    "honeycombio",
     "mapbox",
-    "skate-engine",
-    "zustand",
+    "opentelemetry",
+    "pnpm",
+    "supabase",
     "tanstack",
+    "turborepo",
+    "tflite",
+    "tsup",
+    "typeorm",
+    "viro",
+    "zustand",
+    "zod",
+
+    // ── Domain / Skate Lingo ────────────────────────────────
     "checkins",
+    "checkin",
     "bailed",
+    "bail",
+    "spotcheck",
+    "spotchecks",
+    "hesh",
+    "ledges",
+    "hubba",
+    "hubbas",
+    "rails",
+    "gnarly",
+    "steez",
+    "skatepark",
+    "skateparks",
+    "flatground",
+    "ollie",
+    "kickflip",
+    "heelflip",
+    "tre",
+    "nollie",
+    "switchstance",
+    "fakie",
+
+    // ── Database & Types ────────────────────────────────────
+    "jsonb",
+    "varchar",
+    "bigint",
+    "smallint",
+    "uuidv",
     "lat",
     "lng",
+    "geohash",
+    "geopoint",
+
+    // ── Libraries & Tools ───────────────────────────────────
     "axios",
-    "tsup",
-    "biomejs",
-    "honeycombio",
-    "opentelemetry"
+    "detox",
+    "eas",
+    "expo",
+    "hermes",
+    "reactotron",
+    "sentry",
+    "tamagui",
+    "unimodules",
+    "expo-modules-autolinking"
+  ],
+
+  "dictionaries": ["companies", "softwareTerms", "typescript", "node", "bash"],
+
+  "overrides": [
+    {
+      "filename": "**/*.md",
+      "language": "en-US",
+      "words": ["gif", "webp", "webp", "mp4", "mov", "skateboarding", "instagram", "tiktok"]
+    },
+    {
+      "filename": "**/package.json",
+      "ignoreRegExpList": ["version", "homepage", "repository"]
+    }
   ]
 }
