@@ -1,0 +1,34 @@
+// The build file for the native Android part of your FFI package
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 34 // Use current standard
+    namespace "com.skatehubba.transcode"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 34
+        // The NDK is required for FFI binding
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+        }
+    }
+
+    // CRITICAL: Tells the Android linker where to find the compiled .so files.
+    sourceSets {
+        main {
+            // Path must point to where cargo-ndk outputs the ABIs
+            jniLibs.srcDirs = ["src/main/jniLibs", "../../lib/android"]
+        }
+    }
+}
+
+dependencies {
+    // Standard Kotlin runtime
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.22"
+    
+    // Required for React Native modules
+    implementation "com.facebook.react:react-native:+" 
+}
