@@ -104,3 +104,4 @@ export class SkateHubbaClient {
 
 export const createClient = (functions: Functions) =>
   new SkateHubbaClient(functions);
+export * from './provider';
