@@ -1,23 +1,72 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "SkateHubba Monorepo • Expo + React Native + Node",
+
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
+    /* Target & Environment */
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+
+    /* React Native */
     "jsx": "react-native",
-    "strict": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
+
+    /* Strictness – non-negotiable in 2025 */
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    /* Monorepo super-powers (Turborepo + project references) */
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "composite": true,
+    "sourceMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
+
+    /* Performance & sanity */
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noErrorTruncation": true,
+
+    /* Clean, scalable imports */
     "baseUrl": ".",
     "paths": {
-      "@skatehubba/*": ["packages/*/src"]
-    }
+      "@skatehubba/*": ["packages/*/src"],
+      "@skatehubba/*/src": ["packages/*/src"]
+    },
+
+    /* Node / Firebase compatibility */
+    "allowJs": false,
+    "isolatedModules": true,
+    "noEmit": false
   },
-  "exclude": ["node_modules", "dist", "build", ".next"],
-  "extends": "expo/tsconfig.base"
+
+  "include": [
+    ".expo/types/**/*.d.ts",
+    "apps/**/*.ts",
+    "apps/**/*.tsx",
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "infra/**/*.ts",
+    "infra/**/*.tsx"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "dist",
+    "build",
+    ".expo",
+    ".next",
+    "**/.turbo",
+    "**/coverage"
+  ]
 }
