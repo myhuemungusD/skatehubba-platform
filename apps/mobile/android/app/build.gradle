@@ -169,6 +169,9 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    
+    // SkateHubba Rust FFI Video Transcoder
+    implementation project(':video-transcode')
     // ========================================================================
     // ViroReact New Architecture (Fabric) Dependencies
     // https://viro-community.readme.io/docs/installation-instructions
