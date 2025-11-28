@@ -11,6 +11,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   detect-changes:
     name: Detect Native Changes
@@ -28,27 +31,31 @@ jobs:
       - name: Determine release type and check for native changes
         id: check
         run: |
+          IS_TAG=false
+          PROFILE=preview
+          CHANNEL=preview
+          NATIVE_CHANGED=false
+          
           # Check if this is a tag push (Production release)
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            echo "is_tag=true" >> $GITHUB_OUTPUT
-            echo "profile=production" >> $GITHUB_OUTPUT
-            echo "channel=production" >> $GITHUB_OUTPUT
+            IS_TAG=true
+            PROFILE=production
+            CHANNEL=production
             # For production tags, always do a full build
-            echo "native_changed=true" >> $GITHUB_OUTPUT
+            NATIVE_CHANGED=true
           else
-            echo "is_tag=false" >> $GITHUB_OUTPUT
-            echo "profile=preview" >> $GITHUB_OUTPUT
-            echo "channel=preview" >> $GITHUB_OUTPUT
-            
-            # Check for native code changes since last commit
+            # Native paths that indicate a full build is needed
+            # Both root-level and apps/mobile-level paths are checked
+            # to support different monorepo structures
             NATIVE_PATHS="ios/ android/ apps/mobile/ios/ apps/mobile/android/"
             NATIVE_FILES="package.json apps/mobile/package.json app.json apps/mobile/app.json Podfile Gemfile"
             
-            NATIVE_CHANGED=false
+            # Get changed files, handling the case of first commit
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff-tree --no-commit-id --name-only -r HEAD)
             
             # Check paths
             for path in $NATIVE_PATHS; do
-              if git diff --name-only HEAD~1 HEAD | grep -q "^$path"; then
+              if echo "$CHANGED_FILES" | grep -q "^$path"; then
                 NATIVE_CHANGED=true
                 break
               fi
@@ -57,21 +64,26 @@ jobs:
             # Check specific files that affect native builds
             if [ "$NATIVE_CHANGED" = false ]; then
               for file in $NATIVE_FILES; do
-                if git diff --name-only HEAD~1 HEAD | grep -q "^$file$"; then
+                if echo "$CHANGED_FILES" | grep -q "^$file$"; then
                   NATIVE_CHANGED=true
                   break
                 fi
               done
             fi
-            
-            echo "native_changed=$NATIVE_CHANGED" >> $GITHUB_OUTPUT
           fi
           
+          # Output all values
+          echo "is_tag=$IS_TAG" >> $GITHUB_OUTPUT
+          echo "profile=$PROFILE" >> $GITHUB_OUTPUT
+          echo "channel=$CHANNEL" >> $GITHUB_OUTPUT
+          echo "native_changed=$NATIVE_CHANGED" >> $GITHUB_OUTPUT
+          
+          # Debug output
           echo "Detected changes:"
-          echo "  is_tag: $(cat $GITHUB_OUTPUT | grep is_tag)"
-          echo "  native_changed: $(cat $GITHUB_OUTPUT | grep native_changed)"
-          echo "  profile: $(cat $GITHUB_OUTPUT | grep profile)"
-          echo "  channel: $(cat $GITHUB_OUTPUT | grep channel)"
+          echo "  is_tag: $IS_TAG"
+          echo "  profile: $PROFILE"
+          echo "  channel: $CHANNEL"
+          echo "  native_changed: $NATIVE_CHANGED"
 
   ota-update:
     name: Publish OTA Update
@@ -84,9 +96,11 @@ jobs:
       - name: Setup Mapbox credentials
         run: |
           # Configure .netrc for Mapbox SDK downloads
-          echo "machine api.mapbox.com" >> ~/.netrc
-          echo "login mapbox" >> ~/.netrc
-          echo "password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> ~/.netrc
+          cat >> ~/.netrc << NETRC_EOF
+          machine api.mapbox.com
+          login mapbox
+          password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}
+          NETRC_EOF
           chmod 600 ~/.netrc
 
       - uses: pnpm/action-setup@v2
@@ -125,9 +139,11 @@ jobs:
       - name: Setup Mapbox credentials
         run: |
           # Configure .netrc for Mapbox SDK downloads
-          echo "machine api.mapbox.com" >> ~/.netrc
-          echo "login mapbox" >> ~/.netrc
-          echo "password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> ~/.netrc
+          cat >> ~/.netrc << NETRC_EOF
+          machine api.mapbox.com
+          login mapbox
+          password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}
+          NETRC_EOF
           chmod 600 ~/.netrc
 
       - uses: pnpm/action-setup@v2
