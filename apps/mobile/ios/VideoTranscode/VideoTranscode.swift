@@ -1,0 +1,161 @@
+import Foundation
+import React
+import Sentry  // Assuming Sentry RN SDK bridged; add via pnpm add @sentry/react-native
+
+// ── Error Codes (expanded; must 1:1 match Rust TranscodeError + JS index.ts) ──
+enum TranscodeError: String, Error { // Adopting 'Error' protocol allows throwing
+    case FFI_LOAD_ERROR = "FFI_LOAD_ERROR"          // Lib load fail
+    case FFI_NULL_PATH = "FFI_NULL_PATH"            // Empty input/output
+    case FFI_PANIC = "FFI_RUST_PANIC"               // Rust unwind
+    case NATIVE_RUNTIME = "NATIVE_RUNTIME_ERROR"    // Swift/ObjC runtime
+    case DURATION_EXCEEDED = "DURATION_EXCEEDED"    // >15s (Rust code 3)
+    case OUTPUT_TOO_LARGE = "OUTPUT_TOO_LARGE"      // >8MB (Rust code 4)
+    case INPUT_INVALID = "INPUT_INVALID"            // No stream/meta (Rust code 2)
+    case TRANSCODE_FAILED = "TRANSCODE_FAILED"      // General encode fail (Rust code 5)
+    case INIT_FAILED = "INIT_FAILED"                // FFmpeg init (Rust code 1)
+    case FALLBACK_REQUIRED = "FALLBACK_REQUIRED"    // Stub active (Rust code -1)
+    case UNKNOWN = "UNKNOWN"                        // Catch-all (unmapped FFI code)
+}
+
+// ── Rust FFI Declarations (static libvideo_transcode.a) ───────────────────
+extern "C" {
+    func transcode_15s(
+        _ input_path: UnsafePointer<CChar>,
+        _ output_path: UnsafePointer<CChar>,
+        _ out_duration_ms: UnsafeMutablePointer<Int64>,
+        _ out_filesize_bytes: UnsafeMutablePointer<Int64>
+    ) -> Int32
+    
+    func heshur_transcoder_version() -> Int32
+    func heshur_transcoder_build_timestamp() -> Int64
+}
+
+// ── Swift Bridge Module ───────────────────────────────────────────────────
+@objc(VideoTranscode)
+final class VideoTranscode: NSObject {
+    
+    // Dedicated concurrent queue — high-throughput, no main/JS block
+    private static let transcodeQueue = DispatchQueue(
+        label: "com.skatehubba.transcode",
+        qos: .utility,
+        attributes: .concurrent
+    )
+    
+    @objc
+    func methodQueue() -> DispatchQueue {
+        Self.transcodeQueue
+    }
+    
+    // ── Main Transcode Entry Point (Async Overhaul) ───────────────────────
+    @objc(transcodeVideo:outputPath:resolver:rejecter:)
+    func transcodeVideo(
+        inputPath: String,
+        outputPath: String,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        // Early validation — fail fast on bad inputs
+        guard !inputPath.isEmpty, !outputPath.isEmpty else {
+            reject(TranscodeError.FFI_NULL_PATH.rawValue, "Input or output path can't be empty, shredder", nil)
+            return
+        }
+        
+        // Offload to queue — full async, no blocking
+        transcodeQueue.async {
+            var durationMs: Int64 = 0
+            var filesizeBytes: Int64 = 0
+            
+            do {
+                // FFI call is wrapped in CString conversion blocks
+                let code = try inputPath.withCString { inputC in
+                    try outputPath.withCString { outputC in
+                        transcode_15s(inputC, outputC, &durationMs, &filesizeBytes)
+                    }
+                }
+                
+                // ── Exhaustive Error Switch (Maps FFI Code to Swift Error) ──────────────
+                switch code {
+                case 0:  // Success
+                    RCTLogInfo("Transcode success: \(durationMs)ms, \(filesizeBytes) bytes")
+                    Sentry.capture(message: "Transcode OK", level: .info)  // Breadcrumb
+                    resolve([
+                        "success": true,
+                        "durationMs": durationMs,
+                        "filesizeBytes": filesizeBytes,
+                        "outputPath": outputPath
+                    ])
+                    
+                case 1:  // INIT_FAILED
+                    throw TranscodeError.INIT_FAILED
+                    
+                case 2:  // INPUT_INVALID
+                    throw TranscodeError.INPUT_INVALID
+                    
+                case 3:  // DURATION_EXCEEDED
+                    throw TranscodeError.DURATION_EXCEEDED
+                    
+                case 4:  // OUTPUT_TOO_LARGE
+                    throw TranscodeError.OUTPUT_TOO_LARGE
+                    
+                case 5:  // TRANSCODE_FAILED
+                    throw TranscodeError.TRANSCODE_FAILED
+
+                case -1: // FALLBACK_REQUIRED (Intentional Stub)
+                    throw TranscodeError.FALLBACK_REQUIRED
+                    
+                case -99:  // FFI_PANIC
+                    throw TranscodeError.FFI_PANIC
+                    
+                default:
+                    throw TranscodeError.UNKNOWN
+                }
+                
+            } catch let error as TranscodeError {
+                // ── Street-Authentic Rejects + Sentry Capture ─────────────
+                let message: String
+                switch error {
+                case .FALLBACK_REQUIRED:
+                    message = "Rust stub active. Must fall back to FFmpegKit."
+                case .INIT_FAILED:
+                    message = "FFmpeg init bombed — check setup"
+                case .INPUT_INVALID:
+                    message = "Bad input clip — no video stream or meta"
+                case .DURATION_EXCEEDED:
+                    message = "Clip over 15s — one-take rule, no excuses"
+                case .OUTPUT_TOO_LARGE:
+                    message = "File too big — keep it under 8MB, trim that footy"
+                case .TRANSCODE_FAILED:
+                    message = "Transcode wiped out — retry or check logs"
+                case .FFI_PANIC:
+                    message = "Rust core panicked — session over, bro"
+                case .UNKNOWN:
+                    message = "Unknown fail — code unknown, inspect Sentry"
+                default:
+                    message = "Runtime error — \(error.rawValue)"
+                }
+                
+                RCTLogError("Transcode error: \(message)")
+                Sentry.capture(error: error)  // Full capture for debugging
+                reject(error.rawValue, message, error)
+                
+            } catch {
+                // Catch-all for native runtime (e.g., CString fail)
+                let runtimeError = TranscodeError.NATIVE_RUNTIME
+                RCTLogError("Native runtime error: \(error.localizedDescription)")
+                Sentry.capture(error: error)
+                reject(runtimeError.rawValue, "Swift runtime wiped out — check paths", error)
+            }
+        }
+    }
+    
+    // ── Version & Build Info (Unchanged; Sync for Sentry) ─────────────────
+    @objc(getTranscoderVersion)
+    func getTranscoderVersion() -> Int32 {
+        heshur_transcoder_version()
+    }
+    
+    @objc(getBuildTimestamp)
+    func getBuildTimestamp() -> NSNumber {
+        NSNumber(value: heshur_transcoder_build_timestamp())
+    }
+}
