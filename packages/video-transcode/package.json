@@ -1,10 +1,41 @@
 {
   "name": "@skatehubba/video-transcode",
-  "version": "0.0.1",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "license": "MIT",
+  "version": "0.1.0",
+  "description": "SkateHubba Heshur AI video transcoder — Rust FFI core with JS bindings",
+  "main": "./dist/lib.js",
+  "module": "./dist/lib.mjs",
+  "types": "./dist/lib.d.ts",
+  "exports": {
+    ".": {
+      "node": "./src/lib.ts",
+      "react-native": "./src/lib.ts",
+      "default": "./src/lib.ts"
+    },
+    "./hooks": {
+      "react-native": "./src/hooks/useVideoTranscoder.ts",
+      "default": "./src/hooks/useVideoTranscoder.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "build": "echo 'Building Rust lib...'"
-  }
+    "build": "node esbuild.config.js",
+    "build:rust": "cargo build --release --target aarch64-apple-ios && cargo build --release --target aarch64-linux-android",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react-native": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "typescript": "^5.0.0"
+  },
+  "license": "MIT"
 }
