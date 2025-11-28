@@ -106,4 +106,17 @@ export function SkateHubbaProvider({
   return (
     <SkateHubbaContext.Provider value={client}>
       {children}
-    </Sk
+    </SkateHubbaContext.Provider>
+  );
+}
+
+/**
+ * Hook to access the SkateHubba API client.
+ */
+export function useSkateHubba(): SkateHubbaClient {
+  const client = useContext(SkateHubbaContext);
+  if (!client) {
+    throw new Error("useSkateHubba must be used within a SkateHubbaProvider");
+  }
+  return client;
+}

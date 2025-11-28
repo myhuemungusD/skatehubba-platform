@@ -61,4 +61,7 @@
     "formatter": {
       "quoteProperties": "asNeeded",
       "arrowParentheses": "asNeeded",
-      "bracketSpacing":
+      "bracketSpacing": true
+    }
+  }
+}
