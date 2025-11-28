@@ -1,54 +1,129 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
-  "globalEnv": ["NODE_ENV", "DATABASE_URL", "NEXT_PUBLIC_API_URL"],
-  "tasks": {
+  "pipeline": {
+    "//# GLOBAL CONFIG": "────────────────────────────────────────────────────────────",
+    "globalDependencies": [
+      "**/.env.*",
+      "tsconfig.json",
+      "package.json",
+      "turbo.json",
+      ".env",
+      ".env.local"
+    ],
+    "globalEnv": [
+      "NODE_ENV",
+      "CI",
+      "VERCEL_ENV",
+      "DATABASE_URL",
+      "DATABASE_AUTH_TOKEN",
+      "NEXT_PUBLIC_.*",
+      "EXPO_.*",
+      "FIREBASE_.*",
+      "SENTRY_.*"
+    ],
+
+    "//# TASKS": "──────────────────────────────────────────────────────────────────────",
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "build/**"],
-      "inputs": [
-        "**/*.tsx",
-        "**/*.ts",
-        "**/*.js",
-        "**/*.jsx",
-        "**/*.json",
-        "tsconfig.json"
+      "outputs": [
+        ".next/**",
+        "dist/**",
+        "build/**",
+        "!.next/cache/**",
+        "!.expo/**",
+        "**/*.d.ts",
+        "**/*.js.map"
+      ],
+      "outputLogs": "hash-only",
+      "env": [
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_APP_ENV",
+        "SENTRY_AUTH_TOKEN"
       ]
     },
+
     "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NODE_ENV",
+        "PORT",
+        "DATABASE_URL"
+      ]
+    },
+
+    "lint": {
+      "dependsOn": [],
+      "outputs": [],
+      "outputLogs": "errors-only",
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "**/*.json",
+        ".eslintrc*",
+        ".prettierrc*",
+        "biome.json"
+      ]
+    },
+
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": [".tsbuildinfo"],
+      "outputLogs": "hash-only",
+      "inputs": [
+        "**/*.{ts,tsx}",
+        "tsconfig.json",
+        "package.json"
+      ]
+    },
+
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "outputLogs": "errors-only"
+    },
+
+    "test:watch": {
       "cache": false,
       "persistent": true
     },
-    "lint": {
-      "inputs": [
-        "**/*.tsx",
-        "**/*.ts",
-        "**/*.js",
-        "**/*.jsx",
-        "**/*.json",
-        ".eslintrc.js"
-      ],
-      "outputs": []
-    },
-    "typecheck": {
-      "inputs": [
-        "**/*.tsx",
-        "**/*.ts",
-        "**/*.js",
-        "**/*.jsx",
-        "**/*.json",
-        "tsconfig.json"
-      ],
-      "outputs": []
-    },
-    "test": {
-      "outputs": []
-    },
+
+    "//# DEPLOY TASKS": "──────────────────────────────────────────────────────────────",
     "deploy:functions": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["build"],
+      "outputs": []
     },
+
     "deploy:rules": {
-      "cache": false
+      "cache": false,
+      "outputs": []
+    },
+
+    "deploy:hosting": {
+      "cache": false,
+      "dependsOn": ["build"]
+    },
+
+    "//# MOBILE-SPECIFIC": "──────────────────────────────────────────────────────────",
+    "expo#prebuild": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
+
+    "//# CLEAN & META": "──────────────────────────────────────────────────────────────",
+    "clean": {
+      "cache": false,
+      "outputs": []
+    },
+
+    "generate": {
+      "dependsOn": ["^build"],
+      "outputs": ["src/generated/**", "drizzle/**"]
+    },
+
+    "migrate": {
+      "cache": false,
+      "dependsOn": ["generate"]
     }
   }
 }
