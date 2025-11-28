@@ -1,9 +1,10 @@
 {
   "cli": { "version": ">= 12.0.0" },
   "build": {
-    "development": { "developmentClient": true, "distribution": "internal" },
-    "preview": { "distribution": "internal" },
+    "development": { "developmentClient": true, "distribution": "internal", "channel": "development" },
+    "preview": { "distribution": "internal", "channel": "preview" },
     "production": {
+      "channel": "production",
       "android": { "buildType": "app-bundle" },
       "ios": { "resourceClass": "m-medium" }
     }
