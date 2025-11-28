@@ -3,9 +3,22 @@
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "~/*": ["./src/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@native/*": ["./src/native/*"],
+      "@lib/*": ["./lib/*"],
+      "@skatehubba/*": ["../../packages/*/src"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "src",
+    "lib"
+  ]
 }
