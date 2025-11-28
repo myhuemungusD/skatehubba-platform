@@ -8,9 +8,10 @@
   },
   "dependencies": {
     "@skatehubba/types": "workspace:*",
-    "zod": "^3.22.4",
     "axios": "^1.6.0",
-    "firebase": "^10.8.0"
+    "firebase": "^10.8.0",
+    "react": "18.3.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "typescript": "~5.3.0"
