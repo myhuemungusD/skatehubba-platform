@@ -24,6 +24,8 @@ import Animated, {
   withTiming, 
   Easing 
 } from 'react-native-reanimated';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage, auth } from '../lib/firebase';
 
 const { width, height } = Dimensions.get('window');
 
@@ -112,6 +114,38 @@ export default function CameraScreen() {
     return () => clearInterval(interval);
   }, [isRecording]);
 
+  // ── UPLOAD LOGIC ──────────────────────────────────────────────────────────
+  const uploadRawFootage = async (uri: string) => {
+    if (!auth.currentUser) return;
+    
+    const filename = `raw/${auth.currentUser.uid}/${Date.now()}.mp4`;
+    const storageRef = ref(storage, filename);
+    
+    try {
+      // Fetch blob from local file URI
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+        }, 
+        (error) => {
+          console.error("Upload failed", error);
+        }, 
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log('File available at', downloadURL);
+        }
+      );
+    } catch (e) {
+      console.error('Error uploading footage:', e);
+    }
+  };
+
   // ── HANDLERS ──────────────────────────────────────────────────────────────
   const startRecording = async () => {
     if (!camera.current) return;
@@ -124,8 +158,10 @@ export default function CameraScreen() {
         camera.current.startRecording({
             onRecordingFinished: (video) => {
                 setIsRecording(false);
-                // Navigate to Transcode Screen with the file path
-                navigation.navigate('transcode', { path: video.path });
+                // 1. Start Background Upload (Fire and Forget)
+                uploadRawFootage(video.path);
+                // 2. Navigate Immediately to Transcode (Local Path for Speed)
+                navigation.navigate('Transcode', { path: video.path });
             },
             onRecordingError: (error) => {
                 console.error(error);

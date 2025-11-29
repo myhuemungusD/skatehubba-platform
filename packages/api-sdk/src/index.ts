@@ -59,8 +59,11 @@ export class SkateHubbaClient {
 
   // --- PROFILE ---
   public readonly profile = {
-    get: () =>
-      this.call<{ user: any }>("getProfile"),
+    get: (uid?: string) =>
+      this.call<{ user: any }>("getProfile", uid ? { uid } : undefined),
+
+    ensure: () =>
+      this.call<{ user: any }>("ensureUserProfile"),
   };
 
   // --- GAME OF S.K.A.T.E. ---

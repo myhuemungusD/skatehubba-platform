@@ -1,0 +1,121 @@
+Update apps/mobile/src/screens/CameraScreen.tsx:
+
+We need to add the upload logic before navigation.
+
+TypeScript
+
+// ... existing imports
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage, auth } from "../lib/firebase"; // Ensure 'storage' is exported in firebase.ts
+
+// Inside CameraScreen component...
+
+  const uploadRawFootage = async (uri: string) => {
+    if (!auth.currentUser) return;
+    
+    const filename = `raw/${auth.currentUser.uid}/${Date.now()}.mp4`;
+    const storageRef = ref(storage, filename);
+    
+    // Fetch blob from local file URI
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    uploadTask.on('state_changed', 
+      (snapshot) => {
+        // Optional: Update progress UI
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+      }, 
+      (error) => {
+        // Handle unsuccessful uploads
+        console.error("Upload failed", error);
+      }, 
+      () => {
+        // Handle successful uploads on complete
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          // NOW navigate to Transcode with the cloud URL or keep local path for speed
+          // For local Rust transcoding, we KEEP the local path, but we upload in background for backup.
+        });
+      }
+    );
+  };
+
+  const startRecording = async () => {
+    // ... existing start logic
+    // inside onRecordingFinished:
+    camera.current.startRecording({
+        onRecordingFinished: (video) => {
+            setIsRecording(false);
+            // 1. Start Background Upload (Fire and Forget)
+            uploadRawFootage(video.path); 
+            // 2. Navigate Immediately to Transcode (Local Path for Speed)
+            navigation.navigate('Transcode', { path: video.path });
+        },
+        // ... error handling
+    });
+  };
+3. Connect Dashboard to Firestore (Real Data)
+The DashboardScreen currently hardcodes "Level 16" and "92 Gold". We need to fetch this from the user's Firestore profile.
+
+Update apps/mobile/src/screens/DashboardScreen.tsx:
+
+TypeScript
+
+// ... imports
+import { doc, onSnapshot } from "firebase/firestore";
+import { db, auth } from "../lib/firebase";
+
+// Inside DashboardScreen component...
+export default function DashboardScreen() {
+  const navigation = useNavigation<any>();
+  const [profile, setProfile] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    if (!auth.currentUser) return;
+
+    // Real-time listener for user profile
+    const unsub = onSnapshot(doc(db, "users", auth.currentUser.uid), (doc) => {
+      setProfile(doc.data());
+    });
+
+    return () => unsub();
+  }, []);
+
+  // Default fallbacks if data is loading
+  const level = profile?.level || 1;
+  const gold = profile?.gold || 0;
+  const username = profile?.username || "Skater";
+
+  // Update HUD Components to use these variables
+  // ...
+  // <Text>{level}</Text>
+  // <Text>{gold}</Text>
+  // <Text>{username}</Text>
+}
+4. API SDK: Add profile.get()
+To support the dashboard, your packages/api-sdk needs a clean method to fetch/create the profile if it doesn't exist.
+
+Update packages/api-sdk/src/index.ts:
+
+TypeScript
+
+// Add to SkateHubbaClient class
+public readonly profile = {
+    get: (uid: string) => 
+      this.call<{ profile: User }>("getProfile", { uid }),
+      
+    // Call this on AuthScreen success to ensure DB document exists
+    ensure: () => 
+      this.call<{ profile: User }>("ensureUserProfile"), 
+};
+Summary of Tasks
+Run pnpm install (Root) -> Fixes zod.
+
+Edit CameraScreen.tsx -> Adds background Firebase Storage upload.
+
+Edit DashboardScreen.tsx -> Connects HUD to Firestore onSnapshot.
+
+Edit api-sdk -> Adds profile methods.
