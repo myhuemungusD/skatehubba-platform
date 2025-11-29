@@ -28,8 +28,8 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node apps/server/dist/server/index.js"
-waitForPort = 8000
+args = "cd apps/server && npm run start"
+waitForPort = 8080
 
 [[workflows.workflow]]
 name = "SkateHubba Web"
@@ -70,10 +70,6 @@ externalPort = 8000
 [[ports]]
 localPort = 8080
 externalPort = 8080
-
-[[ports]]
-localPort = 8081
-externalPort = 8081
 
 [[ports]]
 localPort = 43315
