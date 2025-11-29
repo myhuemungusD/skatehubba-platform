@@ -1,6 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { useFetch } from '../hooks/useFetch'
+import { ErrorAlert } from '../components/ErrorAlert'
+import { LoadingSpinner } from '../components/LoadingSpinner'
+import { EmptyState } from '../components/EmptyState'
 
 type AdminSection = 
   | 'overview'
@@ -12,6 +16,14 @@ type AdminSection =
   | 'marketplace'
   | 'analytics'
   | 'announcements'
+
+type Spot = {
+  id: string
+  name: string
+  location: string
+  checkins: number
+  status: 'verified' | 'pending'
+}
 
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState<AdminSection>('overview')
@@ -196,6 +208,13 @@ function OverviewContent() {
 }
 
 function SpotsContent() {
+  const { data: spots, loading, error, retry } = useFetch<{ spots: Spot[] }, Spot[]>({
+    url: '/api/spots',
+    transform: (response: { spots: Spot[] }) => response.spots || [],
+    initialData: [],
+    enabled: true,
+  })
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -208,25 +227,53 @@ function SpotsContent() {
           Add New Spot
         </button>
       </div>
+
+      {error && (
+        <ErrorAlert 
+          title="Error loading spots"
+          error={error}
+          onRetry={retry}
+        />
+      )}
+
+      {loading && !error && (
+        <LoadingSpinner message="Loading spots..." />
+      )}
+
+      {!loading && !error && (!spots || spots.length === 0) && (
+        <EmptyState 
+          icon="📍"
+          title="No spots found"
+          description="Add your first skate spot to get started"
+        />
+      )}
       
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-900">
-            <tr>
-              <th className="px-6 py-4 text-left">Spot Name</th>
-              <th className="px-6 py-4 text-left">Location</th>
-              <th className="px-6 py-4 text-left">Check-ins</th>
-              <th className="px-6 py-4 text-left">Status</th>
-              <th className="px-6 py-4 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <SpotRow name="Embarcadero Plaza" location="San Francisco, CA" checkins={1247} status="verified" />
-            <SpotRow name="Venice Beach Skatepark" location="Los Angeles, CA" checkins={892} status="verified" />
-            <SpotRow name="Downtown Rails" location="Portland, OR" checkins={445} status="pending" />
-          </tbody>
-        </table>
-      </div>
+      {!loading && !error && spots && spots.length > 0 && (
+        <div className="bg-gray-800 rounded-lg overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-900">
+              <tr>
+                <th className="px-6 py-4 text-left">Spot Name</th>
+                <th className="px-6 py-4 text-left">Location</th>
+                <th className="px-6 py-4 text-left">Check-ins</th>
+                <th className="px-6 py-4 text-left">Status</th>
+                <th className="px-6 py-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {spots.map((spot: Spot) => (
+                <SpotRow
+                  key={spot.id}
+                  name={spot.name}
+                  location={spot.location}
+                  checkins={spot.checkins}
+                  status={spot.status}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
