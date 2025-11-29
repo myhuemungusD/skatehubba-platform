@@ -10,6 +10,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^7.11.6",
     "@napi-rs/canvas": "^0.1.83",
     "@skatehubba/db": "workspace:*",
     "@skatehubba/types": "workspace:*",

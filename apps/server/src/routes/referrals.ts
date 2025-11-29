@@ -1,7 +1,7 @@
-import express, { Router, Response } from 'express';
+import express, { Router, Request, Response } from 'express';
 import { randomBytes } from 'crypto';
 import { collections } from '@skatehubba/db';
-import { requireAuth, AuthenticatedRequest } from '../middleware/auth';
+import { requireAuth } from '../middleware/auth';
 import { FieldValue } from '@google-cloud/firestore';
 
 export const referralsRouter: Router = express.Router();
@@ -10,10 +10,10 @@ function generateReferralCode(): string {
   return randomBytes(4).toString('hex').toUpperCase();
 }
 
-referralsRouter.post('/invite', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+referralsRouter.post('/invite', requireAuth, async (req: Request, res: Response) => {
   try {
     const { referredEmail } = req.body;
-    const referrerId = req.user.uid;
+    const referrerId = req.user!.uid;
 
     if (!referredEmail || typeof referredEmail !== 'string') {
       res.status(400).json({ error: 'referredEmail is required' });
@@ -24,6 +24,42 @@ referralsRouter.post('/invite', requireAuth, async (req: AuthenticatedRequest, r
     if (!emailRegex.test(referredEmail)) {
       res.status(400).json({ error: 'Invalid email format' });
       return;
+    }
+
+    const userDoc = await collections.users().doc(referrerId).get();
+    if (!userDoc.exists) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    const userData = userDoc.data();
+    let referralCode = userData?.referralCode;
+    
+    if (!referralCode) {
+      let isUnique = false;
+      let attempts = 0;
+
+      while (!isUnique && attempts < 10) {
+        referralCode = generateReferralCode();
+        const existingCode = await collections.users()
+          .where('referralCode', '==', referralCode)
+          .limit(1)
+          .get();
+        
+        if (existingCode.empty) {
+          isUnique = true;
+        }
+        attempts++;
+      }
+
+      if (!isUnique) {
+        res.status(500).json({ error: 'Failed to generate unique referral code' });
+        return;
+      }
+
+      await collections.users().doc(referrerId).update({
+        referralCode: referralCode!,
+      });
     }
 
     const existingReferrals = await collections.referrals()
@@ -52,6 +88,7 @@ referralsRouter.post('/invite', requireAuth, async (req: AuthenticatedRequest, r
       message: 'Referral invite created successfully',
       referralId,
       referredEmail,
+      referralCode,
     });
   } catch (error) {
     console.error('Error creating referral invite:', error);
@@ -59,13 +96,49 @@ referralsRouter.post('/invite', requireAuth, async (req: AuthenticatedRequest, r
   }
 });
 
-referralsRouter.get('/:userId', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+referralsRouter.get('/:userId', requireAuth, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    if (req.user.uid !== userId) {
+    if (req.user!.uid !== userId) {
       res.status(403).json({ error: 'Forbidden: You can only view your own referral stats' });
       return;
+    }
+
+    const userDoc = await collections.users().doc(userId).get();
+    if (!userDoc.exists) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    const userData = userDoc.data();
+    let referralCode = userData?.referralCode;
+
+    if (!referralCode) {
+      let isUnique = false;
+      let attempts = 0;
+
+      while (!isUnique && attempts < 10) {
+        referralCode = generateReferralCode();
+        const existingCode = await collections.users()
+          .where('referralCode', '==', referralCode)
+          .limit(1)
+          .get();
+        
+        if (existingCode.empty) {
+          isUnique = true;
+        }
+        attempts++;
+      }
+
+      if (!isUnique) {
+        res.status(500).json({ error: 'Failed to generate unique referral code' });
+        return;
+      }
+
+      await collections.users().doc(userId).update({
+        referralCode: referralCode!,
+      });
     }
 
     const referralsSnapshot = await collections.referrals()
@@ -96,6 +169,7 @@ referralsRouter.get('/:userId', requireAuth, async (req: AuthenticatedRequest, r
 
     res.json({
       userId,
+      referralCode,
       totalInvites,
       completedInvites,
       pendingInvites,
@@ -108,10 +182,10 @@ referralsRouter.get('/:userId', requireAuth, async (req: AuthenticatedRequest, r
   }
 });
 
-referralsRouter.post('/complete', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+referralsRouter.post('/complete', requireAuth, async (req: Request, res: Response) => {
   try {
     const { referralCode } = req.body;
-    const newUserId = req.user.uid;
+    const newUserId = req.user!.uid;
 
     if (!referralCode || typeof referralCode !== 'string') {
       res.status(400).json({ error: 'referralCode is required' });
@@ -148,7 +222,7 @@ referralsRouter.post('/complete', requireAuth, async (req: AuthenticatedRequest,
       return;
     }
 
-    const userEmail = req.user.email;
+    const userEmail = req.user!.email;
     if (!userEmail) {
       res.status(400).json({ error: 'User email is required for referral completion' });
       return;
@@ -240,9 +314,9 @@ referralsRouter.post('/complete', requireAuth, async (req: AuthenticatedRequest,
   }
 });
 
-referralsRouter.post('/generate-code', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+referralsRouter.post('/generate-code', requireAuth, async (req: Request, res: Response) => {
   try {
-    const userId = req.user.uid;
+    const userId = req.user!.uid;
 
     const userDoc = await collections.users().doc(userId).get();
     if (!userDoc.exists) {

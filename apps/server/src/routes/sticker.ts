@@ -1,8 +1,8 @@
-import express, { Router, Response } from 'express';
-import { createCanvas, GlobalFonts, SKRSContext2D } from '@napi-rs/canvas';
+import express, { Router, Request, Response } from 'express';
+import { createCanvas, loadImage, GlobalFonts, SKRSContext2D } from '@napi-rs/canvas';
 import QRCode from 'qrcode';
 import { collections } from '@skatehubba/db';
-import { requireAuth, AuthenticatedRequest } from '../middleware/auth';
+import { requireAuth } from '../middleware/auth';
 
 export const stickerRouter: Router = express.Router();
 
@@ -102,7 +102,7 @@ async function generateSticker(
   
   const qrImage = await fetch(qrDataURL);
   const qrBuffer = await qrImage.arrayBuffer();
-  const qrImg = await canvas.loadImage(Buffer.from(qrBuffer));
+  const qrImg = await loadImage(Buffer.from(qrBuffer));
 
   const qrSize = 400;
   const qrX = (STICKER_SIZE - qrSize) / 2;
@@ -129,7 +129,7 @@ async function generateSticker(
   return canvas.toBuffer('image/png');
 }
 
-stickerRouter.get('/:userId', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+stickerRouter.get('/:userId', requireAuth, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
