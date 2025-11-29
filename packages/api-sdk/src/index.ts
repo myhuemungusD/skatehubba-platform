@@ -6,6 +6,8 @@ import type {
   CheckIn,
   SkateGame,
   Spot,
+  Quest,
+  Session,
 } from "@skatehubba/types";
 
 // ==========================================
@@ -76,6 +78,39 @@ export class SkateHubbaClient {
 
     join: (id: string) =>
       this.call<{ game: SkateGame }, { gameId: string }>("joinSkateGame", { gameId: id }),
+  };
+
+  // --- QUESTS ---
+  public readonly quests = {
+    list: () =>
+      this.call<{ quests: Quest[] }>("getQuests"),
+
+    get: (id: string) =>
+      this.call<{ quest: Quest }, { questId: string }>("getQuest", { questId: id }),
+
+    getNearby: (lat: number, lng: number, radiusKm: number = 5) =>
+      this.call<{ quests: Quest[] }>("getQuestsNearby", { lat, lng, radiusKm }),
+  };
+
+  // --- SESSIONS ---
+  public readonly sessions = {
+    create: (questId: string) =>
+      this.call<{ session: Session }, { questId: string }>("createSession", { questId }),
+
+    get: (id: string) =>
+      this.call<{ session: Session }, { sessionId: string }>("getSession", { sessionId: id }),
+
+    updateClips: (sessionId: string, clipUrls: string[]) =>
+      this.call<{ session: Session }, { sessionId: string; clips: string[] }>(
+        "updateSessionClips",
+        { sessionId, clips: clipUrls },
+      ),
+
+    complete: (sessionId: string, status: "COMPLETED" | "FAILED") =>
+      this.call<{ session: Session }, { sessionId: string; status: string }>(
+        "completeSession",
+        { sessionId, status },
+      ),
   };
 }
 
