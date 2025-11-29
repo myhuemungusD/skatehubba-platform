@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,10 +8,11 @@ import { View, ActivityIndicator } from 'react-native';
 
 // Screens
 import AuthScreen from '../screens/AuthScreen';
-import DashboardScreen from '../screens/AvatarScreen'; // Lobby (Avatar/Dashboard)
-import MapScreen from '../screens/MapScreen'; // World Map
-import ProfileScreen from '../screens/ProfileScreen'; 
-import CameraScreen from '../screens/CameraScreen'; // Camera/Recording
+import DashboardScreen from '../screens/DashboardScreen';
+import MapScreen from '../screens/MapScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import CameraScreen from '../screens/CameraScreen';
+import TranscodeComponent from '../components/TranscodeComponent';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,11 +42,12 @@ export default function RootNavigator() {
         {user ? (
           // ── APP STACK (Signed In) ─────────────────────────────────────────
           <Stack.Group>
-            {/* Dashboard is the Lobby */}
-            <Stack.Screen name="Dashboard" component={DashboardScreen} />
-            <Stack.Screen name="Map" component={MapScreen} />
+            {/* Dashboard is the Main Lobby */}
+            <Stack.Screen name="dashboard" component={DashboardScreen} />
+            <Stack.Screen name="map" component={MapScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
-            <Stack.Screen name="Camera" component={CameraScreen} />
+            <Stack.Screen name="camera" component={CameraScreen} />
+            <Stack.Screen name="transcode" component={TranscodeComponent} />
           </Stack.Group>
         ) : (
           // ── AUTH STACK (Guest) ───────────────────────────────────────────
