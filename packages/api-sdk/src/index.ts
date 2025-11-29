@@ -57,6 +57,12 @@ export class SkateHubbaClient {
       this.call<{ checkin: CheckIn }>("createCheckin", data),
   };
 
+  // --- PROFILE ---
+  public readonly profile = {
+    get: () =>
+      this.call<{ user: any }>("getProfile"),
+  };
+
   // --- GAME OF S.K.A.T.E. ---
   public readonly skate = {
     create: (data: { trickVideoUrl: string; opponentHandle?: string }) =>

@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Map, Zap, User, Camera, Menu as MenuIcon, Backpack, Shirt } from '@tamagui/lucide-icons';
 import { useAuthStore } from '../lib/auth';
+import { getClient } from '../../lib/client';
 
 const { width, height } = Dimensions.get('window');
 
@@ -144,6 +145,36 @@ const StatBox = ({ label, value }: { label: string; value: string | number }) =>
 export default function DashboardScreen() {
   const navigation = useNavigation();
   const { user } = useAuthStore();
+  const [profile, setProfile] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchProfile() {
+      if (!user) return;
+      
+      try {
+        const client = await getClient();
+        const { user: profileData } = await client.profile.get();
+        setProfile(profileData);
+      } catch (error) {
+        console.error('Failed to fetch profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchProfile();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <LinearGradient colors={[COLORS.BG_GRADIENT_TOP, COLORS.BG_GRADIENT_BOT]} style={{ flex: 1 }}>
+        <YStack f={1} ai="center" jc="center">
+          <Text color={COLORS.GOLD}>Loading...</Text>
+        </YStack>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient
@@ -204,18 +235,18 @@ export default function DashboardScreen() {
                   fontFamily={Platform.OS === 'ios' ? 'Arial-BoldMT' : 'sans-serif-condensed'}
                   textTransform="uppercase"
                 >
-                  {user?.displayName || 'Skater'}
+                  {profile?.displayName || user?.displayName || 'Skater'}
                 </Text>
                 <Text color={COLORS.TEAL} fontSize={16} fontWeight="600">
-                  Level 12 • Pro
+                  {profile?.stance || 'Regular'} • {profile?.handle || 'New Skater'}
                 </Text>
               </YStack>
             </XStack>
 
             <XStack space="$3">
-              <StatBox label="XP" value="2,450" />
-              <StatBox label="Spots" value="42" />
-              <StatBox label="Rank" value="#127" />
+              <StatBox label="Wins" value={profile?.stats?.wins || 0} />
+              <StatBox label="Losses" value={profile?.stats?.losses || 0} />
+              <StatBox label="Board" value={profile?.board?.deck || 'None'} />
             </XStack>
           </YStack>
 
