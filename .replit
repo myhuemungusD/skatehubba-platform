@@ -15,6 +15,10 @@ args = "SkateHubba API"
 task = "workflow.run"
 args = "SkateHubba Web"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SkateHubba Mobile"
+
 [[workflows.workflow]]
 name = "SkateHubba API"
 author = "agent"
@@ -38,6 +42,18 @@ outputType = "webview"
 task = "shell.exec"
 args = "cd /home/runner/workspace/apps/web && npx vite --host 0.0.0.0 --port 5000"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "SkateHubba Mobile"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd apps/mobile && pnpm dev"
+waitForPort = 8081
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 3000

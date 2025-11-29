@@ -1,292 +1,235 @@
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  Image,
-  ImageBackground,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useAuthStore } from "../../lib/auth";
-import { db } from "../../lib/firebase";
+import React, { useEffect } from 'react';
+import { Dimensions, Platform, Image as RNImage } from 'react-native';
+import { 
+  YStack, 
+  XStack, 
+  Text, 
+  Button, 
+  Image, 
+  Theme,
+  Stack,
+} from 'tamagui';
+import * as Haptics from 'expo-haptics';
+import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Map, Backpack, User, Camera } from 'lucide-react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withRepeat, 
+  withTiming, 
+  Easing 
+} from 'react-native-reanimated';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
-interface UserProfile {
-  username: string;
-  level: number;
-  currency: {
-    hardware: number;
-    bearings: number;
-  };
-  avatarUrl: string;
-}
-
-const DEFAULT_PROFILE: UserProfile = {
-  username: "New Skater",
-  level: 1,
-  currency: { hardware: 10, bearings: 5 },
-  avatarUrl: "https://via.placeholder.com/300x600/transparent/png?text=Skater",
+// ── RPG PALETTE ────────────────────────────────────────────────────
+const COLORS = {
+  GOLD: '#FFD700',
+  ORANGE: '#FF9100',
+  ORANGE_DARK: '#E65100',
+  BORDER: '#000000',
+  BG_GRADIENT_TOP: '#263238',
+  BG_GRADIENT_BOT: '#102027',
+  TEAL: '#00BCD4',
 };
 
-export default function AvatarScreen() {
-  const { user: authUser, loading: authLoading } = useAuthStore();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+// ── ANIMATED COMPONENTS ─────────────────────────────────────────────
+const AnimatedStack = Animated.createAnimatedComponent(Stack);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!authUser) {
-      setLoading(false);
-      return;
-    }
+// ── REUSABLE "GAME" COMPONENTS ──────────────────────────────────────
 
-    const userRef = doc(db, "users", authUser.uid);
-
-    const unsubscribe = onSnapshot(
-      userRef,
-      async (docSnap) => {
-        if (docSnap.exists()) {
-          setProfile(docSnap.data() as UserProfile);
-        } else {
-          try {
-            // Create profile if it doesn't exist
-            await setDoc(userRef, DEFAULT_PROFILE);
-            // No need to setProfile here, the snapshot will fire again immediately after writing!
-          } catch (err) {
-            console.error("Error creating profile:", err);
-          }
-        }
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Profile Sync Error:", error);
-        Alert.alert("Connection Issue", "Could not sync profile data.");
-        setLoading(false);
-      },
-    );
-
-    return () => unsubscribe();
-  }, [authUser, authLoading]);
-
-  if (loading || authLoading) {
-    return (
-      <View style={styles.centeredContainer}>
-        <ActivityIndicator size="large" color="#FBBF24" />
-        <Text style={styles.loadingText}>Syncing Garage...</Text>
-      </View>
-    );
-  }
-
-  if (!authUser) {
-    return (
-      <View style={styles.centeredContainer}>
-        <Text style={styles.loadingText}>
-          Please Log In to view your Avatar.
-        </Text>
-      </View>
-    );
-  }
-
+const GameButton = ({ 
+  title, 
+  onPress, 
+  variant = 'primary', 
+  width = 'auto', 
+  height = 60,
+  icon: Icon 
+}: any) => {
+  const isPrimary = variant === 'primary';
+  const bg = isPrimary ? COLORS.ORANGE : '#333';
+  
   return (
-    <ImageBackground
-      source={{
-        uri: "https://images.unsplash.com/photo-1585920806256-227956696727?q=80&w=1000&auto=format&fit=crop",
+    <Button
+      unstyled
+      onPress={() => {
+        if (Platform.OS !== 'web') Haptics.selectionAsync();
+        onPress();
       }}
-      style={styles.container}
-      resizeMode="cover"
+      bg={bg}
+      borderColor={COLORS.BORDER}
+      borderWidth={3}
+      borderBottomWidth={8}
+      borderRadius={12}
+      height={height}
+      width={width}
+      ai="center"
+      jc="center"
+      pressStyle={{ borderBottomWidth: 3, marginTop: 5 }}
+      shadowColor="#000"
+      shadowRadius={0}
+      shadowOffset={{ width: 4, height: 4 }}
     >
-      <View style={styles.overlay}>
-        {/* SafeAreaView keeps content out of the notch/battery area */}
-        <SafeAreaView style={styles.safeArea}>
-          {/* CENTER AVATAR LAYER */}
-          {/* We place this absolutely so it sits behind the UI controls */}
-          {profile && (
-            <View style={styles.avatarContainer}>
-              <Image
-                source={{ uri: profile.avatarUrl }}
-                style={styles.avatarImage}
-                resizeMode="contain"
-              />
-            </View>
-          )}
-
-          {/* UI CONTROLS LAYER */}
-          <View style={styles.controlsContainer}>
-            {/* LEFT COLUMN */}
-            <View style={styles.column}>
-              <RetroButton text="TOP" onPress={() => console.log("Edit Top")} />
-              <View style={styles.spacer} />
-              <RetroButton
-                text="BOTTOM"
-                onPress={() => console.log("Edit Bottom")}
-              />
-            </View>
-
-            {/* RIGHT COLUMN */}
-            <View style={styles.column}>
-              <RetroButton
-                text="SKATEHUB"
-                onPress={() => console.log("Go to Hub")}
-              />
-              <View style={styles.spacer} />
-              <RetroButton
-                text="EQUIP"
-                highlight
-                onPress={() => console.log("Equip Item")}
-              />
-            </View>
-          </View>
-
-          {/* BOTTOM STATS BAR */}
-          <View style={styles.statsBar}>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>HARDWARE:</Text>
-              <Text style={styles.statValue}>
-                × {profile?.currency.hardware ?? 0}
-              </Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>BEARINGS:</Text>
-              <Text style={styles.statValue}>
-                × {profile?.currency.bearings ?? 0}
-              </Text>
-            </View>
-          </View>
-        </SafeAreaView>
-      </View>
-    </ImageBackground>
+      <XStack space="$2" ai="center">
+        {Icon && <Icon size={24} color="#fff" strokeWidth={3} />}
+        <Text 
+          color="#fff" 
+          fontFamily={Platform.OS === 'ios' ? 'Arial-BoldMT' : 'sans-serif-condensed'} 
+          fontWeight="900" 
+          fontSize={20} 
+          textTransform="uppercase"
+          letterSpacing={1}
+          textShadowColor="#000"
+          textShadowRadius={0}
+          textShadowOffset={{ width: 2, height: 2 }}
+        >
+          {title}
+        </Text>
+      </XStack>
+    </Button>
   );
-}
+};
 
-// -- REUSABLE UI COMPONENT --
-const RetroButton = ({
-  text,
-  onPress,
-  highlight,
-}: {
-  text: string;
-  onPress: () => void;
-  highlight?: boolean;
-}) => (
-  <TouchableOpacity
-    style={[styles.btnFrame, highlight && styles.btnHighlight]}
-    onPress={onPress}
-    activeOpacity={0.7}
+const GameBanner = ({ title }: { title: string }) => (
+  <Stack
+    bg={COLORS.BORDER}
+    px="$4"
+    py="$2"
+    borderRadius={8}
+    borderWidth={2}
+    borderColor={COLORS.GOLD}
+    shadowColor="#000"
+    shadowOffset={{ width: 4, height: 4 }}
+    shadowRadius={0}
+    transform={[{ rotate: '-2deg' }]}
   >
-    <View style={styles.btnInner}>
-      <Text style={styles.btnText}>{text}</Text>
-    </View>
-  </TouchableOpacity>
+    <Text
+      color={COLORS.GOLD}
+      fontFamily={Platform.OS === 'ios' ? 'Arial-BoldMT' : 'sans-serif-condensed'}
+      fontWeight="900"
+      fontSize={32}
+      textTransform="uppercase"
+      letterSpacing={-1}
+      textShadowColor="#000"
+      textShadowOffset={{ width: 2, height: 2 }}
+      textShadowRadius={0}
+    >
+      {title}
+    </Text>
+  </Stack>
 );
 
-// -- STYLES --
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#111" },
-  overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)" },
-  safeArea: { flex: 1 },
+// ── MAIN SCREEN ─────────────────────────────────────────────────────
+export default function AvatarScreen() {
+  const navigation = useNavigation<any>();
 
-  centeredContainer: {
-    flex: 1,
-    backgroundColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: { color: "#666", marginTop: 10 },
+  // ── ANIMATION LOGIC ───────────────────────────────────────────────
+  const scale = useSharedValue(1);
+  const translateY = useSharedValue(0);
 
-  // Avatar is absolutely positioned to stay centered regardless of UI
-  avatarContainer: {
-    position: "absolute",
-    width: "100%",
-    height: "80%",
-    top: "10%",
-    zIndex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarImage: {
-    width: width * 0.8, // Responsive width
-    height: "100%",
-  },
+  useEffect(() => {
+    scale.value = withRepeat(
+      withTiming(1.02, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+    translateY.value = withRepeat(
+      withTiming(-5, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+  }, []);
 
-  // Container to hold left/right columns
-  controlsContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: "40%", // Push buttons down visually
-    zIndex: 10,
-  },
-  column: {
-    flexDirection: "column",
-  },
-  spacer: { height: 20 },
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }, { translateY: translateY.value }],
+  }));
 
-  // Buttons
-  btnFrame: {
-    borderWidth: 2,
-    borderColor: "#FBBF24",
-    borderRadius: 8,
-    backgroundColor: "#000",
-    padding: 2,
-    width: 140,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-  },
-  btnHighlight: {
-    borderColor: "#FFF",
-    shadowColor: "#FFF",
-  },
-  btnInner: {
-    backgroundColor: "#1a1a1a",
-    paddingVertical: 12,
-    borderRadius: 4,
-    alignItems: "center",
-  },
-  btnText: {
-    color: "#FFF",
-    fontSize: 16, // Slightly smaller for better fit
-    fontWeight: "900",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
+  return (
+    <Theme name="dark">
+      <LinearGradient
+        colors={[COLORS.BG_GRADIENT_TOP, COLORS.BG_GRADIENT_BOT]}
+        style={{ flex: 1 }}
+      >
+        <YStack f={1} pt="$8" pb="$6" px="$4" jc="space-between">
+            
+            {/* TOP HUD */}
+            <XStack w="100%" jc="space-between" ai="flex-start" zIndex={100}>
+                <YStack space="$2">
+                    <GameButton title="TOP" height={50} width={120} variant="secondary" onPress={() => {}} />
+                    <GameButton title="BOTTOM" height={50} width={120} variant="secondary" onPress={() => {}} />
+                </YStack>
 
-  // Stats
-  statsBar: {
-    alignSelf: "center", // Center the bar horizontally
-    marginBottom: 20, // Lift off the bottom
-    backgroundColor: "#000",
-    borderWidth: 2,
-    borderColor: "#FBBF24",
-    borderRadius: 8,
-    padding: 12,
-    width: "90%", // Take up most width
-    maxWidth: 400,
-    zIndex: 20,
-    flexDirection: "row", // Align items side by side
-    justifyContent: "space-around",
-  },
-  statItem: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  statLabel: {
-    color: "#FBBF24",
-    fontSize: 14,
-    fontWeight: "bold",
-    marginRight: 8,
-  },
-  statValue: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
+                <GameBanner title="SKATEHUBBA" />
+            </XStack>
+
+            {/* AVATAR STAGE (Animated) */}
+            <YStack 
+                position="absolute" 
+                top={0} 
+                bottom={0} 
+                left={0} 
+                right={0} 
+                jc="center" 
+                ai="center" 
+                zIndex={0}
+            >
+                <Animated.View style={[{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }, animatedStyle]}>
+                    <Image 
+                        source={{ uri: 'https://github.com/shadcn.png' }}
+                        width={width * 0.9}
+                        height={height * 0.6}
+                        resizeMode="contain"
+                    />
+                </Animated.View>
+                
+                <Stack 
+                    width={200} 
+                    height={30} 
+                    bg="#000" 
+                    opacity={0.5} 
+                    borderRadius={100} 
+                    position="absolute"
+                    bottom={height * 0.15}
+                    zIndex={-1}
+                />
+            </YStack>
+
+            {/* BOTTOM CONTROLS */}
+            <YStack space="$3" w="100%" zIndex={100}>
+                
+                <XStack jc="space-between">
+                    <GameButton 
+                        title="EQUIP" 
+                        icon={Backpack} 
+                        width={width * 0.42} 
+                        onPress={() => navigation.navigate('Profile')} 
+                    />
+                    <GameButton 
+                        title="MAP" 
+                        icon={Map} 
+                        width={width * 0.42} 
+                        onPress={() => navigation.navigate('Map')} 
+                    />
+                </XStack>
+
+                <Stack 
+                    bg="#000" 
+                    borderWidth={2} 
+                    borderColor={COLORS.GOLD} 
+                    borderRadius={8} 
+                    p="$3"
+                    flexDirection="row"
+                    jc="space-between"
+                >
+                    <Text color={COLORS.GOLD} fontWeight="900" fontSize="$4">HARDWARE: × 24</Text>
+                    <Text color={COLORS.GOLD} fontWeight="900" fontSize="$4">BEARINGS: × 16</Text>
+                </Stack>
+
+            </YStack>
+
+        </YStack>
+      </LinearGradient>
+    </Theme>
+  );
+}
