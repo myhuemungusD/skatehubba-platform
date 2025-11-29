@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import type { Quest, Session } from '@skatehubba/types';
 
 export const questsRouter = Router();
@@ -38,7 +38,7 @@ const seedQuests = () => {
 seedQuests();
 
 // GET /quests
-questsRouter.get('/', (req, res) => {
+questsRouter.get('/', (_req: Request, res: Response) => {
   try {
     const questList = Array.from(quests.values());
     res.json({ quests: questList });
@@ -48,7 +48,7 @@ questsRouter.get('/', (req, res) => {
 });
 
 // GET /quests/:id
-questsRouter.get('/:id', (req, res) => {
+questsRouter.get('/:id', (req: Request, res: Response) => {
   try {
     const quest = quests.get(req.params.id);
     if (!quest) {
@@ -61,7 +61,7 @@ questsRouter.get('/:id', (req, res) => {
 });
 
 // POST /quests/nearby
-questsRouter.post('/nearby', (req, res) => {
+questsRouter.post('/nearby', (req: Request, res: Response) => {
   try {
     const { lat, lng, radiusKm = 5 } = req.body;
 
@@ -79,7 +79,7 @@ questsRouter.post('/nearby', (req, res) => {
 });
 
 // POST /sessions
-questsRouter.post('/sessions', (req, res) => {
+questsRouter.post('/sessions', (req: Request, res: Response) => {
   try {
     const { userId, questId } = req.body;
 
@@ -105,7 +105,7 @@ questsRouter.post('/sessions', (req, res) => {
 });
 
 // POST /sessions/:id/clips
-questsRouter.post('/sessions/:id/clips', (req, res) => {
+questsRouter.post('/sessions/:id/clips', (req: Request, res: Response) => {
   try {
     const { clipUrl } = req.body;
     const session = sessions.get(req.params.id);
@@ -124,7 +124,7 @@ questsRouter.post('/sessions/:id/clips', (req, res) => {
 });
 
 // POST /sessions/:id/complete
-questsRouter.post('/sessions/:id/complete', (req, res) => {
+questsRouter.post('/sessions/:id/complete', (req: Request, res: Response) => {
   try {
     const { status } = req.body;
     const session = sessions.get(req.params.id);
