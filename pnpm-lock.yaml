@@ -22,6 +22,16 @@ packageExtensionsChecksum: sha256-Ey5KBRTCPBpmjtrtCoD+ZOnCSIGwmkdD/GMwxp6cDWw=
 importers:
 
   .:
+    dependencies:
+      expo:
+        specifier: ~54.0.25
+        version: 54.0.25(@babel/core@7.28.5)(@expo/metro-runtime@4.0.1(react-native@0.74.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.3.12)(react@18.3.1)))(expo-router@4.0.21)(graphql@16.8.1)(react-native@0.74.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      react-native:
+        specifier: 0.74.5
+        version: 0.74.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.3.12)(react@18.3.1)
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -44,9 +54,6 @@ importers:
       eslint:
         specifier: ^9.13.0
         version: 9.39.1(jiti@1.21.7)
-      expo:
-        specifier: latest
-        version: 54.0.25(@babel/core@7.28.5)(@expo/metro-runtime@4.0.1(react-native@0.74.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.3.12)(react@18.3.1)))(expo-router@4.0.21)(graphql@16.8.1)(react-native@0.74.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1)
       prettier:
         specifier: ^3.3.3
         version: 3.7.2
@@ -1758,7 +1765,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
 
   '@expo/cli@0.22.26':
     resolution: {integrity: sha512-I689wc8Fn/AX7aUGiwrh3HnssiORMJtR2fpksX+JIe8Cj/EDleblYMSwRPd0025wrwOV9UN1KM/RuEt/QjCS3Q==}
@@ -11452,7 +11459,7 @@ snapshots:
   '@expo/config@10.0.6':
     dependencies:
       '@babel/code-frame': 7.10.4
-      '@expo/config-plugins': 9.0.12
+      '@expo/config-plugins': 9.0.17
       '@expo/config-types': 52.0.5
       '@expo/json-file': 9.1.5
       deepmerge: 4.3.1
@@ -11837,8 +11844,8 @@ snapshots:
 
   '@expo/prebuild-config@8.0.17':
     dependencies:
-      '@expo/config': 10.0.6
-      '@expo/config-plugins': 9.0.12
+      '@expo/config': 10.0.11
+      '@expo/config-plugins': 9.0.17
       '@expo/config-types': 52.0.5
       '@expo/image-utils': 0.6.5
       '@expo/json-file': 9.1.5
@@ -18104,7 +18111,7 @@ snapshots:
 
   filelist@1.0.4:
     dependencies:
-      minimatch: 5.1.2
+      minimatch: 5.1.6
 
   fill-range@7.1.1:
     dependencies:
@@ -18563,8 +18570,8 @@ snapshots:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.3.2
-      ignore: 5.3.0
+      fast-glob: 3.3.3
+      ignore: 5.3.2
       merge2: 1.4.1
       slash: 3.0.0
 
