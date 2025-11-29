@@ -1,4 +1,4 @@
-package com.skatehubba
+package com.jayham710.skatehubbamonorepo
 
 import android.os.Build
 import android.os.Bundle

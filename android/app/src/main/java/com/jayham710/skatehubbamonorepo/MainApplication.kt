@@ -1,4 +1,4 @@
-package com.skatehubba
+package com.jayham710.skatehubbamonorepo
 
 import android.app.Application
 import android.content.res.Configuration
