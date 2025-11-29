@@ -14,9 +14,9 @@ config.watchFolders = [
   path.resolve(workspaceRoot, "apps/mobile"),
 ];
 
-// 2. Enable symlinks and package exports (pnpm compatibility)
+// 2. Enable symlinks, disable package exports (pnpm compatibility)
 config.resolver.unstable_enableSymlinks = true;
-config.resolver.unstable_enablePackageExports = true;
+config.resolver.unstable_enablePackageExports = false;
 
 // 3. Fix node_modules resolution (critical for pnpm workspaces)
 config.resolver.nodeModulesPaths = [
