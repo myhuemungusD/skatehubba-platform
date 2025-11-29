@@ -42,4 +42,4 @@ export function createNextAuthConfig(config: AuthConfig): NextAuthConfig {
   };
 }
 
-export { auth as getServerSession } from "next-auth";
+export type { Session } from "next-auth";

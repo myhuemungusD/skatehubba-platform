@@ -1,7 +1,6 @@
 import {
   GoogleSignin,
   statusCodes,
-  type ConfigureParams,
 } from "@react-native-google-signin/google-signin";
 import { initializeApp, getApps, getApp } from "firebase/app";
 import {

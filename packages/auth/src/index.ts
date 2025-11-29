@@ -1,9 +1,10 @@
-export type { User, Session, Account, AuthConfig } from "./types";
+export type { User, Session, Account, AuthConfig } from "./types.js";
 
 export {
   createNextAuthConfig,
-  getServerSession,
-} from "./next-auth";
+} from "./next-auth.js";
+
+export type { Session as NextAuthSession } from "./next-auth.js";
 
 export {
   configureExpoAuth,
@@ -13,6 +14,6 @@ export {
   onAuthStateChanged,
   getAuth,
   getFirestore,
-} from "./expo-auth";
+} from "./expo-auth.js";
 
-export { FirestoreAdapter } from "./firestore-adapter";
+export { FirestoreAdapter } from "./firestore-adapter.js";

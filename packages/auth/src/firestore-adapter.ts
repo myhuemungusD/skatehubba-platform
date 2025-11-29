@@ -45,6 +45,7 @@ export function FirestoreAdapter(app: FirebaseApp): Adapter {
       const snapshot = await getDocs(q);
       if (snapshot.empty) return null;
       const userDoc = snapshot.docs[0];
+      if (!userDoc) return null;
       const data = userDoc.data();
       return {
         id: userDoc.id,
@@ -65,24 +66,33 @@ export function FirestoreAdapter(app: FirebaseApp): Adapter {
         where("providerAccountId", "==", providerAccountId)
       );
       const snapshot = await getDocs(q);
-      if (snapshot.empty) return null;
+      if (snapshot.empty || !snapshot.docs[0]) return null;
       const accountData = snapshot.docs[0].data();
       return this.getUser!(accountData.userId);
     },
 
     async updateUser(user) {
       const userRef = doc(db, "users", user.id);
+      const existing = await getDoc(userRef);
+      const existingData = existing.data() || {};
+      
       const updateData = {
-        ...user,
-        emailVerified: user.emailVerified?.toISOString() || null,
+        email: user.email || existingData.email || "",
+        name: user.name || existingData.name || null,
+        image: user.image || existingData.image || null,
+        emailVerified: user.emailVerified?.toISOString() || existingData.emailVerified || null,
+        createdAt: existingData.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+      
       await setDoc(userRef, updateData, { merge: true });
+      
       return {
-        ...updateData,
+        id: user.id,
+        email: updateData.email,
+        name: updateData.name,
+        image: updateData.image,
         emailVerified: updateData.emailVerified ? new Date(updateData.emailVerified) : null,
-        createdAt: new Date(updateData.createdAt || new Date().toISOString()),
-        updatedAt: new Date(updateData.updatedAt),
       };
     },
 
@@ -149,7 +159,7 @@ export function FirestoreAdapter(app: FirebaseApp): Adapter {
       const sessionsRef = collection(db, "sessions");
       const q = query(sessionsRef, where("sessionToken", "==", sessionToken));
       const snapshot = await getDocs(q);
-      if (snapshot.empty) return null;
+      if (snapshot.empty || !snapshot.docs[0]) return null;
       const sessionData = snapshot.docs[0].data();
       const expires = new Date(sessionData.expires);
       if (expires < new Date()) {
@@ -172,7 +182,7 @@ export function FirestoreAdapter(app: FirebaseApp): Adapter {
       const sessionsRef = collection(db, "sessions");
       const q = query(sessionsRef, where("sessionToken", "==", sessionToken));
       const snapshot = await getDocs(q);
-      if (snapshot.empty) return null;
+      if (snapshot.empty || !snapshot.docs[0]) return null;
       const sessionRef = snapshot.docs[0].ref;
       const updateData = {
         ...session,
@@ -181,7 +191,7 @@ export function FirestoreAdapter(app: FirebaseApp): Adapter {
       await setDoc(sessionRef, updateData, { merge: true });
       return {
         sessionToken,
-        ...session,
+        userId: session.userId || snapshot.docs[0].data().userId,
         expires: session.expires || new Date(),
       };
     },
@@ -216,7 +226,7 @@ export function FirestoreAdapter(app: FirebaseApp): Adapter {
         where("token", "==", token)
       );
       const snapshot = await getDocs(q);
-      if (snapshot.empty) return null;
+      if (snapshot.empty || !snapshot.docs[0]) return null;
       const tokenData = snapshot.docs[0].data();
       await deleteDoc(snapshot.docs[0].ref);
       return {
