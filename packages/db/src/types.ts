@@ -39,6 +39,8 @@ export interface User {
   xp?: number;
   level?: number;
   avatarUrl?: string;
+  referralCode?: string;
+  referredBy?: string;
   createdAt: Timestamp;
   updatedAt?: Timestamp;
 }
@@ -160,11 +162,10 @@ export interface Session {
 export interface Referral {
   id: string;
   referrerId: string;
-  referredUserId: string;
-  code: string;
-  rewardClaimed: boolean;
+  referredEmail: string;
+  referredUserId: string | null;
   createdAt: Timestamp;
-  claimedAt?: Timestamp;
+  completed: boolean;
 }
 
 export interface Badge {

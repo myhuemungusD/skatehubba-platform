@@ -40,6 +40,8 @@ export const UserSchema = z.object({
   xp: z.number().int().nonnegative().optional().default(0),
   level: z.number().int().positive().optional().default(1),
   avatarUrl: z.string().url().optional(),
+  referralCode: z.string().optional(),
+  referredBy: z.string().optional(),
   createdAt: z.any(),
   updatedAt: z.any().optional(),
 });
@@ -161,11 +163,10 @@ export const SessionSchema = z.object({
 export const ReferralSchema = z.object({
   id: z.string(),
   referrerId: z.string(),
-  referredUserId: z.string(),
-  code: z.string().min(1),
-  rewardClaimed: z.boolean().default(false),
+  referredEmail: z.string().email(),
+  referredUserId: z.string().nullable(),
   createdAt: z.any(),
-  claimedAt: z.any().optional(),
+  completed: z.boolean().default(false),
 });
 
 export const BadgeSchema = z.object({

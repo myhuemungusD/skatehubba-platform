@@ -1,5 +1,7 @@
 import express, { Router } from 'express';
 import { questsRouter } from './quests';
+import { stickerRouter } from '../routes/sticker';
+import { referralsRouter } from '../routes/referrals';
 
 export const router: Router = express.Router();
 
@@ -17,3 +19,9 @@ router.get('/', (req, res) => {
 
 // Mount quest/session routes
 router.use('/quests', questsRouter);
+
+// Mount sticker generation route
+router.use('/sticker', stickerRouter);
+
+// Mount referrals routes
+router.use('/referrals', referralsRouter);
