@@ -63,9 +63,10 @@ const seedQuests = async (): Promise<void> => {
       await questsCollection.doc(quest2.id).set(quest2);
       console.log('Seeded quest:', quest2.title);
     }
-  } catch (error) {
-    console.error('Error seeding quests:', error);
-    throw error;
+  } catch (error: any) {
+    console.warn('⚠️  Unable to seed quests - Firestore database may not be initialized yet.');
+    console.warn('   Create a Firestore database in Firebase Console to enable quest seeding.');
+    console.warn('   Error details:', error.message || error);
   }
 };
 
