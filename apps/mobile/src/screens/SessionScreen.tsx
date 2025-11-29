@@ -4,7 +4,7 @@ import { YStack, XStack, Text, Button, Stack, Theme, ScrollView } from 'tamagui'
 import * as Haptics from 'expo-haptics';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Clock, Zap, CheckCircle } from 'lucide-react-native';
+import { Clock, Zap, CheckCircle, AlertCircle, X } from 'lucide-react-native';
 import { useSession } from '../store/useStore';
 
 const { width, height } = Dimensions.get('window');
@@ -17,6 +17,8 @@ const COLORS = {
   TEAL: '#00BCD4',
   BG_GRADIENT_TOP: '#263238',
   BG_GRADIENT_BOT: '#102027',
+  ERROR_BG: '#D32F2F',
+  ERROR_BORDER: '#B71C1C',
 };
 
 const GameButton = ({ title, onPress, variant = 'primary', width: w = 'auto' }: any) => {
@@ -74,10 +76,42 @@ const StatBox = ({ label, value }: { label: string; value: string | number }) =>
 
 export default function SessionScreen() {
   const navigation = useNavigation<any>();
-  const { currentSession, currentQuest, loading, error, endSession } = useSession();
+  const { 
+    currentSession, 
+    currentQuest, 
+    loading, 
+    error, 
+    apiError,
+    endSession,
+    startSessionPolling,
+    stopSessionPolling 
+  } = useSession();
   const [elapsedTime, setElapsedTime] = useState(0);
   const [showComplete, setShowComplete] = useState(false);
+  const [localApiError, setLocalApiError] = useState<string | null>(null);
 
+  // Start polling when screen mounts and currentSession exists
+  useEffect(() => {
+    if (currentSession) {
+      console.log('[SessionScreen] Starting session polling for session:', currentSession.id);
+      startSessionPolling();
+    }
+
+    // Stop polling when screen unmounts
+    return () => {
+      console.log('[SessionScreen] Unmounting, stopping session polling');
+      stopSessionPolling();
+    };
+  }, [currentSession?.id, startSessionPolling, stopSessionPolling]);
+
+  // Track API errors locally for dismissal
+  useEffect(() => {
+    if (apiError) {
+      setLocalApiError(apiError);
+    }
+  }, [apiError]);
+
+  // Timer effect
   useEffect(() => {
     if (!currentSession) return;
 
@@ -96,8 +130,9 @@ export default function SessionScreen() {
       await endSession(currentSession.id, 'COMPLETED');
       setShowComplete(true);
       setTimeout(() => navigation.goBack(), 2000);
-    } catch (err) {
-      console.error('Error completing session:', err);
+    } catch (err: any) {
+      console.error('[SessionScreen] Error completing session:', err);
+      setLocalApiError(err.message || 'Failed to complete session');
     }
   };
 
@@ -106,9 +141,14 @@ export default function SessionScreen() {
     try {
       await endSession(currentSession.id, 'FAILED');
       navigation.goBack();
-    } catch (err) {
-      console.error('Error failing session:', err);
+    } catch (err: any) {
+      console.error('[SessionScreen] Error failing session:', err);
+      setLocalApiError(err.message || 'Failed to end session');
     }
+  };
+
+  const handleDismissError = () => {
+    setLocalApiError(null);
   };
 
   if (!currentSession) {
@@ -148,6 +188,38 @@ export default function SessionScreen() {
                 </Text>
               )}
             </Stack>
+
+            {/* Error Banner */}
+            {localApiError && (
+              <Stack
+                bg={COLORS.ERROR_BG}
+                borderWidth={3}
+                borderColor={COLORS.ERROR_BORDER}
+                borderRadius={12}
+                p="$3"
+                mb="$3"
+                shadowColor="#000"
+                shadowOffset={{ width: 3, height: 3 }}
+                shadowRadius={0}
+              >
+                <XStack jc="space-between" ai="flex-start">
+                  <XStack ai="center" space="$2" flex={1}>
+                    <AlertCircle size={20} color="#fff" strokeWidth={2} />
+                    <Text color="#fff" fontSize={14} fontWeight="700" flex={1}>
+                      {localApiError}
+                    </Text>
+                  </XStack>
+                  <Button
+                    unstyled
+                    bg="transparent"
+                    onPress={handleDismissError}
+                    p="$1"
+                  >
+                    <X size={18} color="#fff" strokeWidth={3} />
+                  </Button>
+                </XStack>
+              </Stack>
+            )}
 
             {/* Timer & Stats */}
             <YStack space="$4">

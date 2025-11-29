@@ -31,8 +31,12 @@ export const useSession = () =>
     activeSessions: state.activeSessions,
     loading: state.loading,
     error: state.error,
+    apiError: state.apiError,
     startSession: state.startSession,
     updateSessionClips: state.updateSessionClips,
     endSession: state.endSession,
+    refreshSession: state.refreshSession,
+    startSessionPolling: state.startSessionPolling,
+    stopSessionPolling: state.stopSessionPolling,
     listenToSessions: state.listenToSessions,
   }));

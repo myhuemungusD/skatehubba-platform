@@ -45,15 +45,24 @@ export const createAuthSlice: StateCreator<GlobalState, [], [], AuthSlice> = (
 
   initAuthListener: () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      set((state: GlobalState) => ({
-        ...state,
-        user,
-        loading: false,
-        error: null,
-      }));
       if (user) {
+        set((state: GlobalState) => ({
+          ...state,
+          user,
+          loading: false,
+          error: null,
+        }));
         console.log("🔥 Auth: Google user synced", user.uid);
       } else {
+        // Clear session data when user signs out to prevent data leaking between users
+        set((state: GlobalState) => ({
+          ...state,
+          user: null,
+          currentSession: null,
+          currentQuest: null,
+          loading: false,
+          error: null,
+        }));
         console.log("🔥 Auth: Signed out");
       }
     });
