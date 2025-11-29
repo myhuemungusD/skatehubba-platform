@@ -91,5 +91,23 @@ service cloud.firestore {
               && request.auth.uid in [resource.data.challengerUid, resource.data.opponentUid])
         );
     }
+
+    // Quest System - RPG-style missions with gold/XP rewards
+    match /quests/{questId} {
+      allow read: if authed();
+      allow create: if false; // Admin-only via Firebase Functions
+      allow update, delete: if false;
+    }
+
+    // Session System - Active quest tracking
+    match /sessions/{sessionId} {
+      allow read: if authed();
+      allow create: if authed() 
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'active';
+      allow update: if authed()
+        && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
   }
 }
