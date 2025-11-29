@@ -19,10 +19,12 @@
   },
   "scripts": {
     "dev": "turbo dev --parallel --continue",
-    "dev:mobile": "turbo dev --filter=@skatehubba/mobile...",
-    "dev:functions": "turbo dev --filter=@skatehubba/functions...",
+    "dev:expo": "turbo dev --filter=@skatehubba/expo...",
+    "dev:web": "turbo dev --filter=@skatehubba/web...",
+    "dev:api": "turbo dev --filter=@skatehubba/server...",
     "build": "turbo build --concurrency=10",
-    "build:mobile": "turbo build --filter=@skatehubba/mobile",
+    "build:web": "turbo build --filter=@skatehubba/web",
+    "build:expo": "eas build --platform all --profile production --non-interactive",
     "preview": "eas build --platform all --profile preview --non-interactive",
     "submit": "eas submit --platform all --latest",
     "lint": "turbo lint --continue",
@@ -35,11 +37,11 @@
     "ci": "turbo lint && turbo typecheck && turbo test && turbo build",
     "clean": "turbo clean && pnpm -r exec rm -rf .turbo dist node_modules .expo .next",
     "fresh": "pnpm clean && pnpm install --frozen-lockfile=false",
-    "android": "pnpm --filter @skatehubba/mobile android",
-    "ios": "pnpm --filter @skatehubba/mobile ios",
-    "start": "pnpm --filter @skatehubba/mobile start",
-    "old:start": "echo 'Deprecated: Use pnpm dev:mobile instead'",
-    "info": "echo 'SkateHubba monorepo — Expo + Firebase + TypeScript + pnpm workspaces'"
+    "android": "pnpm --filter @skatehubba/expo android",
+    "ios": "pnpm --filter @skatehubba/expo ios",
+    "deploy:vercel": "vercel --prod",
+    "deploy:web": "cd apps/web && vercel --prod",
+    "deploy:landing": "cd apps/landing && vercel --prod"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
