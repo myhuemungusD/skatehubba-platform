@@ -51,9 +51,21 @@
       ]
     },
     "plugins": [
-      "expo-location",
-      "expo-camera",
-      "react-native-vision-camera",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow SkateHubba to record your tricks",
+          "microphonePermission": "Allow SkateHubba to record audio with your clips"
+        }
+      ],
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "SkateHubba needs camera access to record your tricks",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "SkateHubba needs microphone access to record audio"
+        }
+      ],
       "expo-dev-client",
       [
         "@reactvision/react-viro",

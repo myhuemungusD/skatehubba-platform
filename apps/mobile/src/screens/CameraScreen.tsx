@@ -125,7 +125,7 @@ export default function CameraScreen() {
             onRecordingFinished: (video) => {
                 setIsRecording(false);
                 // Navigate to Transcode Screen with the file path
-                navigation.navigate('Transcode', { path: video.path });
+                navigation.navigate('transcode', { path: video.path });
             },
             onRecordingError: (error) => {
                 console.error(error);
