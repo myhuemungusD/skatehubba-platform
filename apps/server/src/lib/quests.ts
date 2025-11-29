@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import type { Quest, Session } from '@skatehubba/types';
 
-export const questsRouter = Router();
+export const questsRouter: Router = Router();
 
 // In-memory stores (replace with Firestore in production)
 const quests: Map<string, Quest> = new Map();

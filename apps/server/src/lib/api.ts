@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Router } from 'express';
 import { questsRouter } from './quests';
 
-export const router = express.Router();
+export const router: Router = express.Router();
 
 router.get('/health', async (req, res) => {
   try {
