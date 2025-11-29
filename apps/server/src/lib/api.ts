@@ -1,4 +1,5 @@
 import express from 'express';
+import { questsRouter } from './quests';
 
 export const router = express.Router();
 
@@ -13,3 +14,6 @@ router.get('/health', async (req, res) => {
 router.get('/', (req, res) => {
   res.json({ message: 'SkateHubba API', version: '1.0.0' });
 });
+
+// Mount quest/session routes
+router.use('/quests', questsRouter);

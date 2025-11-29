@@ -12,6 +12,7 @@ import DashboardScreen from '../screens/DashboardScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import CameraScreen from '../screens/CameraScreen';
+import SessionScreen from '../screens/SessionScreen';
 import TranscodeComponent from '../components/TranscodeComponent';
 
 const Stack = createNativeStackNavigator();
@@ -47,6 +48,7 @@ export default function RootNavigator() {
             <Stack.Screen name="map" component={MapScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="camera" component={CameraScreen} />
+            <Stack.Screen name="session" component={SessionScreen} />
             <Stack.Screen name="transcode" component={TranscodeComponent} />
           </Stack.Group>
         ) : (
