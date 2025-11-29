@@ -94,3 +94,62 @@ export type CheckIn = z.infer<typeof CheckInSchema>;
 
 // Alias for backward compatibility
 export type SkateGame = Game;
+
+// ── RPG / INVENTORY SYSTEM ──────────────────────────────────────────────────
+export const ItemTypeSchema = z.enum(["DECK", "TRUCKS", "WHEELS", "CLOTHING", "STICKER"]);
+export type ItemType = z.infer<typeof ItemTypeSchema>;
+
+export const RaritySchema = z.enum(["COMMON", "RARE", "EPIC", "LEGENDARY"]);
+export type Rarity = z.infer<typeof RaritySchema>;
+
+export const ItemSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  type: ItemTypeSchema,
+  rarity: RaritySchema,
+  image_url: z.string().url(),
+  stats: z.object({
+    pop: z.number().optional(),
+    durability: z.number().optional(),
+    style: z.number().optional(),
+  }).optional(),
+});
+export type Item = z.infer<typeof ItemSchema>;
+
+// ── QUEST / SESSION SYSTEM ──────────────────────────────────────────────────
+export const QuestTypeSchema = z.enum(["SPOT_CHECK", "TRICK_BATTLE", "FILM_CLIP"]);
+export type QuestType = z.infer<typeof QuestTypeSchema>;
+
+export const DifficultySchema = z.enum(["EASY", "MEDIUM", "HARD", "GNARLY"]);
+export type Difficulty = z.infer<typeof DifficultySchema>;
+
+export const QuestSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  description: z.string(),
+  location: z.object({
+    name: z.string(),
+    lat: z.number(),
+    lng: z.number(),
+  }),
+  type: QuestTypeSchema,
+  difficulty: DifficultySchema,
+  reward: z.object({
+    gold: z.number().int().positive(),
+    xp: z.number().int().positive(),
+    item_id: z.string().uuid().optional(),
+  }),
+  expires_at: z.number(), // Unix timestamp
+});
+export type Quest = z.infer<typeof QuestSchema>;
+
+// ── ACTIVE SESSION ──────────────────────────────────────────────────────────
+export const SessionSchema = z.object({
+  id: z.string().uuid(),
+  host_id: z.string(),
+  quest_id: z.string().uuid(),
+  status: z.enum(["ACTIVE", "COMPLETED", "FAILED"]),
+  start_time: z.number(), // Unix timestamp
+  clips: z.array(z.string().url()).default([]), // URLs to uploaded footy
+});
+export type Session = z.infer<typeof SessionSchema>;
