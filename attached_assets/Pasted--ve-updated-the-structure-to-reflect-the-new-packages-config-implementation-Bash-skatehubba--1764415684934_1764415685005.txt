@@ -1,0 +1,197 @@
+'ve updated the structure to reflect the new packages/config implementation.
+
+Bash
+
+skatehubba/
+├─ .github/
+│  └─ workflows/
+│     ├─ ci.yml             # Needs Turbo caching
+│     └─ deploy.yml
+├─ apps/
+│  ├─ expo/
+│  ├─ web/
+│  └─ landing/
+├─ packages/
+│  ├─ ui/
+│  ├─ config/              # NEW: Houses shared Biome, TS, ESLint configs
+│  ├─ db/
+│  ├─ auth/
+│  └─ analytics/
+├─ turbo.json
+├─ pnpm-workspace.yaml
+├─ package.json
+└─ .env.local             # Added to structure list for clarity
+1. Root Files (Polished)
+package.json (Root)
+Added @skatehubba/config dev dependency to the root to manage shared tools and ensured all versions are consistent.
+
+JSON
+
+{
+  "name": "skatehubba",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "deploy": "turbo build && turbo deploy"
+  },
+  "devDependencies": {
+    "turbo": "^2.2.0",
+    "pnpm": "^9.11.0",
+    "biome": "^1.9.3",
+    "@skatehubba/config": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
+tsconfig.json (Root)
+We need a root tsconfig.json to define project references.
+
+JSON
+
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "dist"
+  },
+  "files": [],
+  "references": [
+    {"path": "packages/config"},
+    {"path": "packages/ui"},
+    {"path": "packages/db"},
+    {"path": "packages/auth"},
+    {"path": "packages/analytics"},
+    {"path": "apps/expo"},
+    {"path": "apps/web"},
+    {"path": "apps/landing"}
+  ]
+}
+biome.json (Root)
+This remains at the root, acting as the global configuration for the monorepo, referencing all files.
+
+JSON
+
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
+  "organizeImports": { "enabled": true },
+  "linter": { "enabled": true, "rules": { "recommended": true } },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": { "quoteStyle": "single", "trailingCommas": "all" }
+  },
+  "files": {
+    "ignore": ["**/node_modules", "dist", ".next", "dist/**", "build/**"]
+  }
+}
+2. Packages (Refined)
+packages/db (Firebase Rules Correction)
+Crucial Correction: Removed the overly permissive wildcard rule that allowed general reads/writes. Now, only users can access their own data, and spots have explicit rules for creation and ownership.
+
+rules (Production-Ready)
+Code snippet
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global: Deny by default. All access must be explicitly granted.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Authenticated Users (Read-only data visible to all, but only write your own profile)
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+    
+    // Skate Spots (Authenticated creation, owner update/delete)
+    match /spots/{spotId} {
+      // Must be authenticated to create a spot
+      allow create: if request.auth != null;
+
+      // Allow authenticated users to read spots
+      allow read: if request.auth != null;
+
+      // Only the owner can update or delete their spot
+      allow update, delete: if resource.data.ownerId == request.auth.uid;
+    }
+    
+    // Add collections here as they are created (e.g., /sessions, /comments)
+  }
+}
+3. Apps (Cleaned)
+The package.json files for expo and web are clean, but we must ensure they reference the correct config.
+
+apps/expo/tsconfig.json
+JSON
+
+{
+  "extends": "@skatehubba/config/tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-native",
+    "module": "commonjs",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*", "index.ts"],
+  "exclude": ["node_modules"]
+}
+apps/web/tsconfig.json
+JSON
+
+{
+  "extends": "@skatehubba/config/tsconfig.nextjs.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "strict": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+4. One-Command Setup (Finalized)
+Bash
+
+# 1. Clone & install
+git clone https://github.com/yourname/skatehubba.git
+cd skatehubba
+pnpm i
+
+# 2. Create .env (all apps)
+# NOTE: The .env.local is critical and must be copied to all app directories
+# or passed via Turbo. For simplicity, we keep it at the root and reference it.
+cat > .env.local << EOF
+# FIREBASE CONFIG
+NEXT_PUBLIC_FIREBASE_API_KEY=xxx
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=skatehubba.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=skatehubba
+NEXT_PUBLIC_FIREBASE_APP_ID=xxx
+
+# AUTH CONFIG
+NEXTAUTH_SECRET=your_long_secure_secret_here_for_nextjs
+GOOGLE_CLIENT_ID=xxx
+GOOGLE_CLIENT_SECRET=xxx
+
+# ANALYTICS
+POSTHOG_KEY=phc_xxx
+POSTHOG_HOST=https://app.posthog.com
+EOF
+
+# 3. Run everything
+pnpm dev
+# → expo starts on :8081
+# → web on :3000
+# → landing on :3001

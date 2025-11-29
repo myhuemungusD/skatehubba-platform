@@ -1,0 +1,13 @@
+{
+  "name": "@skatehubba/config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared TypeScript, ESLint, and Biome configurations for SkateHubba monorepo",
+  "main": "index.js",
+  "files": [
+    "tsconfig.*.json",
+    "biome.json"
+  ],
+  "keywords": ["config", "typescript", "biome"],
+  "license": "UNLICENSED"
+}
