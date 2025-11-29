@@ -1,0 +1,290 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { StyleSheet, Dimensions, Platform, StatusBar } from 'react-native';
+import { 
+  Camera, 
+  useCameraDevice, 
+  useCameraPermission, 
+  useMicrophonePermission 
+} from 'react-native-vision-camera';
+import { 
+  YStack, 
+  XStack, 
+  Text, 
+  Button, 
+  Stack,
+  Theme
+} from 'tamagui';
+import * as Haptics from 'expo-haptics';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { X, RefreshCcw, Zap, ZapOff } from 'lucide-react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withRepeat, 
+  withTiming, 
+  Easing 
+} from 'react-native-reanimated';
+
+const { width, height } = Dimensions.get('window');
+
+// ── RPG PALETTE ─────────────────────────────────────────────────────────────
+const COLORS = {
+  GOLD: '#FFD700',
+  RED_REC: '#D50000',
+  RED_DARK: '#B71C1C',
+  BORDER: '#000000',
+  OVERLAY_BG: 'rgba(0,0,0,0.5)',
+};
+
+// ── ANIMATED COMPONENTS ─────────────────────────────────────────────────────
+const AnimatedStack = Animated.createAnimatedComponent(Stack);
+
+// Blinking "REC" Dot
+const RecIndicator = ({ isRecording }: { isRecording: boolean }) => {
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    if (isRecording) {
+      opacity.value = withRepeat(
+        withTiming(0, { duration: 800, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true
+      );
+    } else {
+      opacity.value = 1;
+    }
+  }, [isRecording]);
+
+  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+
+  if (!isRecording) return null;
+
+  return (
+    <XStack ai="center" space="$2" bg={COLORS.RED_REC} px="$2" py="$1" borderRadius={4}>
+      <AnimatedStack 
+        width={10} 
+        height={10} 
+        borderRadius={5} 
+        bg="#fff" 
+        style={animatedStyle} 
+      />
+      <Text color="#fff" fontWeight="900" fontSize="$2">REC</Text>
+    </XStack>
+  );
+};
+
+// ── MAIN SCREEN ─────────────────────────────────────────────────────────────
+export default function CameraScreen() {
+  const navigation = useNavigation<any>();
+  const isFocused = useIsFocused();
+  
+  // Permissions
+  const { hasPermission: hasCamPerm, requestPermission: reqCam } = useCameraPermission();
+  const { hasPermission: hasMicPerm, requestPermission: reqMic } = useMicrophonePermission();
+  
+  // Camera State
+  const device = useCameraDevice('back');
+  const camera = useRef<Camera>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [flash, setFlash] = useState<'off' | 'on'>('off');
+  const [timeLeft, setTimeLeft] = useState(15);
+
+  // ── LIFECYCLE ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!hasCamPerm) reqCam();
+    if (!hasMicPerm) reqMic();
+  }, []);
+
+  // Timer Logic
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRecording && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => {
+            if (prev <= 1) {
+                stopRecording(); // Auto-cut at 15s
+                return 0;
+            }
+            return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRecording]);
+
+  // ── HANDLERS ──────────────────────────────────────────────────────────────
+  const startRecording = async () => {
+    if (!camera.current) return;
+    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    
+    setIsRecording(true);
+    setTimeLeft(15);
+    
+    try {
+        camera.current.startRecording({
+            onRecordingFinished: (video) => {
+                setIsRecording(false);
+                // Navigate to Transcode Screen with the file path
+                navigation.navigate('Transcode', { path: video.path });
+            },
+            onRecordingError: (error) => {
+                console.error(error);
+                setIsRecording(false);
+            },
+        });
+    } catch (e) {
+        setIsRecording(false);
+    }
+  };
+
+  const stopRecording = async () => {
+    if (!camera.current || !isRecording) return;
+    if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    
+    await camera.current.stopRecording();
+    setIsRecording(false);
+  };
+
+  // ── RENDER ────────────────────────────────────────────────────────────────
+  if (!hasCamPerm || !hasMicPerm) return <YStack f={1} bg="#000" ai="center" jc="center"><Text color="#fff">NEED PERMISSIONS</Text></YStack>;
+  if (!device) return <YStack f={1} bg="#000" ai="center" jc="center"><Text color="#fff">NO CAMERA</Text></YStack>;
+
+  return (
+    <Theme name="dark">
+        <YStack f={1} bg="#000">
+            <StatusBar hidden />
+            
+            {/* 1. CAMERA VIEW */}
+            {isFocused && (
+                <Camera
+                    ref={camera}
+                    style={StyleSheet.absoluteFill}
+                    device={device}
+                    isActive={true}
+                    video={true}
+                    audio={true}
+                    torch={flash}
+                />
+            )}
+
+            {/* 2. TOP HUD (Controls) */}
+            <XStack 
+                position="absolute" 
+                top={Platform.OS === 'ios' ? 60 : 40} 
+                left={0} 
+                right={0} 
+                px="$4" 
+                jc="space-between" 
+                ai="center"
+            >
+                {/* Close Button */}
+                <Button 
+                    circular 
+                    size="$4" 
+                    bg="rgba(0,0,0,0.6)" 
+                    borderWidth={1} 
+                    borderColor="#fff"
+                    onPress={() => navigation.goBack()}
+                >
+                    <X size={24} color="#fff" />
+                </Button>
+
+                {/* Rec Indicator (Center) */}
+                <RecIndicator isRecording={isRecording} />
+
+                {/* Flash Toggle */}
+                <Button 
+                    circular 
+                    size="$4" 
+                    bg={flash === 'on' ? COLORS.GOLD : "rgba(0,0,0,0.6)"} 
+                    borderWidth={1} 
+                    borderColor="#fff"
+                    onPress={() => setFlash(f => f === 'off' ? 'on' : 'off')}
+                >
+                    {flash === 'on' ? <Zap size={24} color="#000" /> : <ZapOff size={24} color="#fff" />}
+                </Button>
+            </XStack>
+
+            {/* 3. CENTER HUD (Crosshair) */}
+            {!isRecording && (
+                <Stack 
+                    position="absolute" 
+                    top={height/2 - 20} 
+                    left={width/2 - 20} 
+                    opacity={0.5}
+                >
+                    {/* Simulated Crosshair corners */}
+                    <Stack w={40} h={1} bg="#fff" position="absolute" top={20} />
+                    <Stack w={1} h={40} bg="#fff" position="absolute" left={20} />
+                </Stack>
+            )}
+
+            {/* 4. BOTTOM CONTROLS */}
+            <YStack 
+                position="absolute" 
+                bottom={0} 
+                width="100%" 
+                pb="$8" 
+                ai="center" 
+                bg={isRecording ? 'transparent' : 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'}
+            >
+                {/* Timer Display */}
+                <Stack mb="$4">
+                    <Text 
+                        color={isRecording ? COLORS.RED_REC : COLORS.GOLD} 
+                        fontWeight="900" 
+                        fontSize={isRecording ? 64 : 48}
+                        fontFamily={Platform.OS === 'ios' ? 'Courier-Bold' : 'monospace'}
+                        textShadowColor="#000"
+                        textShadowOffset={{width: 2, height: 2}}
+                        textShadowRadius={0}
+                    >
+                        00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}
+                    </Text>
+                </Stack>
+
+                {/* SHUTTER BUTTON */}
+                <Button
+                    unstyled
+                    onPress={isRecording ? stopRecording : startRecording}
+                    width={90}
+                    height={90}
+                    borderRadius={45}
+                    bg={COLORS.RED_REC}
+                    borderWidth={4}
+                    borderColor="#fff"
+                    ai="center"
+                    jc="center"
+                    scale={isRecording ? 0.9 : 1}
+                    animation="bouncy"
+                    shadowColor="#000"
+                    shadowRadius={10}
+                    shadowOffset={{width: 0, height: 4}}
+                    shadowOpacity={0.5}
+                >
+                    {isRecording ? (
+                        <Stack width={30} height={30} bg="#fff" borderRadius={4} />
+                    ) : (
+                        <Stack width={76} height={76} borderRadius={38} borderWidth={2} borderColor="rgba(255,255,255,0.3)" />
+                    )}
+                </Button>
+
+                {/* Label */}
+                <Text 
+                    color="#fff" 
+                    fontWeight="700" 
+                    fontSize="$3" 
+                    mt="$4" 
+                    opacity={0.8}
+                    textTransform="uppercase"
+                    letterSpacing={2}
+                >
+                    {isRecording ? "RECORDING..." : "TAP TO SHRED"}
+                </Text>
+
+            </YStack>
+
+        </YStack>
+    </Theme>
+  );
+}
