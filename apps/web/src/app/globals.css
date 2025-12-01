@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SKATEHUBBA™ DESIGN SYSTEM — LOCKED FOREVER */
+@layer base {
+  :root {
+    /* Core brand colors — never change */
+    --ink: 0 0% 4%;          /* #0a0a0a */
+    --paper: 60 9% 96%;      /* #f5f3ef */
+    --neon: 135 100% 50%;    /* #39ff14 */
+    --blood: 0 80% 40%;      /* #b80f0a */
+    --gold: 45 100% 45%;      /* #e3c300 */
+    --grime: 0 0% 11%;       /* #1c1c1c */
+
+    /* Semantic mapping */
+    --background: var(--ink);
+    --foreground: var(--paper);
+    --card: var(--grime);
+    --card-foreground: var(--paper);
+    --popover: var(--grime);
+    --popover-foreground: var(--paper);
+    --primary: var(--neon);
+    --primary-foreground: var(--ink);
+    --secondary: var(--grime);
+    --secondary-foreground: var(--gold);
+    --muted: hsl(0 0% 15%);
+    --muted-foreground: hsl(0 0% 60%);
+    --accent: var(--blood);
+    --accent-foreground: var(--paper);
+    --destructive: var(--blood);
+    --destructive-foreground: var(--paper);
+    --border: hsl(0 0% 20%);
+    --input: hsl(0 0% 20%);
+    --ring: var(--neon);
+
+    --radius: 1rem;
+  }
+
+  /* NO LIGHT MODE — EVER */
+  .dark {
+    /* Same as :root — forced dark */
+    --background: var(--ink);
+    --foreground: var(--paper);
+    --card: var(--grime);
+    --card-foreground: var(--paper);
+    --primary: var(--neon);
+    --primary-foreground: var(--ink);
+    --secondary: var(--grime);
+    --secondary-foreground: var(--gold);
+    --border: hsl(0 0% 20%);
+    --ring: var(--neon);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+    background-image: 
+      radial-gradient(circle at top, var(--grime) 0%, var(--ink) 70%),
+      url('/textures/grime.png');
+    background-size: 100%, 400px;
+    background-repeat: no-repeat, repeat;
+  }
+
+  /* Neon text glow */
+  .text-glow {
+    text-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+  }
+
+  /* Selection = neon */
+  ::selection {
+    @apply bg-neon text-ink;
+  }
+}
+
+/* Custom scrollbars — gritty */
+@layer components {
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-ink;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neon border-4 border-ink rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold;
+  }
+}

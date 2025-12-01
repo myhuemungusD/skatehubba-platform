@@ -1,10 +1,35 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "allowJs": false,
     "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@skatehubba/ui": ["../../packages/ui/src/index.ts"],
+      "@skatehubba/ui/*": ["../../packages/ui/src/*"],
+      "@skatehubba/utils": ["../../packages/utils/src/index.ts"],
+      "@skatehubba/utils/*": ["../../packages/utils/src/*"],
+      "@skatehubba/types": ["../../packages/types/src/index.ts"],
+      "@skatehubba/types/*": ["../../packages/types/src/*"],
+      "@skatehubba/store": ["../../packages/store/src/index.ts"],
+      "@skatehubba/store/*": ["../../packages/store/src/*"]
+    }
   },
-  "include": ["vite.config.ts"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "dist", "out"]
 }
