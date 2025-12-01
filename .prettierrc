@@ -1,8 +1,21 @@
-{
-  "semi": true,
-  "singleQuote": true,
-  "trailingComma": "es5",
-  "printWidth": 100,
-  "tabWidth": 2,
-  "useTabs": false
-}
+/** @type {import("prettier").Config} */
+module.exports = {
+  semi: true,
+  singleQuote: true,
+  quoteProps: 'consistent',
+  trailingComma: 'es5',
+  printWidth: 100,
+  tabWidth: 2,
+  useTabs: false,
+  bracketSpacing: true,
+  arrowParens: 'avoid',
+  endOfLine: 'lf',
+
+  // === TAILWIND CLASS SORTING (MUST HAVE) ===
+  plugins: ['prettier-plugin-tailwindcss'],
+
+  // === CUSTOM SKATEHUBBA ORDERING (Optional but elite) ===
+  tailwindConfig: './tailwind.config.ts',
+  tailwindFunctions: ['cn', 'cva'],
+  tailwindAttributes: ['className', 'variant'],
+};
