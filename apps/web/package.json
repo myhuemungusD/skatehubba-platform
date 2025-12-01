@@ -33,8 +33,7 @@
 
     "@skatehubba/ui": "workspace:*",
     "@skatehubba/utils": "workspace:*",
-    "@skatehubba/types": "workspace:*",
-    "@skatehubba/store": "workspace:*"
+    "@skatehubba/types": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.4.2",
