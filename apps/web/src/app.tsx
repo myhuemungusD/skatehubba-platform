@@ -1,82 +1,72 @@
-import { initializeApp } from "firebase/app";
-import {
-  GoogleAuthProvider,
-  getAuth,
-  onAuthStateChanged,
-  signInWithPopup,
-} from "firebase/auth";
-import { useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+// apps/mobile/src/App.tsx
+import "react-native-url-polyfill/auto";
+import "react-native-get-random-values";
+import "@/global.css";
 
-// Fix Leaflet default icon issue
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-});
+import React, { useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { ThemeProvider } from "@/theme/ThemeProvider";
+import { useUserStore } from "@/store/userStore";
+import { RootNavigator } from "@/navigation/RootNavigator";
+import { SKATE } from "@/theme/skateTheme";
+
+// Keep splash on until fonts + auth ready
+SplashScreen.preventAutoHideAsync();
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+initializeApp(firebaseConfig);
+const auth = getAuth();
 
-function App() {
-  const [user, setUser] = useState<any>(null);
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: 1000 * 60 * 5, retry: 1, refetchOnWindowFocus: false },
+  },
+});
+
+export default function App() {
+  const { setUser, setLoading } = useUserStore();
+  const [fontsLoaded] = useFonts({
+    "BakerScript": require("@/assets/fonts/BakerScript.ttf"),
+    "DeathRattle": require("@/assets/fonts/DeathRattleBB.otf"),
+    "Thrasher": require("@/assets/fonts/ThrasherFlames.ttf"),
+  });
 
   useEffect(() => {
-    onAuthStateChanged(auth, setUser);
-  }, []);
+    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+      if (fontsLoaded) SplashScreen.hideAsync();
+    });
+    return () => unsub();
+  }, [fontsLoaded, setUser, setLoading]);
 
-  const signIn = () => {
-    signInWithPopup(auth, new GoogleAuthProvider());
-  };
+  if (!fontsLoaded) return null;
 
   return (
-    <>
-      <header className="header">
-        <h1>SkateHubba</h1>
-        {user ? (
-          <div className="user-info">
-            <img src={user.photoURL} alt="" />
-            <span>{user.displayName}</span>
-          </div>
-        ) : (
-          <button onClick={signIn} className="sign-in-btn">
-            Sign in with Google
-          </button>
-        )}
-      </header>
-
-      <div className="map-container">
-        <MapContainer
-          center={[37.7749, -122.4194]}
-          zoom={10}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap contributors"
-          />
-          <Marker position={[37.7749, -122.4194]}>
-            <Popup>
-              San Francisco – the birthplace of modern street skating 🛹
-            </Popup>
-          </Marker>
-        </MapContainer>
-      </div>
-    </>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={SKATE}>
+          <SafeAreaProvider>
+            <StatusBar style="light" backgroundColor={SKATE.colors.ink} />
+            <RootNavigator />
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
-
-export default App;
