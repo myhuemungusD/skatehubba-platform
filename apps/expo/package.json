@@ -24,7 +24,6 @@
     "@rnmapbox/maps": "^10.1.0",
     "@skatehubba/api": "workspace:*",
     "@skatehubba/api-sdk": "workspace:*",
-    "@skatehubba/skate-engine": "workspace:*",
     "@skatehubba/types": "workspace:*",
     "@skatehubba/ui": "workspace:*",
     "@skatehubba/utils": "workspace:*",
