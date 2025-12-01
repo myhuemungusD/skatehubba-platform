@@ -77,4 +77,58 @@ export {
   UserStatsSchema,
   UserAvatarSchema,
   UserProfileSchema,
-};
+});
+
+import { z } from "zod";
+
+// --- AVATAR & CLOSET ---
+
+// 1. AvatarItem Schema
+export const AvatarItemSchema = z.object({
+  id: z.string().min(3),
+  type: z.enum(['outfit', 'deck', 'shoes', 'hat', 'buddy']),
+  name: z.string().min(1),
+  rarity: z.enum(['common', 'rare', 'epic']),
+  imageUrl: z.string().url(),
+  tradable: z.boolean(),
+});
+
+// 2. UserProfile Schemas (Nested Structures)
+
+// Stats Schema
+const UserStatsSchema = z.object({
+  wins: z.number().int().min(0),
+  losses: z.number().int().min(0),
+  checkIns: z.number().int().min(0),
+  hubbaBucks: z.number().int().min(0),
+  distanceSkated: z.number().min(0).default(0), // Can be a float for km
+  rank: z.number().int().min(1).optional(), // Optional for leaderboards
+});
+
+// Avatar Equipped Schema
+const UserAvatarSchema = z.object({
+  outfit: z.string().min(1),
+  deck: z.string().min(1),
+  shoes: z.string().min(1),
+  hat: z.string().min(1),
+  buddy: z.string().min(1).optional(),
+});
+
+// 3. UserProfile Main Schema
+export const UserProfileSchema = z.object({
+  uid: z.string().min(1),
+  handle: z.string().min(3).max(20).trim(), // Enforce length and clean input
+  level: z.number().int().min(1).default(1),
+  xp: z.number().int().min(0).default(0),
+  maxXp: z.number().int().min(100),
+  sponsors: z.array(z.string().min(1)),
+  badges: z.array(z.string().url()),
+  stats: UserStatsSchema,
+  avatar: UserAvatarSchema,
+  items: z.array(AvatarItemSchema), // Array of the nested item schema
+});
+
+// 4. Infer TypeScript types from Zod for maximum safety
+// (This is often cleaner than defining the interface manually)
+export type UserProfile = z.infer<typeof UserProfileSchema>;
+export type AvatarItem = z.infer<typeof AvatarItemSchema>;
