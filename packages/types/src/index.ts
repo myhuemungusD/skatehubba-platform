@@ -1,128 +1,80 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-// --- SKATER PROFILE ---
-export const StanceSchema = z.enum(["regular", "goofy"]);
+/* -------------------------------------------------
+   1. CORE ENUMS
+------------------------------------------------- */
+export const StanceSchema = z.enum(['regular', 'goofy']);
 export type Stance = z.infer<typeof StanceSchema>;
 
-export const UserSchema = z.object({
-  uid: z.string(),
-  username: z.string().min(3).max(20).regex(/^[a-zA-Z0-9_]+$/, "No special chars"),
-  email: z.string().email(),
-  photoURL: z.string().url().optional(),
-  stance: StanceSchema.default("regular"),
-  bio: z.string().max(140).optional(),
-  location: z.object({
-    latitude: z.number(),
-    longitude: z.number(),
-    city: z.string().optional(),
-  }).optional(),
-  stats: z.object({
-    wins: z.number().int().default(0),
-    losses: z.number().int().default(0),
-    rank: z.number().int().default(1000), // Elo rating
-  }).default({}),
-  createdAt: z.string().datetime(), // ISO String
-  updatedAt: z.string().datetime(),
+export const RaritySchema = z.enum(['common', 'rare', 'epic', 'legendary']);
+export type Rarity = z.infer<typeof RaritySchema>;
+
+/* -------------------------------------------------
+   2. AVATAR ITEM
+------------------------------------------------- */
+export const AvatarItemSchema = z.object({
+  id: z.string().min(3),
+  type: z.enum(['outfit', 'deck', 'shoes', 'hat', 'buddy']),
+  name: z.string().min(1),
+  rarity: RaritySchema,
+  imageUrl: z.string().url(),
+  tradable: z.boolean(),
+  acquiredAt: z.number().optional(),
 });
-export type User = z.infer<typeof UserSchema>;
+export type AvatarItem = z.infer<typeof AvatarItemSchema>;
 
-// --- AVATAR & CLOSET (New) ---
-export interface AvatarItem {
-  id: string;
-  type: 'outfit' | 'deck' | 'shoes' | 'hat' | 'buddy';
-  name: string;
-  rarity: 'common' | 'rare' | 'epic';
-  imageUrl: string;
-  tradable: boolean;
-}
-
-// Extended Profile for UI (extends base User logic)
-export interface UserProfile extends User {
-  level: number;
-  xp: number;
-  maxXp: number;
-  sponsors: string[];
-  badges: string[];
-  extendedStats: {
-    checkIns: number;
-    hubbaBucks: number;
-    distanceSkated: number; // km
-  };
-  avatar: {
-    outfit: string;
-    deck: string;
-    shoes: string;
-    hat: string;
-    buddy?: string;
-  };
-  items: AvatarItem[]; // Closet inventory
-}
-
-// --- GAME ---
-export const GameStatusSchema = z.enum(["pending", "active", "completed", "forfeit"]);
-export type GameStatus = z.infer<typeof GameStatusSchema>;
-
-export const GameSchema = z.object({
-  id: z.string(),
-  hostId: z.string(),
-  opponentId: z.string().optional(),
-  status: GameStatusSchema.default("pending"),
-  letters: z.object({
-    host: z.string().default(""),
-    opponent: z.string().default(""),
-  }).default({ host: "", opponent: "" }),
-  currentTurn: z.string(), // uid of current player
-  winnerId: z.string().optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+/* -------------------------------------------------
+   3. USER STATS
+------------------------------------------------- */
+export const UserStatsSchema = z.object({
+  wins: z.number().int().min(0),
+  losses: z.number().int().min(0),
+  checkIns: z.number().int().min(0),
+  hubbaBucks: z.number().int().min(0),
+  distanceSkated: z.number().min(0).default(0),
+  rank: z.number().int().min(1).optional(),
 });
-export type Game = z.infer<typeof GameSchema>;
+export type UserStats = z.infer<typeof UserStatsSchema>;
 
-// --- TRICK ---
-export const TrickSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  difficulty: z.enum(["easy", "medium", "hard", "pro"]),
-  points: z.number().int().positive(),
-  description: z.string().optional(),
+/* -------------------------------------------------
+   4. EQUIPPED AVATAR
+------------------------------------------------- */
+export const UserAvatarSchema = z.object({
+  outfit: z.string().min(1),
+  deck: z.string().min(1),
+  shoes: z.string().min(1),
+  hat: z.string().min(1),
+  buddy: z.string().min(1).optional(),
 });
-export type Trick = z.infer<typeof TrickSchema>;
+export type UserAvatar = z.infer<typeof UserAvatarSchema>;
 
-// --- SPOTS & CHALLENGES (Restored) ---
-export const SpotSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  geo: z.object({
-    lat: z.number(),
-    lng: z.number(),
-  }),
-  createdAt: z.string().datetime(),
-  createdBy: z.string(),
+/* -------------------------------------------------
+   5. FULL USER PROFILE (THE ONE SOURCE OF TRUTH)
+------------------------------------------------- */
+export const UserProfileSchema = z.object({
+  uid: z.string().min(1),
+  handle: z.string().min(3).max(20).trim(),
+  stance: StanceSchema,
+  level: z.number().int().min(1).default(1),
+  xp: z.number().int().min(0).default(0),
+  maxXp: z.number().int().min(100),
+  sponsors: z.array(z.string().min(1)),
+  badges: z.array(z.string().url()),
+  stats: UserStatsSchema,
+  avatar: UserAvatarSchema,
+  items: z.array(AvatarItemSchema),
 });
-export type Spot = z.infer<typeof SpotSchema>;
 
-export const ChallengeSchema = z.object({
-  id: z.string(),
-  createdBy: z.string(),
-  status: z.enum(["pending", "accepted", "completed", "expired"]),
-  rules: z.object({
-    oneTake: z.boolean(),
-    durationSec: z.number(),
-  }),
-  clipA: z.string(),
-  clipB: z.string().optional(),
-  ts: z.string().datetime(),
-});
-export type Challenge = z.infer<typeof ChallengeSchema>;
+export type UserProfile = z.infer<typeof UserProfileSchema>;
 
-export const CheckInSchema = z.object({
-  id: z.string(),
-  uid: z.string(),
-  spotId: z.string(),
-  ts: z.string().datetime(),
-  proofVideoUrl: z.string().nullable(),
-});
-export type CheckIn = z.infer<typeof CheckInSchema>;
-
-// Alias for backward compatibility
-export type SkateGame = Game;
+/* -------------------------------------------------
+   6. RE-EXPORT FOR CLEAN IMPORTS
+------------------------------------------------- */
+export {
+  StanceSchema,
+  RaritySchema,
+  AvatarItemSchema,
+  UserStatsSchema,
+  UserAvatarSchema,
+  UserProfileSchema,
+};
