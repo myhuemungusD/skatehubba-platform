@@ -6,6 +6,8 @@ export const SKATE = {
     grime: "#1c1c1c",
     blood: "#b80f0a",
     gold: "#e3c300",
+    piss: "#f4d03f",
+    hours: "#2c3e50",
   },
   radius: { lg: 16, xl: 24 },
   timing: { fast: 120, norm: 220, slow: 360 },

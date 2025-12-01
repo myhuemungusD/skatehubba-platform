@@ -25,6 +25,7 @@
     "@skatehubba/api": "workspace:*",
     "@skatehubba/api-sdk": "workspace:*",
     "@skatehubba/skate-engine": "workspace:*",
+    "@skatehubba/telemetry": "workspace:*",
     "@skatehubba/types": "workspace:*",
     "@skatehubba/ui": "workspace:*",
     "@skatehubba/utils": "workspace:*",
