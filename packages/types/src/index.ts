@@ -26,6 +26,38 @@ export const UserSchema = z.object({
 });
 export type User = z.infer<typeof UserSchema>;
 
+// --- AVATAR & CLOSET (New) ---
+export interface AvatarItem {
+  id: string;
+  type: 'outfit' | 'deck' | 'shoes' | 'hat' | 'buddy';
+  name: string;
+  rarity: 'common' | 'rare' | 'epic';
+  imageUrl: string;
+  tradable: boolean;
+}
+
+// Extended Profile for UI (extends base User logic)
+export interface UserProfile extends User {
+  level: number;
+  xp: number;
+  maxXp: number;
+  sponsors: string[];
+  badges: string[];
+  extendedStats: {
+    checkIns: number;
+    hubbaBucks: number;
+    distanceSkated: number; // km
+  };
+  avatar: {
+    outfit: string;
+    deck: string;
+    shoes: string;
+    hat: string;
+    buddy?: string;
+  };
+  items: AvatarItem[]; // Closet inventory
+}
+
 // --- GAME ---
 export const GameStatusSchema = z.enum(["pending", "active", "completed", "forfeit"]);
 export type GameStatus = z.infer<typeof GameStatusSchema>;
