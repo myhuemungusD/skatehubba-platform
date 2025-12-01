@@ -1,23 +1,50 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "module": "ESNext",
-    "lib": ["ES2020"],
-    "jsx": "react-native",
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
     "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "declaration": true,
     "declarationMap": true,
     "composite": true,
+    "incremental": true,
+
     "baseUrl": ".",
     "paths": {
-      "@skatehubba/*": ["packages/*/src"]
+      "@skatehubba/ui": ["packages/ui/src/index.ts"],
+      "@skatehubba/ui/*": ["packages/ui/src/*"],
+      "@skatehubba/utils": ["packages/utils/src/index.ts"],
+      "@skatehubba/utils/*": ["packages/utils/src/*"],
+      "@skatehubba/store": ["packages/store/src/index.ts"],
+      "@skatehubba/store/*": ["packages/store/src/*"],
+      "@skatehubba/types": ["packages/types/src/index.ts"],
+      "@skatehubba/types/*": ["packages/types/src/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "build", ".next"],
-  "extends": "expo/tsconfig.base"
+  "include": [
+    "apps/**/*",
+    "packages/**/*",
+    "expo-env.d.ts",
+    ".expo/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "android",
+    "ios"
+  ]
 }
