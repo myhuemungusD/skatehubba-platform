@@ -304,35 +304,37 @@ export const rejectTrade = functions.https.onCall(async (request) => {
   const { tradeId } = AcceptTradeSchema.parse(request.data);
   const rejecterUid = request.auth.uid;
 
-  const tradeRef = db.doc(`trades/${tradeId}`);
-  const tradeSnap = await tradeRef.get();
+  return db.runTransaction(async (transaction) => {
+    const tradeRef = db.doc(`trades/${tradeId}`);
+    const tradeSnap = await transaction.get(tradeRef);
 
-  if (!tradeSnap.exists) {
-    throw new functions.https.HttpsError("not-found", "Trade not found.");
-  }
+    if (!tradeSnap.exists) {
+      throw new functions.https.HttpsError("not-found", "Trade not found.");
+    }
 
-  const trade = tradeSnap.data() as TradeRequest;
+    const trade = tradeSnap.data() as TradeRequest;
 
-  if (trade.toUid !== rejecterUid) {
-    throw new functions.https.HttpsError(
-      "permission-denied",
-      "This trade is not for you."
-    );
-  }
+    if (trade.toUid !== rejecterUid) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "This trade is not for you."
+      );
+    }
 
-  if (trade.status !== "pending") {
-    throw new functions.https.HttpsError(
-      "failed-precondition",
-      `Trade is already ${trade.status}.`
-    );
-  }
+    if (trade.status !== "pending") {
+      throw new functions.https.HttpsError(
+        "failed-precondition",
+        `Trade is already ${trade.status}.`
+      );
+    }
 
-  await tradeRef.update({
-    status: "rejected",
-    updatedAt: admin.firestore.Timestamp.now(),
+    transaction.update(tradeRef, {
+      status: "rejected",
+      updatedAt: admin.firestore.Timestamp.now(),
+    });
+
+    return { success: true };
   });
-
-  return { success: true };
 });
 
 /**
@@ -349,33 +351,35 @@ export const cancelTrade = functions.https.onCall(async (request) => {
   const { tradeId } = AcceptTradeSchema.parse(request.data);
   const cancellerUid = request.auth.uid;
 
-  const tradeRef = db.doc(`trades/${tradeId}`);
-  const tradeSnap = await tradeRef.get();
+  return db.runTransaction(async (transaction) => {
+    const tradeRef = db.doc(`trades/${tradeId}`);
+    const tradeSnap = await transaction.get(tradeRef);
 
-  if (!tradeSnap.exists) {
-    throw new functions.https.HttpsError("not-found", "Trade not found.");
-  }
+    if (!tradeSnap.exists) {
+      throw new functions.https.HttpsError("not-found", "Trade not found.");
+    }
 
-  const trade = tradeSnap.data() as TradeRequest;
+    const trade = tradeSnap.data() as TradeRequest;
 
-  if (trade.fromUid !== cancellerUid) {
-    throw new functions.https.HttpsError(
-      "permission-denied",
-      "Only the trade initiator can cancel it."
-    );
-  }
+    if (trade.fromUid !== cancellerUid) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "Only the trade initiator can cancel it."
+      );
+    }
 
-  if (trade.status !== "pending") {
-    throw new functions.https.HttpsError(
-      "failed-precondition",
-      `Trade is already ${trade.status}.`
-    );
-  }
+    if (trade.status !== "pending") {
+      throw new functions.https.HttpsError(
+        "failed-precondition",
+        `Trade is already ${trade.status}.`
+      );
+    }
 
-  await tradeRef.update({
-    status: "cancelled",
-    updatedAt: admin.firestore.Timestamp.now(),
+    transaction.update(tradeRef, {
+      status: "cancelled",
+      updatedAt: admin.firestore.Timestamp.now(),
+    });
+
+    return { success: true };
   });
-
-  return { success: true };
 });

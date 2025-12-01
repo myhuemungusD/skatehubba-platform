@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import { doc, getDoc } from "firebase/firestore";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -19,7 +20,9 @@ import Animated, {
 import { GrittyButton, SKATE } from "@skatehubba/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+
+// Default avatar background color for DiceBear API
+const DEFAULT_AVATAR_BG = "b6e3f4";
 
 interface UserStats {
   wins: number;
@@ -47,7 +50,7 @@ async function fetchProfile(uid: string): Promise<ProfileData> {
     return {
       uid,
       username: "Skater",
-      avatarUrl: `https://api.dicebear.com/9.x/avataaars/png?seed=${uid}&backgroundColor=b6e3f4`,
+      avatarUrl: `https://api.dicebear.com/9.x/avataaars/png?seed=${uid}&backgroundColor=${DEFAULT_AVATAR_BG}`,
       level: 1,
       xp: 0,
       stats: {

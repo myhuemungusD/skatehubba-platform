@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Stack, useRouter } from "expo-router";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
