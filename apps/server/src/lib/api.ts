@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 import { questsRouter } from './quests';
 import { stickerRouter } from '../routes/sticker';
 import { referralsRouter } from '../routes/referrals';
+import { heshurRouter } from '../routes/heshur';
 
 export const router: Router = express.Router();
 
@@ -25,3 +26,6 @@ router.use('/sticker', stickerRouter);
 
 // Mount referrals routes
 router.use('/referrals', referralsRouter);
+
+// Mount Heshur AI routes (rate limited)
+router.use('/heshur', heshurRouter);
