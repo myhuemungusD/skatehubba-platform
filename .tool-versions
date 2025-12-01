@@ -1,1 +1,20 @@
-pnpm 8.15.0
+# ===============================================================================
+# SkateHubba™ – Tool Versions (2025 Production Stack)
+# Used by asdf-vm, rtx, mise, etc. — never guess versions again
+# ===============================================================================
+
+# Node.js — required for Expo 51 + Next.js 14 + native modules
+nodejs 22.11.0
+
+# pnpm — only version that works with Expo 51 + monorepo + native modules
+pnpm 9.12.2
+
+# Bun — optional but elite (for ultra-fast scripts)
+bun 1.1.33
+
+# ===============================================================================
+# Optional but recommended
+# ===============================================================================
+# python 3.12.7
+# java 21.0.4
+# flutter 3.24.3
