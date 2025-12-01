@@ -1,21 +1,50 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
+    /* === Core === */
+    "target": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+
+    /* === Next.js 14 Requirements === */
+    "jsx": "preserve",
+    "incremental": true,
+    "allowJs": false,                  // prevent stray JS files from breaking builds
     "noEmit": true,
-    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true,      // REQUIRED for Next.js 14 App Router
+    "isolatedModules": true,
+
+    /* === Type Safety === */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "skipLibCheck": true,              // best practice for Next.js
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* === Workspace / Monorepo Paths === */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+
+      /* Shared packages inside monorepo */
+      "@repo/ui/*": ["../../packages/ui/src/*"],
+      "@repo/utils/*": ["../../packages/utils/src/*"],
+      "@repo/types/*": ["../../packages/types/src/*"],
+      "@repo/store/*": ["../../packages/store/src/*"]
+    },
+
+    /* === Next.js Plugin === */
+    "plugins": [{ "name": "next" }]
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+
+  /* === Included Files === */
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+
+  /* === Excluded Files === */
+  "exclude": ["node_modules"]
 }
