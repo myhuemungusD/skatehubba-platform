@@ -1,0 +1,9 @@
+import * as React from "react";
+function useCallbackRef(callback) {
+  const callbackRef = React.useRef(callback);
+  return React.useEffect(() => {
+    callbackRef.current = callback;
+  }), React.useMemo(() => (...args) => callbackRef.current?.(...args), []);
+}
+export { useCallbackRef };
+//# sourceMappingURL=index.mjs.map

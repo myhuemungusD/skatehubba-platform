@@ -1,0 +1,12 @@
+import type { TurboModule } from 'react-native';
+export interface Spec extends TurboModule {
+    getSessionId(): string | null;
+    getAppStartTime(): number;
+    getDebugSourceMapUUID(): string | null;
+    getResource(): {
+        [key: string]: string | number | boolean;
+    };
+}
+declare const _default: Spec;
+export default _default;
+//# sourceMappingURL=NativeHoneycombOpentelemetryReactNative.d.ts.map

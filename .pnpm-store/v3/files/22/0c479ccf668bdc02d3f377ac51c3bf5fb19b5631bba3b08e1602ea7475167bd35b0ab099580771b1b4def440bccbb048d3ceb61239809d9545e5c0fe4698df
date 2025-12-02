@@ -1,0 +1,25 @@
+import { type HoneycombOptions, HoneycombWebSDK } from '@honeycombio/opentelemetry-web';
+import { type FetchInstrumentationConfig } from '@opentelemetry/instrumentation-fetch';
+import { type ReactNativeStartupInstrumentationConfig } from './ReactNativeStartupInstrumentation';
+import { type UncaughtExceptionInstrumentationConfig } from './UncaughtExceptionInstrumentation';
+import { type SlowEventLoopInstrumentationConfig } from './SlowEventLoopInstrumentation';
+export { NavigationInstrumentation } from './NavigationInstrumentation';
+export { ReactNativeStartupInstrumentation } from './ReactNativeStartupInstrumentation';
+export { SlowEventLoopInstrumentation, type SlowEventLoopInstrumentationConfig, } from './SlowEventLoopInstrumentation';
+export { UncaughtExceptionInstrumentation, type UncaughtExceptionInstrumentationConfig, } from './UncaughtExceptionInstrumentation';
+/**
+ * The options used to configure the Honeycomb React Native SDK.
+ */
+interface HoneycombReactNativeOptions extends Partial<HoneycombOptions> {
+    reactNativeStartupInstrumentationConfig?: ReactNativeStartupInstrumentationConfig;
+    uncaughtExceptionInstrumentationConfig?: UncaughtExceptionInstrumentationConfig;
+    fetchInstrumentationConfig?: FetchInstrumentationConfig;
+    slowEventLoopInstrumentationConfig?: SlowEventLoopInstrumentationConfig;
+}
+/**
+ * The entry point to Honeycomb in React Native apps.
+ */
+export declare class HoneycombReactNativeSDK extends HoneycombWebSDK {
+    constructor(options?: HoneycombReactNativeOptions);
+}
+//# sourceMappingURL=index.d.ts.map

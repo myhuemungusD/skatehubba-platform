@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/sleep.ts"],
+  "mappings": "AAAA,SAAS,kBAAkB;AAEpB,MAAM,QAAQ,OAAO,IAAY,WAAwC;AAE9E,MADA,MAAM,IAAI,QAAQ,CAAC,QAAQ,WAAW,KAAK,EAAE,CAAC,GAC1C,QAAQ;AACV,UAAM,IAAI,WAAW;AAEzB;",
+  "names": []
+}

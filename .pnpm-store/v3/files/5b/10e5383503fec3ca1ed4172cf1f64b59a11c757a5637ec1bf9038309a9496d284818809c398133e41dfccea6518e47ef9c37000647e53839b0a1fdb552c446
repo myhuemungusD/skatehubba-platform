@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/LayoutGroupContext.tsx"],
+  "mappings": "AAAA,OAAO,WAAW;AAOX,MAAM,qBAAqB,MAAM,cAAuC,CAAC,CAAC;",
+  "names": []
+}

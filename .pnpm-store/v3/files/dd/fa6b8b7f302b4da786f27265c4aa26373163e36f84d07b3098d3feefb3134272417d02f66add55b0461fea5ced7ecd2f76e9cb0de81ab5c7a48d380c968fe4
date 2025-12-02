@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/grassA.ts"
+  ],
+  "sourcesContent": [
+    "export const grassA = {\n  grassA1: 'hsla(120, 94.9%, 38.7%, 0.016)',\n  grassA2: 'hsla(120, 94.9%, 38.7%, 0.048)',\n  grassA3: 'hsla(120, 98.0%, 35.5%, 0.079)',\n  grassA4: 'hsla(120, 98.7%, 31.5%, 0.126)',\n  grassA5: 'hsla(122, 98.5%, 29.9%, 0.193)',\n  grassA6: 'hsla(125, 99.2%, 27.9%, 0.283)',\n  grassA7: 'hsla(125, 99.9%, 27.0%, 0.408)',\n  grassA8: 'hsla(131, 100%, 27.6%, 0.604)',\n  grassA9: 'hsla(131, 99.7%, 26.3%, 0.726)',\n  grassA10: 'hsla(132, 99.9%, 24.0%, 0.761)',\n  grassA11: 'hsla(133, 99.5%, 19.5%, 0.840)',\n  grassA12: 'hsla(128, 98.0%, 4.9%, 0.895)',\n}\n"
+  ],
+  "version": 3
+}

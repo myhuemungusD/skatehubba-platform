@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/purple.ts"
+  ],
+  "sourcesContent": [
+    "export const purple = {\n  purple1: 'hsl(280, 65.0%, 99.4%)',\n  purple2: 'hsl(276, 100%, 99.0%)',\n  purple3: 'hsl(276, 83.1%, 97.0%)',\n  purple4: 'hsl(275, 76.4%, 94.7%)',\n  purple5: 'hsl(275, 70.8%, 91.8%)',\n  purple6: 'hsl(274, 65.4%, 87.8%)',\n  purple7: 'hsl(273, 61.0%, 81.7%)',\n  purple8: 'hsl(272, 60.0%, 73.5%)',\n  purple9: 'hsl(272, 51.0%, 54.0%)',\n  purple10: 'hsl(272, 46.8%, 50.3%)',\n  purple11: 'hsl(272, 50.0%, 45.8%)',\n  purple12: 'hsl(272, 66.0%, 16.0%)',\n}\n"
+  ],
+  "version": 3
+}

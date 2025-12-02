@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/LayoutGroupContext.tsx"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,mBAAkB;AAOX,MAAM,qBAAqB,aAAAA,QAAM,cAAuC,CAAC,CAAC;",
+  "names": ["React"]
+}

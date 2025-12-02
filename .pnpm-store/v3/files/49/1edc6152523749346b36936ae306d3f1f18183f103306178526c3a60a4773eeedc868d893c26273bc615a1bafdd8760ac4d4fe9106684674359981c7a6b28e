@@ -1,0 +1,13 @@
+{
+  "mappings": "AAAA,cAAc,kBAAkB;;;;AAKhC,OAAO,cAAMA,cAAc;AAO3B,OAAO,iBAAS,iCAAiC,MAAM",
+  "names": [
+    "initialValue: WindowSize"
+  ],
+  "sources": [
+    "src/initialValue.ts"
+  ],
+  "sourcesContent": [
+    "import type { WindowSize } from './types'\n\n/**\n * SSR safe useWindowDimensions\n */\nexport const initialValue: WindowSize = {\n  width: 800,\n  height: 600,\n  scale: 1,\n  fontScale: 1,\n}\n\nexport function configureInitialWindowDimensions(next: WindowSize): void {\n  Object.assign(initialValue, next)\n}\n"
+  ],
+  "version": 3
+}

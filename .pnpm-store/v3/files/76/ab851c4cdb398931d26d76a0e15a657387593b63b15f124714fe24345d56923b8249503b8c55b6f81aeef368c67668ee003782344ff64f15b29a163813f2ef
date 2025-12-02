@@ -1,0 +1,11 @@
+{
+  "mappings": "",
+  "names": [],
+  "sources": [
+    "src/tests.tsx"
+  ],
+  "sourcesContent": [
+    "import { applyMask } from './applyMask'\nimport { createTheme } from './createTheme'\nimport { createStrengthenMask, createWeakenMask } from './masks'\n\n// --- tests ---\nif (process.env.NODE_ENV === 'development') {\n  const palette = ['0', '1', '2', '3', '-3', '-2', '-1', '-0']\n  const template = { bg: 1, fg: -1 }\n\n  const stongerMask = createStrengthenMask()\n  const weakerMask = createWeakenMask()\n\n  const theme = createTheme(palette, template)\n  if (theme.bg !== '1') throw `❌`\n  if (theme.fg !== '-1') throw `❌`\n\n  const str = applyMask(theme, stongerMask)\n  if (str.bg !== '0') throw `❌`\n  if (str.fg !== '-0') throw `❌`\n\n  const weak = applyMask(theme, weakerMask)\n  if (weak.bg !== '2') throw `❌`\n  if (weak.fg !== '-2') throw `❌`\n\n  const weak2 = applyMask(theme, weakerMask, { strength: 2 })\n  if (weak2.bg !== '3') throw `❌`\n  if (weak2.fg !== '-3') throw `❌`\n}\n"
+  ],
+  "version": 3
+}

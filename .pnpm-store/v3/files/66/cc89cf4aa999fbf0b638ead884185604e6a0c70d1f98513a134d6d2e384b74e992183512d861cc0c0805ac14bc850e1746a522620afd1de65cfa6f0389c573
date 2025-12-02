@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/sage.ts"
+  ],
+  "sourcesContent": [
+    "export const sage = {\n  sage1: 'hsl(155, 30.0%, 98.8%)',\n  sage2: 'hsl(150, 16.7%, 97.6%)',\n  sage3: 'hsl(151, 10.6%, 95.2%)',\n  sage4: 'hsl(151, 8.8%, 93.0%)',\n  sage5: 'hsl(151, 7.8%, 90.8%)',\n  sage6: 'hsl(152, 7.2%, 88.4%)',\n  sage7: 'hsl(153, 6.7%, 85.3%)',\n  sage8: 'hsl(154, 6.1%, 77.5%)',\n  sage9: 'hsl(155, 3.5%, 55.5%)',\n  sage10: 'hsl(154, 2.8%, 51.7%)',\n  sage11: 'hsl(155, 3.0%, 43.0%)',\n  sage12: 'hsl(155, 24.0%, 9.0%)',\n}\n"
+  ],
+  "version": 3
+}

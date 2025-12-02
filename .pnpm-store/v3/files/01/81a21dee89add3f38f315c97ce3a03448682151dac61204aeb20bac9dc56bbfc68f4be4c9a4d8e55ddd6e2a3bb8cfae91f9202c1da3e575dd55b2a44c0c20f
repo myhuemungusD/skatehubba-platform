@@ -1,0 +1,152 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.HoneycombReactNativeSDK = void 0;
+Object.defineProperty(exports, "NavigationInstrumentation", {
+  enumerable: true,
+  get: function () {
+    return _NavigationInstrumentation.NavigationInstrumentation;
+  }
+});
+Object.defineProperty(exports, "ReactNativeStartupInstrumentation", {
+  enumerable: true,
+  get: function () {
+    return _ReactNativeStartupInstrumentation.ReactNativeStartupInstrumentation;
+  }
+});
+Object.defineProperty(exports, "SlowEventLoopInstrumentation", {
+  enumerable: true,
+  get: function () {
+    return _SlowEventLoopInstrumentation.SlowEventLoopInstrumentation;
+  }
+});
+Object.defineProperty(exports, "UncaughtExceptionInstrumentation", {
+  enumerable: true,
+  get: function () {
+    return _UncaughtExceptionInstrumentation.UncaughtExceptionInstrumentation;
+  }
+});
+var _NativeHoneycombOpentelemetryReactNative = _interopRequireDefault(require("./NativeHoneycombOpentelemetryReactNative"));
+var _opentelemetryWeb = require("@honeycombio/opentelemetry-web");
+var _instrumentationFetch = require("@opentelemetry/instrumentation-fetch");
+var _ReactNativeStartupInstrumentation = require("./ReactNativeStartupInstrumentation.js");
+var _UncaughtExceptionInstrumentation = require("./UncaughtExceptionInstrumentation.js");
+var _resources = require("@opentelemetry/resources");
+var _sdkTraceBase = require("@opentelemetry/sdk-trace-base");
+var _incubating = require("@opentelemetry/semantic-conventions/incubating");
+var _version = require("./version.js");
+var _SlowEventLoopInstrumentation = require("./SlowEventLoopInstrumentation.js");
+var _NavigationInstrumentation = require("./NavigationInstrumentation.js");
+var _reactNative = require("react-native");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+const generator = new _sdkTraceBase.RandomIdGenerator();
+const defaultSessionId = generator.generateTraceId();
+
+// By default, we include a SessionIdProvider that uses the native session ID,
+// if possible. Otherwise, it falls back with a reasonable default.
+class SessionIdProvider {
+  getSessionId() {
+    const nativeSessionId = _NativeHoneycombOpentelemetryReactNative.default.getSessionId();
+    if (nativeSessionId) {
+      return nativeSessionId;
+    }
+    return defaultSessionId;
+  }
+}
+
+/**
+ * The options used to configure the Honeycomb React Native SDK.
+ */
+
+const reactNativeOSTypeToOtelOSName = {
+  ios: 'iOS',
+  android: 'Android',
+  macos: 'macOS',
+  native: 'Native',
+  web: 'Web',
+  windows: 'windows'
+};
+function getOSName() {
+  return reactNativeOSTypeToOtelOSName[_reactNative.Platform.OS];
+}
+
+/**
+ * The entry point to Honeycomb in React Native apps.
+ */
+class HoneycombReactNativeSDK extends _opentelemetryWeb.HoneycombWebSDK {
+  constructor(options) {
+    const instrumentations = [...(options?.instrumentations || [])];
+    if (options?.reactNativeStartupInstrumentationConfig?.enabled !== false) {
+      instrumentations.push(new _ReactNativeStartupInstrumentation.ReactNativeStartupInstrumentation(options?.reactNativeStartupInstrumentationConfig));
+    }
+    if (options?.fetchInstrumentationConfig?.enabled !== false) {
+      instrumentations.push(new _instrumentationFetch.FetchInstrumentation(options?.fetchInstrumentationConfig));
+    }
+    if (options?.uncaughtExceptionInstrumentationConfig?.enabled !== false) {
+      instrumentations.push(new _UncaughtExceptionInstrumentation.UncaughtExceptionInstrumentation(options?.uncaughtExceptionInstrumentationConfig));
+    }
+    const {
+      major,
+      minor,
+      patch,
+      prerelease
+    } = _reactNative.Platform.constants.reactNativeVersion;
+    let reactNativeVersion = `${major}.${minor}.${patch}`;
+    if (prerelease) {
+      reactNativeVersion = `${reactNativeVersion}-${[prerelease]}`;
+    }
+
+    // If the native SDKs are not initialized, fall back the the RN furnished values
+    const nativeAttributes = _NativeHoneycombOpentelemetryReactNative.default.getResource();
+    if (!nativeAttributes[_incubating.ATTR_OS_NAME]) {
+      nativeAttributes[_incubating.ATTR_OS_NAME] = getOSName();
+    }
+    if (!nativeAttributes[_incubating.ATTR_OS_VERSION]) {
+      nativeAttributes[_incubating.ATTR_OS_VERSION] = _reactNative.Platform.Version;
+    }
+    const attributes = {
+      ...nativeAttributes,
+      // Honeycomb distro attributes,
+      'honeycomb.distro.version': _version.VERSION,
+      'honeycomb.distro.runtime_version': reactNativeVersion,
+      // Opentelemetry attributes
+      [_incubating.ATTR_TELEMETRY_DISTRO_NAME]: '@honeycombio/opentelemetry-react-native',
+      [_incubating.ATTR_TELEMETRY_DISTRO_VERSION]: _version.VERSION,
+      [_incubating.ATTR_TELEMETRY_SDK_LANGUAGE]: 'hermesjs',
+      [_incubating.ATTR_TELEMETRY_SDK_NAME]: 'opentelemetry',
+      [_incubating.ATTR_TELEMETRY_SDK_VERSION]: _version.VERSION,
+      // React Native enviornment
+      [_incubating.ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: __DEV__ ? 'development' : 'production'
+    };
+    const sourceMapUuid = _NativeHoneycombOpentelemetryReactNative.default.getDebugSourceMapUUID();
+    if (sourceMapUuid) {
+      attributes['app.debug.source_map_uuid'] = sourceMapUuid;
+    }
+    let resource = (0, _resources.resourceFromAttributes)(attributes);
+    if (options?.resource) {
+      resource = resource.merge(options.resource);
+    }
+    if (options?.slowEventLoopInstrumentationConfig?.enabled !== false) {
+      instrumentations.push(new _SlowEventLoopInstrumentation.SlowEventLoopInstrumentation(options?.slowEventLoopInstrumentationConfig));
+    }
+    super({
+      ...options,
+      // Add default instrumentations
+      instrumentations,
+      resource,
+      // Override web options that make no sense for React Native.
+      disableBrowserAttributes: true,
+      sessionProvider: new SessionIdProvider(),
+      webVitalsInstrumentationConfig: {
+        enabled: false
+      },
+      globalErrorsInstrumentationConfig: {
+        enabled: false
+      }
+    });
+  }
+}
+exports.HoneycombReactNativeSDK = HoneycombReactNativeSDK;
+//# sourceMappingURL=index.js.map

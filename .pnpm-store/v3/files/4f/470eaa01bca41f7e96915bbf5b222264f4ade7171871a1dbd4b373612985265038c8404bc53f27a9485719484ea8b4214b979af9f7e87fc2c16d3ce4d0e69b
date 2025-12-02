@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../../src/views/TamaguiProvider.tsx"],
+  "mappings": "AACA,SAAS,mBAAmB,kBAAkB;AAC9C,SAAS,sBAAsB;AAC/B,SAAS,0BAA0B;AAM3B;AAJD,MAAM,kBAAkB,CAAC,EAAE,UAAU,GAAG,MAAM,MAEjD,oBAAC,cAAY,GAAG,OACd,8BAAC,mBAAmB,UAAnB,EAA4B,OAAO,GAClC,8BAAC,kBAAe,mBAAiB,IAAE,UAAS,GAC9C,GACF;",
+  "names": []
+}

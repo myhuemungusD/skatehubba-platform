@@ -4,3 +4,4 @@ export { haversine } from "./geo";
 export * from "./hooks/useChallenge";
 export * from "./hooks/useWallet";
 export * from "./types/skate";
+export * from "./videoValidation";

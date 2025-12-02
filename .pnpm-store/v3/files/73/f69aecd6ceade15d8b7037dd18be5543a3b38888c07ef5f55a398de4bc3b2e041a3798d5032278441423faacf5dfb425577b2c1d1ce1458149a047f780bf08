@@ -1,0 +1,1 @@
+{"version":3,"names":["createVariables","createTokens","tokens","process","env","TAMAGUI_TOKEN_PREFIX"],"sources":["../../src/createTokens.ts"],"sourcesContent":[null],"mappings":"AAAA,SAASA,eAAA,QAAuB;AAGzB,SAASC,aAAqCC,MAAA,EAA0B;EAC7E,OAAOF,eAAA,CAAgBE,MAAA,EAAQC,OAAA,CAAQC,GAAA,CAAIC,oBAAA,IAAwB,GAAG;AACxE","ignoreList":[]}

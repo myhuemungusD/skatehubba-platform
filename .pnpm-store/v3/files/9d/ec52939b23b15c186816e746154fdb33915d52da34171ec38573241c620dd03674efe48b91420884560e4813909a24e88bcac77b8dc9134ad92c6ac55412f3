@@ -1,0 +1,11 @@
+{
+  "mappings": "AAGA,OAAO,cAAM",
+  "names": [],
+  "sources": [
+    "src/useKeyboardVisible.ts"
+  ],
+  "sourcesContent": [
+    "import React from 'react'\nimport { Keyboard } from 'react-native'\n\nexport const useKeyboardVisible = (): boolean => {\n  const [isKeyboardVisible, setKeyboardVisible] = React.useState(false)\n\n  React.useEffect(() => {\n    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {\n      setKeyboardVisible(true)\n    })\n    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {\n      setKeyboardVisible(false)\n    })\n\n    return () => {\n      keyboardDidHideListener.remove()\n      keyboardDidShowListener.remove()\n    }\n  }, [])\n\n  return isKeyboardVisible\n}\n"
+  ],
+  "version": 3
+}

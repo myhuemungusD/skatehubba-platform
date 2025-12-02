@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/dark/amberA.ts"
+  ],
+  "sourcesContent": [
+    "export const amberA = {\n  amberA1: 'hsla(0, 0%, 0%, 0)',\n  amberA2: 'hsla(31, 100%, 49.7%, 0.036)',\n  amberA3: 'hsla(27, 100%, 49.9%, 0.094)',\n  amberA4: 'hsla(29, 100%, 50.0%, 0.143)',\n  amberA5: 'hsla(31, 100%, 50.0%, 0.192)',\n  amberA6: 'hsla(35, 100%, 50.0%, 0.250)',\n  amberA7: 'hsla(34, 99.6%, 52.9%, 0.331)',\n  amberA8: 'hsla(36, 100%, 50.0%, 0.442)',\n  amberA9: 'hsla(40, 100%, 57.2%, 0.980)',\n  amberA10: 'hsla(44, 100%, 64.2%, 0.980)',\n  amberA11: 'hsla(39, 99.9%, 52.7%, 0.938)',\n  amberA12: 'hsla(45, 100%, 94.2%, 0.980)',\n}\n"
+  ],
+  "version": 3
+}

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../../src/contexts/GroupContext.tsx"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,mBAA8B;AAGvB,MAAM,mBAAe,4BAAuC,IAAI;",
+  "names": []
+}

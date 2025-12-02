@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/orange.ts"
+  ],
+  "sourcesContent": [
+    "export const orange = {\n  orange1: 'hsl(24, 70.0%, 99.0%)',\n  orange2: 'hsl(24, 83.3%, 97.6%)',\n  orange3: 'hsl(24, 100%, 95.3%)',\n  orange4: 'hsl(25, 100%, 92.2%)',\n  orange5: 'hsl(25, 100%, 88.2%)',\n  orange6: 'hsl(25, 100%, 82.8%)',\n  orange7: 'hsl(24, 100%, 75.3%)',\n  orange8: 'hsl(24, 94.5%, 64.3%)',\n  orange9: 'hsl(24, 94.0%, 50.0%)',\n  orange10: 'hsl(24, 100%, 46.5%)',\n  orange11: 'hsl(24, 100%, 37.0%)',\n  orange12: 'hsl(15, 60.0%, 17.0%)',\n}\n"
+  ],
+  "version": 3
+}

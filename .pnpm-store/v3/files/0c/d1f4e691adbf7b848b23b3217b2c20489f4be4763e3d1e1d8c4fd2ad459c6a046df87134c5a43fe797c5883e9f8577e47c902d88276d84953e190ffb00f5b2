@@ -1,0 +1,1 @@
+{"version":3,"file":"matchMedia.native.d.ts","sourceRoot":"","sources":["../../src/helpers/matchMedia.native.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,UAAU,EAAkB,MAAM,UAAU,CAAA;AAI1D,eAAO,MAAM,UAAU,EAAE,UAAiD,CAAA;AAc1E,wBAAgB,eAAe,CAAC,CAAC,EAAE,UAAU,QAe5C"}

@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/green.ts"
+  ],
+  "sourcesContent": [
+    "export const green = {\n  green1: 'hsl(136, 50.0%, 98.9%)',\n  green2: 'hsl(138, 62.5%, 96.9%)',\n  green3: 'hsl(139, 55.2%, 94.5%)',\n  green4: 'hsl(140, 48.7%, 91.0%)',\n  green5: 'hsl(141, 43.7%, 86.0%)',\n  green6: 'hsl(143, 40.3%, 79.0%)',\n  green7: 'hsl(146, 38.5%, 69.0%)',\n  green8: 'hsl(151, 40.2%, 54.1%)',\n  green9: 'hsl(151, 55.0%, 41.5%)',\n  green10: 'hsl(152, 57.5%, 37.6%)',\n  green11: 'hsl(153, 67.0%, 28.5%)',\n  green12: 'hsl(155, 40.0%, 14.0%)',\n}\n"
+  ],
+  "version": 3
+}

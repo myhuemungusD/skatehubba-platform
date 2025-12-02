@@ -1,0 +1,11 @@
+{
+  "mappings": "AAEA,cAAc,YAAY,0BAA0B;AAKpD,OAAO,iBAAS,iBAAiB;AAwDjC,OAAO,iBAAS,UAAU,IAAI",
+  "names": [],
+  "sources": [
+    "src/helpers.ts"
+  ],
+  "sourcesContent": [
+    "import { isClient } from '@tamagui/constants'\nimport { initialValue } from './initialValue'\nimport type { WindowSize, WindowSizeListener } from './types'\n\nlet lastSize: WindowSize = initialValue\nlet docEl: HTMLElement | null = null\n\nexport function getWindowSize(): WindowSize {\n  if (!isClient) {\n    return initialValue\n  }\n\n  docEl ||= window.document.documentElement\n\n  const nextSize: WindowSize = {\n    fontScale: 1,\n    height: docEl.clientHeight,\n    scale: window.devicePixelRatio || 1,\n    width: docEl.clientWidth,\n  }\n\n  if (\n    nextSize.height !== lastSize.height ||\n    nextSize.width !== lastSize.width ||\n    nextSize.scale !== lastSize.scale\n  ) {\n    lastSize = nextSize\n    return nextSize\n  }\n\n  return lastSize\n}\n\nconst cbs = new Set<WindowSizeListener>()\n\nif (isClient) {\n  let lastUpdate = Date.now()\n  let tm\n  const USER_MAX_MS = process.env.TAMAGUI_USE_WINDOW_DIMENSIONS_MAX_UPDATE_MS\n  const updateMaxMs = USER_MAX_MS ? +USER_MAX_MS : 100\n\n  function flushUpdate() {\n    lastUpdate = Date.now()\n    cbs.forEach((cb) => cb(getWindowSize()))\n  }\n\n  const onResize = () => {\n    clearTimeout(tm)\n\n    // only update every few frames\n    const timeSinceLast = Date.now() - lastUpdate\n    if (timeSinceLast < updateMaxMs) {\n      setTimeout(() => {\n        flushUpdate()\n      }, updateMaxMs - timeSinceLast)\n    } else {\n      flushUpdate()\n    }\n  }\n\n  window.addEventListener('resize', onResize)\n}\n\nexport function subscribe(cb: WindowSizeListener): () => void {\n  cbs.add(cb)\n  return () => cbs.delete(cb)\n}\n"
+  ],
+  "version": 3
+}

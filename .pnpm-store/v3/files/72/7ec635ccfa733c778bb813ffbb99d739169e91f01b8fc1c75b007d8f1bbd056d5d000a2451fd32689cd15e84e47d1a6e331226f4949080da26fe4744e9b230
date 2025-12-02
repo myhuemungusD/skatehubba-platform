@@ -1,0 +1,16 @@
+{
+  "name": "@tamagui/fake-react-native",
+  "version": "1.138.6",
+  "main": "index.js",
+  "module": "index.mjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "a49cc7ea6b93ba384e77a4880ae48ac4a5635c14"
+}

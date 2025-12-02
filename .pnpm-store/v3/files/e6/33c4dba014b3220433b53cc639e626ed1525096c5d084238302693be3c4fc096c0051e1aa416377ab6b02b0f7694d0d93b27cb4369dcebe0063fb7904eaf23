@@ -1,0 +1,4 @@
+var Pressability = require("react-native/Libraries/Pressability/Pressability").default,
+  usePressability = require("react-native/Libraries/Pressability/usePressability").default;
+export { Pressability, usePressability };
+//# sourceMappingURL=Pressability.native.js.map

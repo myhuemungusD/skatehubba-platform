@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/blueA.ts"
+  ],
+  "sourcesContent": [
+    "export const blueA = {\n  blueA1: 'hsla(210, 100%, 51.0%, 0.016)',\n  blueA2: 'hsla(210, 100%, 51.0%, 0.040)',\n  blueA3: 'hsla(210, 100%, 50.3%, 0.071)',\n  blueA4: 'hsla(210, 100%, 50.1%, 0.118)',\n  blueA5: 'hsla(208, 99.1%, 47.1%, 0.189)',\n  blueA6: 'hsla(209, 99.5%, 45.3%, 0.283)',\n  blueA7: 'hsla(208, 99.9%, 43.8%, 0.412)',\n  blueA8: 'hsla(206, 99.8%, 45.1%, 0.632)',\n  blueA9: 'hsla(206, 100%, 50.0%, 0.980)',\n  blueA10: 'hsla(208, 100%, 47.2%, 0.980)',\n  blueA11: 'hsla(212, 100%, 43.0%, 0.980)',\n  blueA12: 'hsla(213, 100%, 14.4%, 0.980)',\n}\n"
+  ],
+  "version": 3
+}

@@ -1,0 +1,1 @@
+{"version":3,"names":["jsx","_jsx","TamaguiProvider","OGProvider","PortalProvider","ZIndexStackContext","param"],"sources":["../../../src/views/TamaguiProvider.tsx"],"sourcesContent":[null],"mappings":"AACA,SAASA,GAAA,IAAAC,IAAA,QAAmB,mBAAkB;AAC9C,SAASC,eAAA,IAAAC,UAAsB;AAC/B,SAASC,cAAA,yBAA0B;AAM3B,SAAAC,kBAAA;AAJD,IAAAH,eAAM,YAAAA,CAAqBI,KAAA,EAAU","ignoreList":[]}

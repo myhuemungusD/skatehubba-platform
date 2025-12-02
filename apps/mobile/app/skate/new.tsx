@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Text, TextInput, View } from "react-native";
-import { VideoRecorder } from "@/components/skate/VideoRecorder";
+// import { VideoRecorder } from "@/components/skate/VideoRecorder";
 import { useAuth } from "@/hooks/useAuth";
 import { SKATE } from "@/theme";
 // import { createSkateChallenge } from '../../../../packages/utils/src/api-sdk/skate'; // Use this relative path if aliases aren't set up
@@ -73,19 +73,18 @@ export default function NewSkateChallenge() {
         One take. 15 seconds. No edits. Just like curbside.
       </Text>
 
-      <VideoRecorder
-        maxDurationSec={15}
+            {/* <VideoRecorder
         onRecordingComplete={async (uri) => {
-          console.log("Uploading clip...", uri);
-          // In a real app, you'd use your uploadToStorage function here:
-          // const url = await uploadToStorage(uri, `skate_games/${user!.uid}_${Date.now()}.mp4`);
-
-          // For now, we simulate a URL so you can test the DB flow:
-          const mockUrl =
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-          createGame.mutate({ trickVideoUrl: mockUrl });
+          try {
+            await createGame.mutateAsync({ trickVideoUrl: uri });
+          } catch (err) {
+            console.error(err);
+          }
         }}
-      />
+      /> */}
+      <View style={{height: 300, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{color:'white'}}>Video Recorder Placeholder</Text>
+      </View>
 
       <TextInput
         placeholder="Tag opponent @handle"

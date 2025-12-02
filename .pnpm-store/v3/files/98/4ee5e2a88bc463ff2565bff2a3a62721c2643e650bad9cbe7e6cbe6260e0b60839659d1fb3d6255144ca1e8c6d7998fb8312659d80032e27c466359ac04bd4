@@ -1,0 +1,15 @@
+#if !RCT_NEW_ARCH_ENABLED
+@objc(RNMBXCircleLayerViewManager)
+class RNMBXCircleLayerViewManager: RCTViewManager {
+    @objc
+    override static func requiresMainQueueSetup() -> Bool {
+        return false
+    }
+  
+    override func view() -> UIView! {
+      let layer = RNMBXCircleLayer()
+      layer.bridge = self.bridge
+      return layer
+    }
+}
+#endif

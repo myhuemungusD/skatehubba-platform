@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../../src/constants/webToNativeProps.tsx"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,MAAM,8BACX,CAAC,GACU,uBAAiD,CAAC;",
+  "names": []
+}

@@ -1,0 +1,11 @@
+{
+  "mappings": "AACA,cAAc,kBAAkB;AAGhC,OAAO,cAAM,eAAgB,GAAG,OAAO,iBAAe",
+  "names": [],
+  "sources": [
+    "src/combineMasks.tsx"
+  ],
+  "sourcesContent": [
+    "import { applyMaskStateless } from './applyMask'\nimport type { CreateMask } from './createThemeTypes'\nimport { getThemeInfo } from './themeInfo'\n\nexport const combineMasks = (...masks: CreateMask[]): CreateMask => {\n  const mask: CreateMask = {\n    name: 'combine-mask',\n    mask: (template, opts) => {\n      let current = getThemeInfo(template, opts.parentName)\n      let theme: any\n      for (const mask of masks) {\n        if (!current) {\n          throw new Error(\n            `Nothing returned from mask: ${current}, for template: ${template} and mask: ${mask.toString()}, given opts ${JSON.stringify(\n              opts,\n              null,\n              2\n            )}`\n          )\n        }\n        const next = applyMaskStateless(current, mask, opts)\n        current = next\n        theme = next.theme\n      }\n      return theme\n    },\n  }\n  return mask\n}\n"
+  ],
+  "version": 3
+}

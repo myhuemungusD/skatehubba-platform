@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/PresenceContext.tsx"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA,YAAuB,8BAWnB;AATG,MAAM,kBACX,MAAM,cAA2C,IAAI,GAE1C,gBAAgB,CAAC,UAGP;AACrB,QAAM,SAAS,MAAM,WAAW,eAAe;AAC/C,SACE,4CAAC,gBAAgB,UAAhB,EAAyB,OAAO,MAAM,UAAU,SAAS,MACvD,gBAAM,UACT;AAEJ;",
+  "names": []
+}

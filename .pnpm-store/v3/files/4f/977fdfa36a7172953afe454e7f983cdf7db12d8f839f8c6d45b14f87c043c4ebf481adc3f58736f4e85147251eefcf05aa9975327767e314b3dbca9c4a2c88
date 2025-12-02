@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/useGetIcon.tsx"],
+  "mappings": "AAAA,OAAO,WAAW;AAEX,MAAM,aAAa,MACjB,CAAC,IAAS,UACV,OACD,MAAM,eAAe,EAAE,IAClB,MAAM,aAAa,IAAI;AAAA,EAC5B,GAAG;AAAA;AAAA,EAEH,GAAG,GAAG;AACR,CAAC,IAEI,MAAM,cAAc,IAAI,KAAK;",
+  "names": []
+}

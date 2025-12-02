@@ -1,0 +1,32 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _configPlugins = require("@expo/config-plugins");
+const withAndroidPlugin = (config, options) => {
+  return (0, _configPlugins.withAndroidManifest)(config, config => {
+    const mainApplication = config?.modResults?.manifest?.application?.[0];
+    if (mainApplication) {
+      // Ensure meta-data array exists
+      if (!mainApplication['meta-data']) {
+        mainApplication['meta-data'] = [];
+      }
+
+      // Remove any existing entry with the same name
+      mainApplication['meta-data'] = mainApplication['meta-data'].filter(entry => entry.$['android:name'] !== 'app.debug.source_map_uuid');
+
+      // Add the custom message as a meta-data entry
+      mainApplication['meta-data'].push({
+        $: {
+          'android:name': 'app.debug.source_map_uuid',
+          'android:value': options.sourceMapUuid
+        }
+      });
+    }
+    return config;
+  });
+};
+var _default = exports.default = withAndroidPlugin;
+//# sourceMappingURL=withUUIDAndroidPlugin.js.map

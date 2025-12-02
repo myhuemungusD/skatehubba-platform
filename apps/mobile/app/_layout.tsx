@@ -9,6 +9,7 @@ import { useAuthStore } from "../lib/auth";
 import { SKATE } from "../theme";
 import "@react-native-firebase/app-check";
 import "../src/lib/firebase"; // Initialize Firebase JS SDK
+
 import { initAnalytics } from "../src/utils/analytics";
 
 // Initialize Observability

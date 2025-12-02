@@ -1,0 +1,18 @@
+"use strict";
+
+import withAndroidPlugin from "./withUUIDAndroidPlugin.js";
+import withIOSPlugin from "./withUUIDIosPlugin.js";
+const withPlugin = config => {
+  const sourceMapUuid = crypto.randomUUID();
+  // Apply Android modifications first
+  config = withAndroidPlugin(config, {
+    sourceMapUuid
+  });
+  // Then apply iOS modifications and return
+  config = withIOSPlugin(config, {
+    sourceMapUuid
+  });
+  return config;
+};
+export default withPlugin;
+//# sourceMappingURL=withUUIDPlugin.js.map

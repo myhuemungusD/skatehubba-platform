@@ -1,0 +1,94 @@
+export const UnknownError = {
+  error: 'Unknown error',
+  message: 'An unknown error occurred'
+};
+export const NotSupportedError = {
+  error: 'NotSupported',
+  message: 'Passkeys are not supported on this device. iOS 15 or Android SDK 28 and above is required to use Passkeys'
+};
+export const RequestFailedError = {
+  error: 'RequestFailed',
+  message: 'The request failed. No Credentials were returned.'
+};
+export const UserCancelledError = {
+  error: 'UserCancelled',
+  message: 'The user cancelled the request.'
+};
+export const InvalidChallengeError = {
+  error: 'InvalidChallenge',
+  message: 'The provided challenge was invalid'
+};
+export const InvalidUserIdError = {
+  error: 'InvalidUserId',
+  message: 'The provided userId was invalid'
+};
+export const BadConfiguration = {
+  error: 'BadConfiguration',
+  message: 'Your app is not properly configured. Refer to the docs for help.'
+};
+export const NoCredentialsError = {
+  error: 'NoCredentials',
+  message: 'No viable credential is available for the user.'
+};
+export const InterruptedError = {
+  error: 'Interrupted',
+  message: 'The operation was interrupted and may be retried.'
+};
+export const TimeoutError = {
+  error: 'TimedOut',
+  message: 'The operation timed out.'
+};
+export const NativeError = (message = 'An unknown error occurred') => {
+  return {
+    error: 'Native error',
+    message: message
+  };
+};
+export function handleNativeError(_error) {
+  if (!_error.code) {
+    return UnknownError;
+  }
+  switch (_error.code) {
+    case 'NotSupported':
+      {
+        return NotSupportedError;
+      }
+    case 'RequestFailed':
+      {
+        return RequestFailedError;
+      }
+    case 'UserCancelled':
+      {
+        return UserCancelledError;
+      }
+    case 'InvalidChallenge':
+      {
+        return InvalidChallengeError;
+      }
+    case 'BadConfiguration':
+      {
+        return BadConfiguration;
+      }
+    case 'Interrupted':
+      {
+        return InterruptedError;
+      }
+    case 'NoCredentials':
+      {
+        return NoCredentialsError;
+      }
+    case 'TimedOut':
+      {
+        return TimeoutError;
+      }
+    case 'UnknownError':
+      {
+        return UnknownError;
+      }
+    default:
+      {
+        return NativeError(String(_error));
+      }
+  }
+}
+//# sourceMappingURL=PasskeyError.js.map

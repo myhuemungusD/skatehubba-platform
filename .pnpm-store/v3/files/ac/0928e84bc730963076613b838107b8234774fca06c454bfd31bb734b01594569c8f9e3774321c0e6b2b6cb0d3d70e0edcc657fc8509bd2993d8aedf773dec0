@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/mauveA.ts"
+  ],
+  "sourcesContent": [
+    "export const mauveA = {\n  mauveA1: 'hsla(300, 89.3%, 18.3%, 0.012)',\n  mauveA2: 'hsla(300, 78.1%, 9.0%, 0.028)',\n  mauveA3: 'hsla(300, 99.5%, 7.7%, 0.051)',\n  mauveA4: 'hsla(270, 90.5%, 6.1%, 0.071)',\n  mauveA5: 'hsla(270, 83.0%, 5.2%, 0.091)',\n  mauveA6: 'hsla(300, 93.5%, 3.7%, 0.114)',\n  mauveA7: 'hsla(270, 82.6%, 3.3%, 0.142)',\n  mauveA8: 'hsla(255, 95.2%, 3.7%, 0.220)',\n  mauveA9: 'hsla(255, 94.8%, 3.7%, 0.444)',\n  mauveA10: 'hsla(253, 96.5%, 3.8%, 0.483)',\n  mauveA11: 'hsla(247, 97.9%, 3.2%, 0.569)',\n  mauveA12: 'hsla(261, 98.7%, 3.0%, 0.918)',\n}\n"
+  ],
+  "version": 3
+}

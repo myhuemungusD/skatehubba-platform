@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/dark/cyanA.ts"
+  ],
+  "sourcesContent": [
+    "export const cyanA = {\n  cyanA1: 'hsla(0, 0%, 0%, 0)',\n  cyanA2: 'hsla(196, 100%, 50.0%, 0.031)',\n  cyanA3: 'hsla(192, 98.0%, 50.9%, 0.085)',\n  cyanA4: 'hsla(194, 99.6%, 51.3%, 0.133)',\n  cyanA5: 'hsla(192, 99.5%, 51.3%, 0.173)',\n  cyanA6: 'hsla(193, 99.7%, 50.4%, 0.226)',\n  cyanA7: 'hsla(192, 100%, 50.0%, 0.310)',\n  cyanA8: 'hsla(193, 100%, 50.0%, 0.425)',\n  cyanA9: 'hsla(190, 99.8%, 50.8%, 0.731)',\n  cyanA10: 'hsla(188, 100%, 50.0%, 0.775)',\n  cyanA11: 'hsla(186, 100%, 49.9%, 0.824)',\n  cyanA12: 'hsla(185, 99.8%, 95.1%, 0.978)',\n}\n"
+  ],
+  "version": 3
+}

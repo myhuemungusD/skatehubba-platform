@@ -1,0 +1,1 @@
+{"version":3,"names":["timer","require","setTimeout","print","time","start","quiet"],"sources":["../../../src/helpers/timer.ts"],"sourcesContent":[null],"mappings":"AAAA,MAAMA,KAAA,GAAQC,OAAA,CAAQ,gBAAgB,EAAED,KAAA,CAAM;AAE9CE,UAAA,CAAW,MAAM;EACfF,KAAA,CAAMG,KAAA,CAAM;AACd,GAAG,GAAI;AAEA,MAAMC,IAAA,GAAOJ,KAAA,CAAMK,KAAA,CAAM;EAC9BC,KAAA,EAAO;AACT,CAAC","ignoreList":[]}

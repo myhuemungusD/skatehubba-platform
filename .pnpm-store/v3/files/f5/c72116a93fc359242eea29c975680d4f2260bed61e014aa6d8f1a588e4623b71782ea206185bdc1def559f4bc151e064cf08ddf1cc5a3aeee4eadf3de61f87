@@ -1,0 +1,1 @@
+{"version":3,"names":["React","isTamaguiComponent","isTamaguiElement","child","name"],"sources":["../../../src/helpers/isTamaguiElement.tsx"],"sourcesContent":[null],"mappings":"AAAA,OAAOA,KAAA,MAAW;AAGlB,SAASC,kBAAA,QAA0B;AAE5B,IAAAC,gBAAM,YAAAA,CACXC,KACA,EAAAC,IAEO","ignoreList":[]}

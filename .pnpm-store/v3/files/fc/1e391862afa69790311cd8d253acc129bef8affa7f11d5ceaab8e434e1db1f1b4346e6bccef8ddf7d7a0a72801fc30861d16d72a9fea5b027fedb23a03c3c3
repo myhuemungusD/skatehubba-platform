@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/errors.ts"],
+  "mappings": "AAAO,MAAM,mBAAmB,MAAM;AAAA,EACpC,YAAY,UAAU,IAAI;AACxB,UAAM,OAAO,GACb,KAAK,OAAO;AAAA,EACd;AACF;",
+  "names": []
+}

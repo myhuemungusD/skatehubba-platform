@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/mintA.ts"
+  ],
+  "sourcesContent": [
+    "export const mintA = {\n  mintA1: 'hsla(168, 95.4%, 42.8%, 0.024)',\n  mintA2: 'hsla(164, 99.1%, 47.1%, 0.063)',\n  mintA3: 'hsla(164, 99.3%, 43.5%, 0.118)',\n  mintA4: 'hsla(164, 99.3%, 41.3%, 0.177)',\n  mintA5: 'hsla(165, 99.0%, 37.5%, 0.248)',\n  mintA6: 'hsla(165, 100%, 35.0%, 0.353)',\n  mintA7: 'hsla(166, 99.9%, 33.5%, 0.510)',\n  mintA8: 'hsla(168, 99.6%, 34.6%, 0.750)',\n  mintA9: 'hsla(167, 99.9%, 39.5%, 0.561)',\n  mintA10: 'hsla(167, 99.7%, 37.4%, 0.589)',\n  mintA11: 'hsla(172, 99.8%, 22.4%, 0.922)',\n  mintA12: 'hsla(172, 99.7%, 8.8%, 0.965)',\n}\n"
+  ],
+  "version": 3
+}

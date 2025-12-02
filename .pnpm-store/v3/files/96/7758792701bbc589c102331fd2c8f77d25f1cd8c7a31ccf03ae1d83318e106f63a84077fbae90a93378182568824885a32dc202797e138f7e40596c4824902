@@ -1,0 +1,11 @@
+{
+  "mappings": "AAGA,OAAO,cAAM,aAAc,eAAe,mBAAkB",
+  "names": [],
+  "sources": [
+    "src/index.ts"
+  ],
+  "sourcesContent": [
+    "const cache = new Map<string, string>()\nlet cacheSize = 0\n\nexport const simpleHash = (strIn: string, hashMin: number | 'strict' = 10): string => {\n  if (cache.has(strIn)) {\n    return cache.get(strIn)!\n  }\n\n  let str = strIn\n\n  // remove var()\n  if (str[0] === 'v' && str.startsWith('var(')) {\n    str = str.slice(6, str.length - 1)\n  }\n\n  let hash = 0\n  let valids = ''\n  let added = 0\n  const len = str.length\n\n  for (let i = 0; i < len; i++) {\n    if (hashMin !== 'strict' && added <= hashMin) {\n      const char = str.charCodeAt(i)\n      if (char === 46) {\n        valids += '--'\n        continue\n      }\n      if (isValidCSSCharCode(char)) {\n        added++\n        valids += str[i]\n        continue\n      }\n    }\n    hash = hashChar(hash, str[i])\n  }\n\n  const res = valids + (hash ? Math.abs(hash) : '')\n\n  if (cacheSize > 10_000) {\n    cache.clear()\n    cacheSize = 0\n  }\n\n  cache.set(strIn, res)\n  cacheSize++\n\n  return res\n}\n\nconst hashChar = (hash: number, c: string) => (Math.imul(31, hash) + c.charCodeAt(0)) | 0\n\nfunction isValidCSSCharCode(code: number) {\n  return (\n    // A-Z\n    (code >= 65 && code <= 90) ||\n    // a-z\n    (code >= 97 && code <= 122) ||\n    // _\n    code === 95 ||\n    // -\n    code === 45 ||\n    // 0-9\n    (code >= 48 && code <= 57)\n  )\n}\n"
+  ],
+  "version": 3
+}

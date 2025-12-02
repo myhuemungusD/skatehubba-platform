@@ -1,0 +1,4 @@
+export { U as UserInteractionInstrumentation } from '../user-interaction-instrumentation-CetVOd-2.js';
+import '@opentelemetry/api';
+import '@opentelemetry/instrumentation';
+import '@opentelemetry/sdk-trace-web';

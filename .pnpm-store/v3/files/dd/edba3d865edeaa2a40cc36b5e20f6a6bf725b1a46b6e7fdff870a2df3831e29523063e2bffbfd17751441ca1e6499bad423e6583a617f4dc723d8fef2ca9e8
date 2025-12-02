@@ -1,0 +1,1 @@
+{"version":3,"names":["createSwitch","SwitchFrame","SwitchThumb","Switch","Frame","Thumb"],"sources":["../../src/index.ts"],"sourcesContent":[null],"mappings":"AAAA,SAASA,YAAA,QAAoB;AAC7B,SAASC,WAAA,EAAaC,WAAA,QAAmB;AAEzC,cAAc;AACd,cAAc;AACd,cAAc;AAaP,IAAAC,MAAM,GAAAH,YAAS;EACpBI,KAAA,EAAOH,WAAA;EACPI,KAAA,EAAOH;AACT,CAAC","ignoreList":[]}

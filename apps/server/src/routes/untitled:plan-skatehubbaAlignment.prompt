@@ -1,0 +1,288 @@
+untitled:plan-skatehubbaAlignment.prompt.md
+
+(No frontmatter. No YAML. Just raw Markdown.)
+
+SkateHubba Platform Alignment Plan
+
+This plan instructs the GitHub Codespaces Workspace Agent to analyze the existing skatehubba-platform monorepo and bring it into full alignment with the SkateHubba Master Blueprint.
+
+The agent must not delete functioning code or undo improvements.
+It should add, repair, or safely reorganize only when needed.
+All diffs must be shown before applying changes.
+
+1. OBJECTIVE
+
+Bring the entire skatehubba-platform monorepo into alignment with the following architecture:
+
+Apps
+
+apps/web → Next.js 14 App Router
+
+apps/mobile → Expo + React Native
+
+apps/server → Express + Drizzle ORM
+
+apps/admin
+
+apps/landing
+
+apps/ar → Unity AR Foundation project folder
+
+Packages
+
+packages/db → Drizzle schema for all entities
+
+packages/types → Shared TS models
+
+packages/firebase → Single Firebase initializer used by all apps
+
+packages/api-sdk → API client wrapper
+
+packages/skate-engine → Game logic for SKATE
+
+packages/ui → Shared RN UI components
+
+packages/utils → Helpers (geo, dates, video, errors, IDs)
+
+2. REQUIRED DATABASE ENTITIES (Drizzle ORM)
+
+These tables must exist:
+
+users
+
+profiles
+
+spots
+
+checkins
+
+skate_challenges
+
+trick_attempts
+
+avatars
+
+inventory
+
+notifications
+
+All must include proper relations and timestamps.
+
+3. REQUIRED SHARED TYPES
+
+Inside packages/types, create or validate:
+
+UserProfile
+
+AvatarItem
+
+SkateChallenge
+
+TrickAttempt
+
+Spot
+
+CheckIn
+
+LeaderboardEntry
+
+All types must match the DB schema exactly.
+
+4. REQUIRED PACKAGE BEHAVIOR
+packages/firebase
+
+Must export: app, auth, firestore, storage, messaging, appCheck
+
+No duplication inside apps/web or apps/mobile
+
+packages/api-sdk
+
+Create modules for:
+
+users.ts
+
+spots.ts
+
+challenges.ts
+
+leaderboard.ts
+
+packages/skate-engine
+
+Handle turn order, trick result validation, letter assignment, victory logic
+
+packages/ui
+
+Core RN components (Button, Card, Header, TrickVideoPlayer, AvatarRenderer)
+
+packages/utils
+
+geo distance
+
+video helpers
+
+timestamp helpers
+
+ID generator
+
+Firebase error formatter
+
+5. REQUIRED APP BEHAVIOR
+apps/web
+
+Uses shared Firebase package
+
+Uses shared types
+
+Uses api-sdk
+
+Uses Zustand store (single source of truth)
+
+Uses branded SkateHubba globals.css
+
+Must have app routes:
+
+/
+
+/profile
+
+/spots
+
+/challenges/[id]
+
+apps/mobile
+
+Uses Expo SDK
+
+Uses shared Firebase
+
+Uses shared api-sdk
+
+Supports FCM push notifications
+
+Supports AppCheck
+
+Zustand store unified with web
+
+apps/server
+
+Express routes must exist for:
+
+/users
+
+/spots
+
+/challenges
+
+/leaderboard
+
+Must authenticate via Firebase token middleware
+
+Must use Drizzle ORM
+
+Must return typed responses
+
+apps/ar
+
+Should not contain Unity build artifacts
+
+Should include Unity scripts for AR check-ins and trick overlays
+
+Should include Firebase connector scripts
+
+6. WORKFLOW FOR THE AGENT
+
+The Workspace Agent must:
+
+Step 1 — Scan
+
+Scan the entire repository and produce a structured Mismatch Report:
+
+missing folders
+
+missing files
+
+missing schema entities
+
+mismatched TS types
+
+duplicate Firebase setups
+
+missing Next.js or Expo routes
+
+missing api-sdk modules
+
+incorrect imports
+
+inconsistent turbo.json or pnpm-workspace.yaml
+
+Do not modify anything yet.
+
+Step 2 — Propose Fix Plan
+
+After scanning, output a Fix Plan that includes:
+
+list of files to create
+
+list of files to update
+
+list of imports to fix
+
+list of schema updates
+
+list of Next.js or Expo routes to add
+
+list of mismatched types
+
+Wait for confirmation.
+
+Step 3 — Generate Diffs
+
+Once confirmed, generate diffs for all changes, grouped by directory:
+
+Example:
+
+/packages/db/schema.ts
+/packages/types/UserProfile.ts
+/apps/server/routes/challenges.ts
+/apps/web/app/(challenges)/[id]/page.tsx
+
+Step 4 — Apply Changes
+
+Apply changes only after showing diffs and receiving approval.
+
+Step 5 — Final Summary
+
+Output a summary:
+
+total files added
+
+total files updated
+
+imports fixed
+
+schema entities added
+
+routes added
+
+alignment result
+
+7. RULES FOR MODIFYING THE CODEBASE
+
+Do not delete working code
+
+Do not overwrite improved logic
+
+Only add missing functionality
+
+Only reorganize when strictly necessary
+
+Only clean up duplicates, not remove valid instances
+
+Never break app boot or build pipelines
+
+8. BEGIN EXECUTION
+
+Begin by scanning the repository and producing the Mismatch Report only.
+
+Do not apply any changes yet.

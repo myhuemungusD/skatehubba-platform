@@ -19,18 +19,14 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
-    "//": "=== DEV WORKFLOW ===",
+    "//": "=== LEGACY / INFO ===",
     "dev": "turbo dev --parallel --continue",
     "dev:mobile": "turbo dev --filter=@skatehubba/mobile...",
     "dev:functions": "turbo dev --filter=@skatehubba/functions...",
-
-    "//": "=== BUILD & RELEASE ===",
     "build": "turbo build --concurrency=10",
     "build:mobile": "turbo build --filter=@skatehubba/mobile",
     "preview": "eas build --platform all --profile preview --non-interactive",
     "submit": "eas submit --platform all --latest",
-
-    "//": "=== QUALITY GATE ===",
     "lint": "turbo lint --continue",
     "typecheck": "turbo typecheck --continue",
     "format": "biome format --write .",
@@ -39,35 +35,33 @@
     "test:watch": "turbo test --watch",
     "test:e2e": "turbo test:e2e",
     "ci": "turbo lint && turbo typecheck && turbo test && turbo build",
-
-    "//": "=== CLEAN & RESET ===",
     "clean": "turbo clean && pnpm -r exec rm -rf .turbo dist node_modules .expo .next",
     "fresh": "pnpm clean && pnpm install --frozen-lockfile=false",
-
-    "//": "=== MOBILE SHORTCUTS ===",
     "android": "pnpm --filter @skatehubba/mobile android",
     "ios": "pnpm --filter @skatehubba/mobile ios",
     "start": "pnpm --filter @skatehubba/mobile start",
-
-    "//": "=== LEGACY / INFO ===",
     "old:start": "echo 'Deprecated: Use pnpm dev:mobile instead'",
     "info": "echo 'SkateHubba monorepo — Expo + Firebase + TypeScript + pnpm workspaces'"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/js": "^9.13.0",
+    "@reactvision/react-viro": "^2.44.2",
+    "@sentry/react-native": "^5.33.0",
+    "@tanstack/react-query": "^5.90.11",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.0",
+    "detox": "^20.24.2",
+    "eas-cli": "latest",
     "eslint": "^9.13.0",
+    "expo": "latest",
+    "expo-av": "~15.0.2",
     "prettier": "^3.3.3",
+    "react-native-reanimated": "~3.16.7",
+    "tsup": "^8.3.5",
     "turbo": "^2.2.2",
     "typescript": "5.6.3",
-    "typescript-eslint": "^8.10.0",
-    "tsup": "^8.3.5",
-    "expo": "latest",
-    "eas-cli": "latest",
-    "detox": "^20.24.2",
-    "@sentry/react-native": "^5.33.0"
+    "typescript-eslint": "^8.10.0"
   },
   "pnpm": {
     "overrides": {

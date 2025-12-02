@@ -1,4 +1,4 @@
-import { TamaguiProvider, TamaguiProviderProps } from 'tamagui'
+import { TamaguiProvider, type TamaguiProviderProps } from 'tamagui'
 import { tamaguiConfig } from './tamagui.config'
 
 export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'config'>) {

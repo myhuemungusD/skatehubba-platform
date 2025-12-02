@@ -1,0 +1,1 @@
+{"version":3,"names":["StyleObjectProperty","StyleObjectValue","StyleObjectIdentifier","StyleObjectPseudo","StyleObjectRules"],"sources":["../../src/types.ts"],"sourcesContent":[null],"mappings":"AAQO,MAAMA,mBAAA,GAAsB;EACtBC,gBAAA,GAAmB;EACnBC,qBAAA,GAAwB;EACxBC,iBAAA,GAAoB;EACpBC,gBAAA,GAAmB","ignoreList":[]}

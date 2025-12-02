@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/dark/grass.ts"
+  ],
+  "sourcesContent": [
+    "export const grass = {\n  grass1: 'hsl(146, 30.0%, 7.4%)',\n  grass2: 'hsl(136, 33.3%, 8.8%)',\n  grass3: 'hsl(137, 36.0%, 11.4%)',\n  grass4: 'hsl(137, 37.6%, 13.7%)',\n  grass5: 'hsl(136, 38.7%, 16.0%)',\n  grass6: 'hsl(135, 39.6%, 19.1%)',\n  grass7: 'hsl(134, 40.3%, 23.8%)',\n  grass8: 'hsl(131, 40.1%, 30.8%)',\n  grass9: 'hsl(131, 41.0%, 46.5%)',\n  grass10: 'hsl(131, 39.0%, 52.1%)',\n  grass11: 'hsl(131, 43.0%, 57.2%)',\n  grass12: 'hsl(137, 72.0%, 94.0%)',\n}\n"
+  ],
+  "version": 3
+}

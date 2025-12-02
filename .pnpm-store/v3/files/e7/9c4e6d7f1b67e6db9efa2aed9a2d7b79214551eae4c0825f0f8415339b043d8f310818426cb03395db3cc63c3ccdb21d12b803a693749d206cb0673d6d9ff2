@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/v2-reanimated.ts"],
+  "mappings": "AAEA,SAAS,kBAAkB;AAC3B,SAAS,UAAU,kBAAkB;AAE9B,MAAM,SAAS;AAAA,EACpB,GAAG;AAAA,EACH;AACF;",
+  "names": []
+}

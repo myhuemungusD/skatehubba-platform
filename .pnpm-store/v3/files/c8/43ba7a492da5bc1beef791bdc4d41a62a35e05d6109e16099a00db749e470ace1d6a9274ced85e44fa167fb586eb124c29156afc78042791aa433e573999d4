@@ -1,0 +1,10 @@
+'use strict';
+
+var userInteractionInstrumentation = require('../user-interaction-instrumentation-qqYujxvd.js');
+require('@opentelemetry/api');
+require('@opentelemetry/instrumentation');
+require('@opentelemetry/sdk-trace-web');
+
+
+
+exports.UserInteractionInstrumentation = userInteractionInstrumentation.UserInteractionInstrumentation;

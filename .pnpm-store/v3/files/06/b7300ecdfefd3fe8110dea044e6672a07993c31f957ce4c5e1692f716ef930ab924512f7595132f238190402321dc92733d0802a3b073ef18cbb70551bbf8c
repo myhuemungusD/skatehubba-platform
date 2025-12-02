@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/grayA.ts"
+  ],
+  "sourcesContent": [
+    "export const grayA = {\n  grayA1: 'hsla(0, 0%, 0%, 0.012)',\n  grayA2: 'hsla(0, 0%, 0%, 0.027)',\n  grayA3: 'hsla(0, 0%, 0%, 0.047)',\n  grayA4: 'hsla(0, 0%, 0%, 0.071)',\n  grayA5: 'hsla(0, 0%, 0%, 0.090)',\n  grayA6: 'hsla(0, 0%, 0%, 0.114)',\n  grayA7: 'hsla(0, 0%, 0%, 0.141)',\n  grayA8: 'hsla(0, 0%, 0%, 0.220)',\n  grayA9: 'hsla(0, 0%, 0%, 0.439)',\n  grayA10: 'hsla(0, 0%, 0%, 0.478)',\n  grayA11: 'hsla(0, 0%, 0%, 0.565)',\n  grayA12: 'hsla(0, 0%, 0%, 0.910)',\n}\n"
+  ],
+  "version": 3
+}

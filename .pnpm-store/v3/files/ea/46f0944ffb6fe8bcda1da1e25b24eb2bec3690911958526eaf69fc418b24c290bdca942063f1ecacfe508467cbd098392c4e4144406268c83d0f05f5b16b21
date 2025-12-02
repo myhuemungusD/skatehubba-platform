@@ -1,0 +1,146 @@
+"use strict";
+
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf,
+  __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+    for (var name in all) __defProp(target, name, {
+      get: all[name],
+      enumerable: !0
+    });
+  },
+  __copyProps = (to, from, except, desc) => {
+    if (from && typeof from == "object" || typeof from == "function") for (let key of __getOwnPropNames(from)) !__hasOwnProp.call(to, key) && key !== except && __defProp(to, key, {
+      get: () => from[key],
+      enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+    });
+    return to;
+  };
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+    value: mod,
+    enumerable: !0
+  }) : target, mod)),
+  __toCommonJS = mod => __copyProps(__defProp({}, "__esModule", {
+    value: !0
+  }), mod);
+var Collapsible_exports = {};
+__export(Collapsible_exports, {
+  Collapsible: () => Collapsible,
+  CollapsibleContent: () => CollapsibleContent,
+  CollapsibleContentFrame: () => CollapsibleContentFrame,
+  CollapsibleTrigger: () => CollapsibleTrigger,
+  CollapsibleTriggerFrame: () => CollapsibleTriggerFrame
+});
+module.exports = __toCommonJS(Collapsible_exports);
+var import_jsx_runtime = require("react/jsx-runtime"),
+  import_animate_presence = require("@tamagui/animate-presence"),
+  import_helpers = require("@tamagui/helpers"),
+  import_use_controllable_state = require("@tamagui/use-controllable-state"),
+  import_web = require("@tamagui/web"),
+  React = __toESM(require("react"), 1),
+  COLLAPSIBLE_NAME = "Collapsible",
+  {
+    Provider: CollapsibleProvider,
+    useStyledContext: useCollapsibleContext
+  } = (0, import_web.createStyledContext)(),
+  _Collapsible = /* @__PURE__ */React.forwardRef(function (props, forwardedRef) {
+    var {
+        __scopeCollapsible,
+        open: openProp,
+        defaultOpen,
+        disabled,
+        onOpenChange,
+        ...collapsibleProps
+      } = props,
+      [open = !1, setOpen] = (0, import_use_controllable_state.useControllableState)({
+        prop: openProp,
+        defaultProp: defaultOpen,
+        onChange: onOpenChange
+      });
+    return /* @__PURE__ */(0, import_jsx_runtime.jsx)(CollapsibleProvider, {
+      scope: __scopeCollapsible,
+      disabled,
+      contentId: React.useId(),
+      open,
+      onOpenToggle: React.useCallback(function () {
+        return setOpen(function (prevOpen) {
+          return !prevOpen;
+        });
+      }, [setOpen]),
+      children: /* @__PURE__ */(0, import_jsx_runtime.jsx)(import_web.Stack, {
+        "data-state": getState(open),
+        "data-disabled": disabled ? "" : void 0,
+        ...collapsibleProps,
+        ref: forwardedRef
+      })
+    });
+  });
+_Collapsible.displayName = COLLAPSIBLE_NAME;
+var TRIGGER_NAME = "CollapsibleTrigger",
+  CollapsibleTriggerFrame = (0, import_web.styled)(import_web.Stack, {
+    name: TRIGGER_NAME,
+    tag: "button"
+  }),
+  CollapsibleTrigger = CollapsibleTriggerFrame.styleable(function (props, forwardedRef) {
+    var {
+        __scopeCollapsible,
+        children,
+        ...triggerProps
+      } = props,
+      context = useCollapsibleContext(__scopeCollapsible);
+    return /* @__PURE__ */(0, import_jsx_runtime.jsx)(CollapsibleTriggerFrame, {
+      "aria-controls": context.contentId,
+      "aria-expanded": context.open || !1,
+      "data-state": getState(context.open),
+      "data-disabled": context.disabled ? "" : void 0,
+      disabled: context.disabled,
+      ...triggerProps,
+      ref: forwardedRef,
+      onPress: (0, import_helpers.composeEventHandlers)(props.onPress, context.onOpenToggle),
+      children: typeof children == "function" ? children({
+        open: context.open
+      }) : children
+    });
+  });
+CollapsibleTrigger.displayName = TRIGGER_NAME;
+var CONTENT_NAME = "CollapsibleContent",
+  CollapsibleContentFrame = (0, import_web.styled)(import_web.Stack, {
+    name: CONTENT_NAME
+  }),
+  CollapsibleContent = CollapsibleContentFrame.styleable(function (props, forwardedRef) {
+    var {
+        forceMount,
+        children,
+        // @ts-expect-error
+        __scopeCollapsible,
+        ...contentProps
+      } = props,
+      context = useCollapsibleContext(__scopeCollapsible);
+    return /* @__PURE__ */(0, import_jsx_runtime.jsx)(import_animate_presence.AnimatePresence, {
+      ...contentProps,
+      children: forceMount || context.open ? /* @__PURE__ */(0, import_jsx_runtime.jsx)(CollapsibleContentFrame, {
+        ref: forwardedRef,
+        ...contentProps,
+        children: /* @__PURE__ */(0, import_jsx_runtime.jsx)(import_animate_presence.ResetPresence, {
+          children
+        })
+      }) : null
+    });
+  });
+CollapsibleContent.displayName = CONTENT_NAME;
+function getState(open) {
+  return open ? "open" : "closed";
+}
+var Collapsible = (0, import_helpers.withStaticProperties)(_Collapsible, {
+  Trigger: CollapsibleTrigger,
+  Content: CollapsibleContent
+});
+//# sourceMappingURL=Collapsible.native.js.map

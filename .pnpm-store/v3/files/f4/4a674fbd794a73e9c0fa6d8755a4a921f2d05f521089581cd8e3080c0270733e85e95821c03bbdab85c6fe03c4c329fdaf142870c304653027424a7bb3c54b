@@ -1,0 +1,4 @@
+import type { ConfigPlugin } from '@expo/config-plugins';
+declare const withPlugin: ConfigPlugin;
+export default withPlugin;
+//# sourceMappingURL=withUUIDPlugin.d.ts.map

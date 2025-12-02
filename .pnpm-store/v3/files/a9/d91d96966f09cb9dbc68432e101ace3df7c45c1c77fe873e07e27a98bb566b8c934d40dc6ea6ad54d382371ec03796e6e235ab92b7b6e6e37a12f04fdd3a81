@@ -1,0 +1,11 @@
+{
+  "mappings": "AAKA,OAAO,iBAAS,OAAO,GACrB,cAAc,GACd,oBACA,oCACO",
+  "names": [],
+  "sources": [
+    "src/useGet.ts"
+  ],
+  "sourcesContent": [
+    "import { useIsomorphicLayoutEffect } from '@tamagui/constants'\nimport * as React from 'react'\n\n// keeps a reference to the current value easily\n\nexport function useGet<A>(\n  currentValue: A,\n  initialValue?: any,\n  forwardToFunction?: boolean\n): () => A {\n  const curRef = React.useRef<any>(initialValue ?? currentValue)\n  useIsomorphicLayoutEffect(() => {\n    curRef.current = currentValue\n  })\n\n  return React.useCallback(\n    forwardToFunction\n      ? (...args) => curRef.current?.apply(null, args)\n      : () => curRef.current,\n    []\n  )\n}\n"
+  ],
+  "version": 3
+}

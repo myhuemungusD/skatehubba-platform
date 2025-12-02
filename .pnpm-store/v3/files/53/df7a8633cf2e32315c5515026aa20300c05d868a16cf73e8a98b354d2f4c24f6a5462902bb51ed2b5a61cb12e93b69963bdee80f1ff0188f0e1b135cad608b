@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/dark/sandA.ts"
+  ],
+  "sourcesContent": [
+    "export const sandA = {\n  sandA1: 'hsla(0, 0%, 0%, 0)',\n  sandA2: 'hsla(60, 89.8%, 91.4%, 0.026)',\n  sandA3: 'hsla(60, 95.5%, 92.5%, 0.056)',\n  sandA4: 'hsla(60, 75.6%, 96.4%, 0.078)',\n  sandA5: 'hsla(60, 81.9%, 95.2%, 0.104)',\n  sandA6: 'hsla(41, 87.6%, 94.8%, 0.134)',\n  sandA7: 'hsla(60, 95.4%, 96.2%, 0.172)',\n  sandA8: 'hsla(49, 93.5%, 95.7%, 0.254)',\n  sandA9: 'hsla(52, 97.3%, 96.2%, 0.391)',\n  sandA10: 'hsla(52, 97.8%, 96.7%, 0.451)',\n  sandA11: 'hsla(51, 97.0%, 97.8%, 0.597)',\n  sandA12: 'hsla(60, 88.7%, 99.8%, 0.923)',\n}\n"
+  ],
+  "version": 3
+}

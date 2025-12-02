@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/shadows.tsx"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,MAAM,mBAAmB,oBACnB,yBAAyB,qBACzB,kBAAkB,mBAClB,wBAAwB,mBAEjB,UAAU;AAAA,EACrB,OAAO;AAAA,IACL,aAAa;AAAA,IACb,kBAAkB;AAAA,IAClB,kBAAkB;AAAA,IAClB,kBAAkB;AAAA,EACpB;AAAA,EACA,MAAM;AAAA,IACJ,aAAa;AAAA,IACb,kBAAkB;AAAA,IAClB,kBAAkB;AAAA,IAClB,kBAAkB;AAAA,EACpB;AACF;",
+  "names": []
+}

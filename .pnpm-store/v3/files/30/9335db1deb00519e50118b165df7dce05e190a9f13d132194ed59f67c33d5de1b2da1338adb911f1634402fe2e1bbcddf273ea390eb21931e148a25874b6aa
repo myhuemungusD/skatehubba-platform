@@ -1,0 +1,1 @@
+{"version":3,"names":["_assert_this_initialized","self","ReferenceError"],"sources":["../../src/errors.ts"],"sourcesContent":[null],"mappings":"AAAO,SAAMA,wBAAyBA,CAAAC,IAAA;EACpC,IAAAA,IAAA,KAAY,QACV,MAAM,IAAAC,cACD,4DAAO;EACd,OAAAD,IAAA;AACF","ignoreList":[]}

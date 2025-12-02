@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/plumA.ts"
+  ],
+  "sourcesContent": [
+    "export const plumA = {\n  plumA1: 'hsla(280, 100%, 51.0%, 0.012)',\n  plumA2: 'hsla(300, 100%, 51.0%, 0.028)',\n  plumA3: 'hsla(300, 99.0%, 40.9%, 0.063)',\n  plumA4: 'hsla(300, 99.9%, 38.5%, 0.102)',\n  plumA5: 'hsla(298, 98.2%, 35.9%, 0.150)',\n  plumA6: 'hsla(297, 99.6%, 33.7%, 0.216)',\n  plumA7: 'hsla(295, 99.7%, 32.6%, 0.314)',\n  plumA8: 'hsla(292, 99.6%, 32.4%, 0.432)',\n  plumA9: 'hsla(292, 99.9%, 31.0%, 0.710)',\n  plumA10: 'hsla(292, 99.9%, 30.8%, 0.765)',\n  plumA11: 'hsla(292, 99.8%, 30.7%, 0.832)',\n  plumA12: 'hsla(291, 99.9%, 9.7%, 0.953)',\n}\n"
+  ],
+  "version": 3
+}

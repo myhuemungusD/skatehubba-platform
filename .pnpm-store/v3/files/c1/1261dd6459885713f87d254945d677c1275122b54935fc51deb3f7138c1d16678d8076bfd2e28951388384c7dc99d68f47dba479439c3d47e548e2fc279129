@@ -1,0 +1,1 @@
+{"version":3,"names":["__create","Object","create","__defProp","defineProperty","__getOwnPropDesc","getOwnPropertyDescriptor"],"sources":["../../src/setup.ts"],"sourcesContent":[null],"mappings":"AAAA,YAAO;;AAEP,IAAAA,QAAY,GAAAC,MAAA,CAAAC,MAAW;AAIvB,IAAAC,SAAW,GAAAF,MAAa,CAAAG,cAAA;AAGpB,IAAAC,gBAAO,GAAAJ,MAAA,CAAAK,wBACE","ignoreList":[]}

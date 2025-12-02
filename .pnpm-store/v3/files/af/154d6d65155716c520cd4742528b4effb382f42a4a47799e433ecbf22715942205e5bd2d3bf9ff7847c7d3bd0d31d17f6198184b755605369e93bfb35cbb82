@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,cAAc,YAAY,mBAAmB;AAG7C,OAAO,cAAM,uBAAwB,UAAU,aAC7C,OAAM,QAAQ,OACb,WAAW,gBAAgB;AA2B9B,cAAM;UACJ,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI",
+  "names": [],
+  "sources": [
+    "src/index.ts"
+  ],
+  "sourcesContent": [
+    "import type { FillInFont, GenericFont } from '@tamagui/core'\nimport { createFont, isWeb } from '@tamagui/core'\n\nexport const createSilkscreenFont = <A extends GenericFont>(\n  font: Partial<A> = {}\n): FillInFont<A, keyof typeof size> => {\n  return createFont({\n    family: isWeb\n      ? 'Silkscreen, Fira Code, Monaco, Consolas, Ubuntu Mono, monospace'\n      : 'Silkscreen',\n    size,\n    lineHeight: Object.fromEntries(\n      Object.entries(font.size || size).map(([k, v]) => [\n        k,\n        typeof v === 'number' ? Math.round(v * 1.2 + 6) : v,\n      ])\n    ) as typeof size,\n    weight: {\n      4: '300',\n    },\n    letterSpacing: {\n      4: 1,\n      5: 3,\n      6: 3,\n      9: -2,\n      10: -3,\n      12: -4,\n    },\n    ...(font as any),\n  })\n}\n\nconst size = {\n  1: 11,\n  2: 12,\n  3: 13,\n  4: 14,\n  5: 15,\n  6: 16,\n  7: 18,\n  8: 21,\n  9: 28,\n  10: 42,\n  11: 52,\n  12: 62,\n  13: 72,\n  14: 92,\n  15: 114,\n  16: 124,\n} as const\n"
+  ],
+  "version": 3
+}

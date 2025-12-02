@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../../src/helpers/isActiveTheme.ts"],
+  "mappings": "AAAO,SAAS,cAAc,KAAa,iBAAyB;AAClE,MAAK,IAAI,WAAW,SAAS;AAC7B,WAAO,IAAI,MAAM,CAAC,EAAE,WAAW,eAAe;AAChD;",
+  "names": []
+}

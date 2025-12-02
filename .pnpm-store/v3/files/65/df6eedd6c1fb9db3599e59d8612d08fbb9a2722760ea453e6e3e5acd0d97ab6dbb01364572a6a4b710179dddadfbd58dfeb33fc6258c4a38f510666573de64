@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/ClientOnly.tsx"],
+  "mappings": "AAAA,SAAS,eAAe,kBAAkB;AAUtC;AARG,MAAM,oBAA4C,cAAc,EAAK,GAE/D,aAAa,CAAC;AAAA,EACzB;AAAA,EACA;AACF,MAA6D;AAC3D,QAAM,gBAAgB,WAAW,iBAAiB;AAClD,SACE,oBAAC,kBAAkB,UAAlB,EAA2B,OAAO,WAAW,eAC3C,UACH;AAEJ;",
+  "names": []
+}

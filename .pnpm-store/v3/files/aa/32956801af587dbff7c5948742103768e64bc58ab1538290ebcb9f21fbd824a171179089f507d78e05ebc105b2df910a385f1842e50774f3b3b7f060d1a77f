@@ -1,0 +1,38 @@
+"use strict";
+
+import { trace } from '@opentelemetry/api';
+import { useEffect, useRef } from 'react';
+import { Fragment as _Fragment, jsx as _jsx } from "react/jsx-runtime";
+const LIBRARY_NAME = '@honeycombio/navigation';
+export function NavigationInstrumentation({
+  ref,
+  children
+}) {
+  const routeNameRef = useRef(undefined);
+  useEffect(() => {
+    if (!ref || !ref.isReady()) {
+      return;
+    }
+    ref.addListener('state', () => {
+      const timestamp = Date.now();
+      const previousRoute = routeNameRef.current;
+      const {
+        name: currentRoute
+      } = ref.getCurrentRoute() ?? {};
+      if (currentRoute) {
+        trace.getTracer(LIBRARY_NAME).startSpan('screen appeared', {
+          startTime: timestamp
+        }).setAttribute('screen.route', currentRoute).end();
+      }
+      if (previousRoute) {
+        trace.getTracer(LIBRARY_NAME).startSpan('screen disappeared', {
+          startTime: timestamp
+        }).setAttribute('screen.route', previousRoute).end();
+      }
+    });
+  }, [ref]);
+  return /*#__PURE__*/_jsx(_Fragment, {
+    children: children
+  });
+}
+//# sourceMappingURL=NavigationInstrumentation.js.map
