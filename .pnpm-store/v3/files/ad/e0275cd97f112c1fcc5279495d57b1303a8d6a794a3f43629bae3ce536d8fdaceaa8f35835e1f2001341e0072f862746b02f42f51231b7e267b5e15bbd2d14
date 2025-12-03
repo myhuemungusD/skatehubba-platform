@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/helpers.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAQO,MAAM,aAAa,CAAmB,QAAW,OAAO,KAAK,GAAG;AAEhE,SAAS,cACd,KACsB;AACtB,SAAO,OAAO,QAAQ,GAAG;AAC3B;AAyBO,SAAS,kBACd,KACwB;AACxB,SAAO,OAAO,YAAY,GAAG;AAC/B;",
-  "names": []
-}

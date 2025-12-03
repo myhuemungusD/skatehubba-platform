@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/initialValue.ts"],
-  "mappings": "AAKO,MAAM,eAA2B;AAAA,EACtC,OAAO;AAAA,EACP,QAAQ;AAAA,EACR,OAAO;AAAA,EACP,WAAW;AACb;AAEO,SAAS,iCAAiC,MAAwB;AACvE,SAAO,OAAO,cAAc,IAAI;AAClC;",
-  "names": []
-}

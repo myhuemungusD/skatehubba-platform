@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/contexts.ts"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,mBAAkB;AAEX,MAAM,qBAAqB,aAAAA,QAAM,cAAc;AAAA,EACpD,QAAQ;AACV,CAAC,GAEY,0BAA0B,aAAAA,QAAM,cAE3C,IAAI;",
-  "names": ["React"]
-}

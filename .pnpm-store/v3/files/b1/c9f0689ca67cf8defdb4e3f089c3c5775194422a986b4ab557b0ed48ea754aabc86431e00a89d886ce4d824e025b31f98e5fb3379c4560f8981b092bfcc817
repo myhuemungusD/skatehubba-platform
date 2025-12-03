@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/hooks/useThemeName.tsx"],
-  "mappings": "AACA,SAAS,qBAAqB;AAG9B,MAAM,mBAAmB,EAAE,gBAAgB,IAAM,OAAO,IAAM,aAAa,MAAM,GAAK,GAChF,YAAY,EAAE,SAAS,oBAAI,IAAI,CAAC,EAAE,CAAC,EAAE;AAEpC,SAAS,eAA0B;AACxC,SAAO,cAAc,kBAAkB,IAAO,SAAS,GAAG,QAAQ;AACpE;",
-  "names": []
-}

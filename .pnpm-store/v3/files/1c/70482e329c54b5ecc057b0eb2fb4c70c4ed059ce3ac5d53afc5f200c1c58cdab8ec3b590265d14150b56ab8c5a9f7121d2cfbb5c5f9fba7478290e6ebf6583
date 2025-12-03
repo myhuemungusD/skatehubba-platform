@@ -1,2 +1,0 @@
-export declare function mergeRefs<T = any>(refs: Array<React.MutableRefObject<T> | React.LegacyRef<T>>): React.RefCallback<T>;
-//# sourceMappingURL=merge-refs.d.ts.map

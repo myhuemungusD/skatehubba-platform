@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/index.reanimated.ts"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,wBAA2B,oCAC3B,gBAAwC;AACxC,qCAAc,oBAFd;AAGA,qCAAc,gCAHd;AAIA,qCAAc,oCAJd;AAMO,MAAM,SAAS;AAAA,EACpB,GAAG;AAAA,EACH;AACF;",
-  "names": []
-}

@@ -1,1 +1,0 @@
-{"version":3,"names":["_mutateTheme","updateTheme","name","theme","insertCSS","mutationType"],"sources":["../../src/updateTheme.ts"],"sourcesContent":[null],"mappings":"AAEA,SAASA,YAAA,QAAoB;AAEtB,SAASC,YAAY;EAC1BC,IAAA;EACAC;AACF,GAGG;EACD,OAAOH,YAAA,CAAa;IAAEE,IAAA;IAAMC,KAAA;IAAOC,SAAA,EAAW;IAAMC,YAAA,EAAc;EAAS,CAAC;AAC9E","ignoreList":[]}

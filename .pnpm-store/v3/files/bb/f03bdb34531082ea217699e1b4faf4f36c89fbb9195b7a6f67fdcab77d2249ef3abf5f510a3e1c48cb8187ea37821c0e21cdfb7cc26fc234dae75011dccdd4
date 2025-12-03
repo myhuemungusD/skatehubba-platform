@@ -1,1 +1,0 @@
-{"version":3,"names":["isTouchable","isWeb","useDidFinishSSR","useIsTouchDevice"],"sources":["../../../src/hooks/useIsTouchDevice.tsx"],"sourcesContent":[null],"mappings":"AAAA,SAASA,WAAA,EAAaC,KAAA,QAAa;AACnC,SAASC,eAAA,QAAuB;AAEzB,IAAAC,gBAAM,YAAAA,CAAA,EACH","ignoreList":[]}

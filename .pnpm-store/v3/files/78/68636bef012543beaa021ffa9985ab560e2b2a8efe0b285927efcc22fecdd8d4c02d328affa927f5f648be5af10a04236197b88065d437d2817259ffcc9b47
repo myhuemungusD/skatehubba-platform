@@ -1,1 +1,0 @@
-{"version":3,"names":["AbortError","Error","constructor","message","name"],"sources":["../../src/errors.ts"],"sourcesContent":[null],"mappings":"AAAO,MAAMA,UAAA,SAAmBC,KAAA,CAAM;EACpCC,YAAYC,OAAA,GAAU,IAAI;IACxB,MAAMA,OAAO,GACb,KAAKC,IAAA,GAAO;EACd;AACF","ignoreList":[]}

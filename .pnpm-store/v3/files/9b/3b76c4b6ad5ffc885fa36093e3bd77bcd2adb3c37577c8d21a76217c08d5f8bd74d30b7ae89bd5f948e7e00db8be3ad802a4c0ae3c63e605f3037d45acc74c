@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/views/View.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,qBAA4B,6BAE5B,mBAAmC,mCACnC,yBAAgC;AAezB,MAAM,WAAO,wCAKlB;AAAA,EACA,kBAAkB;AAAA,EAClB,cAAc;AAAA,EACd;AACF,CAAC;",
-  "names": []
-}

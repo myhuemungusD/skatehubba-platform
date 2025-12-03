@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/constants.ts"],
-  "mappings": "AAAA,SAAS,iBAAiB;AAEnB,MAAM,YACX,OAAO,SAAW,OAClB,GAAQ,OAAO,cAAc,OAAO,wBAEzB,oBACX,QAAQ,IAAI,6BACZ,QAAQ,IAAI,8BAA8B,UACtC,KACA,CAAC,aAAa,CAAC,WAER,iBAAiB,oBAAI,IAAyB,GAC9C,kBAAiD,CAAC;",
-  "names": []
-}

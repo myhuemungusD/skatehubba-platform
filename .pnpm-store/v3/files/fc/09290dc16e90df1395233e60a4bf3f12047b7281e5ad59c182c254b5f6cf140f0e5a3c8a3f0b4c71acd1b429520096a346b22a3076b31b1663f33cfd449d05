@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/v3.tsx"],
-  "mappings": "AAAA,SAAS,cAAc;AACvB,SAAS,cAAc;AAGvB,SAAS,MAAM,gBAAgB;AAC/B,SAAS,OAAO,iBAAiB;AACjC,SAAS,KAAK,eAAe;AAC7B,SAAS,QAAQ,kBAAkB;AACnC,SAAS,QAAQ,kBAAkB;AACnC,SAAS,MAAM,gBAAgB;AAC/B,SAAS,QAAQ,kBAAkB;AACnC,SAAS,MAAM,gBAAgB;",
-  "names": []
-}

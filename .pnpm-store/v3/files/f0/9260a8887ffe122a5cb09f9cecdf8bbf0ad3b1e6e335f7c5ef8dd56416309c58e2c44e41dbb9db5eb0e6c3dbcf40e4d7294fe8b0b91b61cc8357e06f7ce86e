@@ -1,1 +1,0 @@
-{"version":3,"names":["NativeMediaQueryList","matchMedia","query"],"sources":["../../src/matchMedia.native.ts"],"sourcesContent":[null],"mappings":"AAAA,SAASA,oBAAA,QAA4B;AAC9B,IAAIC,UAAA,GAAa,SAAAA,CAASC,KAAA,EAAO;EACpC,OAAO,IAAIF,oBAAA,CAAqBE,KAAK;AACzC","ignoreList":[]}

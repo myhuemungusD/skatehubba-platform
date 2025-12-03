@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/views/Stack.tsx"],
-  "mappings": "AAAA,SAAS,mBAAmB;AAE5B,SAAS,0BAA0B;AACnC,SAAS,uBAAuB;AAUzB,MAAM,QAAQ,gBAKnB;AAAA,EACA,kBAAkB;AAAA,EAClB,cAAc;AAAA,EACd;AACF,CAAC;AAED,MAAM,cAAiB;",
-  "names": []
-}

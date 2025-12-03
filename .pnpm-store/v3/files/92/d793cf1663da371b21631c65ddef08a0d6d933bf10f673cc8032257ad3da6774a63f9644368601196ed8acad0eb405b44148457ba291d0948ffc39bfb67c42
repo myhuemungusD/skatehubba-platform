@@ -1,1 +1,0 @@
-{"version":3,"file":"registerFocusable.native.d.ts","sourceRoot":"","sources":["../src/registerFocusable.native.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,aAAa,CAAA;AAI5C,eAAO,MAAM,iBAAiB,GAAI,IAAI,MAAM,EAAE,OAAO,SAAS,eAU7D,CAAA;AAED,eAAO,MAAM,mBAAmB,GAAI,IAAI,MAAM,SAE7C,CAAA;AAED,eAAO,MAAM,cAAc,GAAI,IAAI,MAAM,EAAE,gBAAc,SAaxD,CAAA"}

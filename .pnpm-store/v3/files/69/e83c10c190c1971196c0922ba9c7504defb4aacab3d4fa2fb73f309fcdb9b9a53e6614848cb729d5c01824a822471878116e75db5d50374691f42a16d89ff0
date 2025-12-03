@@ -1,1 +1,0 @@
-{"version":3,"names":["React","useFloatingContext","useCallback"],"sources":["../../src/useFloatingContext.native.tsx"],"sourcesContent":[null],"mappings":"AAAA,OAAOA,KAAA,MAAW;AAEX,IAAIC,kBAAA,GAAqB,SAAAA,CAAA,EAAW;EACvC,OAAOD,KAAA,CAAME,WAAA,CAAY,YAAW,CAAC,GAAG,EAAE;AAC9C","ignoreList":[]}

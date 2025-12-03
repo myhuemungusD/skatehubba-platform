@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/index.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,oBAAuB,4BAEvB,oBAA2B,yBAC3B,gBAAwC,qBAExCA,iBAAwC;AACxC,0BAAc,oBANd;AAOA,0BAAc,gCAPd;AAQA,0BAAc,yBARd;AAUO,MAAM,SAAS;AAAA,EACpB,GAAG;AAAA;AAAA,EAEH,QAAQ;AAAA,EACR;AACF;",
-  "names": ["import_config"]
-}

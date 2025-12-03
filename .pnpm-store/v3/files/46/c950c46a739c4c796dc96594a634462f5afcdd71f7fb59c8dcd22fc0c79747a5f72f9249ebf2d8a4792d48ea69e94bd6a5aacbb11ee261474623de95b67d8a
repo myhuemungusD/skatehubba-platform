@@ -1,1 +1,0 @@
-{"version":3,"names":["RemoveScroll","props","children","getAllowedScrollableNode"],"sources":["../../src/RemoveScroll.native.tsx"],"sourcesContent":[null],"mappings":"AAAO,IAAIA,YAAA,GAAe,SAAAA,CAASC,KAAA,EAAO;IACtC,OAAOA,KAAA,CAAMC,QAAA;EACjB;EACWC,wBAAA,GAA2B,SAAAA,CAAA,EAAW,CAAC","ignoreList":[]}

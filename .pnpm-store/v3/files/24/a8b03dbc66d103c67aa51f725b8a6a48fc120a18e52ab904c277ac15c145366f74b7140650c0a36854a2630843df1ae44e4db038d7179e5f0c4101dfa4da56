@@ -1,1 +1,0 @@
-{"version":3,"file":"useCurrentColor.d.ts","sourceRoot":"","sources":["../src/useCurrentColor.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,WAAW,EAAE,eAAe,EAAE,QAAQ,EAAE,MAAM,cAAc,CAAA;AAE1E,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,cAAc,CAAA;AAE7C,eAAO,MAAM,eAAe,GAAI,WAAW,SAAS,QAMnD,CAAA;AAED,MAAM,MAAM,SAAS,GACjB,eAAe,GACf,QAAQ,GACR,WAAW,GACX,SAAS,CAAC,OAAO,CAAC,GAClB,SAAS,CAAA"}

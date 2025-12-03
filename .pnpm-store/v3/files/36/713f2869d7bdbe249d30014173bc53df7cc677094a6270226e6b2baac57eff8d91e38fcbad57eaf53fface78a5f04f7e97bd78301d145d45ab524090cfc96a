@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/helpers/getGroupPropParts.ts"],
-  "mappings": "AAAA,SAAS,gBAAgB;AAIlB,SAAS,kBAAkB,WAA+B;AAC/D,QAAM,eAAe,SAAS,GACxB,CAAC,GAAG,MAAM,OAAO,KAAK,IAAI,UAAU,MAAM,GAAG;AACnD,MAAI;AAQJ,QAAM,QAAQ,SAAS,eAAe,QAAQ;AAC9C,SAAK,QAGH,SAAS,QAFT,SAAS,OAIJ,EAAE,MAAM,QAAQ,MAAM;AAC/B;",
-  "names": []
-}

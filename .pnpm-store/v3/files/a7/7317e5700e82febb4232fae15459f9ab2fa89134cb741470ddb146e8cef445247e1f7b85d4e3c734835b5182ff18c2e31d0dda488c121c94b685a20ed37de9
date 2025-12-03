@@ -1,1 +1,0 @@
-{"version":3,"names":["isTamaguiComponent","comp","name","config","staticConfig","componentName"],"sources":["../../../src/helpers/isTamaguiComponent.tsx"],"sourcesContent":[null],"mappings":"AAEO,SAASA,mBACdC,IAAA,EACAC,IAAA,EAGA;EACA,MAAMC,MAAA,GAASF,IAAA,EAAOG,YAAA;EACtB,OAAO,GAAQD,MAAA,KAAW,CAAAD,IAAA,IAAOA,IAAA,KAASC,MAAA,CAAOE,aAAA;AACnD","ignoreList":[]}

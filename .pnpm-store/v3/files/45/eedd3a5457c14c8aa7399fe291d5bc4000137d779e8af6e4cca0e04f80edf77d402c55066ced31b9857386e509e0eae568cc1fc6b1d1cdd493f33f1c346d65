@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/views/Fieldset.tsx"],
-  "mappings": "AACA,SAAS,cAAc;AACvB,SAAS,cAAc;AAEhB,MAAM,WAAW,OAAO,QAAQ;AAAA,EACrC,MAAM;AAAA,EACN,KAAK;AAAA;AAAA,EAGL,aAAa;AAAA,EAEb,UAAU;AAAA,IACR,YAAY;AAAA,MACV,MAAM;AAAA,QACJ,eAAe;AAAA,QACf,YAAY;AAAA,MACd;AAAA,IACF;AAAA,EACF;AACF,CAAC;",
-  "names": []
-}

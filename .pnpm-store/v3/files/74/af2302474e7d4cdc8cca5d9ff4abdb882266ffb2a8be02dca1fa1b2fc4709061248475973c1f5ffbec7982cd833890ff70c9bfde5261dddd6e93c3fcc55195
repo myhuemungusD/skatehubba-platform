@@ -1,1 +1,0 @@
-{"version":3,"names":["createStyledContext","Provider","TabsProvider","useStyledContext","useTabsContext"],"sources":["../../src/StyledContext.tsx"],"sourcesContent":[null],"mappings":"AACA,SAASA,mBAAA,QAA2B;AAgB7B;EAAMC,QAAE,EAAAC,YAAU;EAAAC,gBAAc,EAAAC;AAAkB,IAAeJ,mBACtE","ignoreList":[]}

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/helpers/sortString.ts"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,MAAM,aAAa,CAAC,GAAW,MAAe,IAAI,IAAI,KAAK,IAAI,IAAI,IAAI;",
-  "names": []
-}

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/NestingContext.tsx"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,mBAAkB;AAEX,MAAM,uBAAuB,aAAAA,QAAM,cAAc,EAAK;",
-  "names": ["React"]
-}

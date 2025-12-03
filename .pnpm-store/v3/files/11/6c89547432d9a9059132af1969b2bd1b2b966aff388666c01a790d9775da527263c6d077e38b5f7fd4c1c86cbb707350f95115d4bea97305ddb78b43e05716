@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/index.ts"],
-  "mappings": "AAAA,SAAS,mBAAmB,4BAA4B;AAEjD,MAAM,kBAAkB,CAAC,aAA6C;AAMzE,uBAAqB,QAAQ;AAEjC;",
-  "names": []
-}

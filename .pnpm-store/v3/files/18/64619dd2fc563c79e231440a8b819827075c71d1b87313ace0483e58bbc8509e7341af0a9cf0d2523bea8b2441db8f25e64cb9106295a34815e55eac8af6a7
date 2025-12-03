@@ -1,1 +1,0 @@
-{"version":3,"names":["setupMatchMedia","matchMedia","createMedia","media"],"sources":["../../src/createMedia.ts"],"sourcesContent":[null],"mappings":"AACA,SAASA,eAAA,QAAuB;AAEhC,SAASC,UAAA,QAAkB;AAMpB,SAASC,YAIdC,KAAA,EAAa;EAGb,OAAAH,eAAA,CAAgBC,UAAU,GACnBE,KAAA;AACT","ignoreList":[]}

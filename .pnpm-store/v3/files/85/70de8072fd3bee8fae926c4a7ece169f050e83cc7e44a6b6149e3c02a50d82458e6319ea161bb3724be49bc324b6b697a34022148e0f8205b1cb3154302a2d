@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/createTokens.ts"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,6BAAgC;AAGzB,SAAS,aAAqC,QAA0B;AAC7E,aAAO,wCAAgB,QAAQ,QAAQ,IAAI,wBAAwB,GAAG;AACxE;",
-  "names": []
-}

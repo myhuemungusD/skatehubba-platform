@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/helpers/setElementProps.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,wBAAsB;AAEf,MAAM,kBAAkB,CAAC,SAAS;AACvC,0BAAM,kBAAkB,IAAI;AAC9B;",
-  "names": []
-}
