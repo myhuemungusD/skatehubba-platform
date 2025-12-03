@@ -1,9 +1,9 @@
-name: Mobile Preview Build (Expo)
+name: Mobile Release Build (Expo EAS)
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
   build:
@@ -13,7 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup pnpm (NO version to avoid “multiple versions” error)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -25,19 +24,23 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      # Install dependencies using your repo’s pnpm version (9.12.2)
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Expo login (reads secrets EXPO_TOKEN)
       - name: Expo Login
         uses: expo/expo-github-action@v8
         with:
           expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      # Build Preview — this does NOT submit to stores
-      - name: Expo Preview Build
-        run: |
-          pnpm --filter apps/mobile expo build:android --profile preview --non-interactive
-          pnpm --filter apps/mobile expo build:ios --profile preview --non-interactive
+      - name: Build Android Release
+        run: pnpm --filter apps/mobile eas build --platform android --profile production --non-interactive
+
+      - name: Build iOS Release
+        run: pnpm --filter apps/mobile eas build --platform ios --profile production --non-interactive
+
+      # OPTIONAL: Enable when ready
+      # - name: Submit to Stores
+      #   run: |
+      #     pnpm --filter apps/mobile eas submit --platform ios --latest --non-interactive
+      #     pnpm --filter apps/mobile eas submit --platform android --latest --non-interactive
