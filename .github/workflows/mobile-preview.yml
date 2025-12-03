@@ -1,55 +1,43 @@
-name: Mobile Preview Build
+name: Mobile Preview Build (Expo)
 
 on:
-  pull_request:
-    paths:
-      - "apps/mobile/**"
-      - "packages/**"
-      - ".github/workflows/mobile-preview.yml"
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  preview:
-    name: Build Expo Preview (iOS + Android)
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      # Setup pnpm (NO version to avoid “multiple versions” error)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
+      # Install dependencies using your repo’s pnpm version (9.12.2)
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
-      - name: Install Expo CLI
-        run: pnpm add -g expo-cli
+      # Expo login (reads secrets EXPO_TOKEN)
+      - name: Expo Login
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Verify Expo project
-        working-directory: apps/mobile
+      # Build Preview — this does NOT submit to stores
+      - name: Expo Preview Build
         run: |
-          echo "Checking Expo config..."
-          npx expo config --type public
-
-      - name: Build Android preview
-        working-directory: apps/mobile
-        run: |
-          echo "Building Android preview..."
-          npx expo build:android --non-interactive --no-wait || true
-
-      - name: Build iOS preview
-        working-directory: apps/mobile
-        run: |
-          echo "Building iOS preview..."
-          npx expo build:ios --non-interactive --no-wait || true
-
-      - name: Done
-        run: echo "Preview build workflow finished"
+          pnpm --filter apps/mobile expo build:android --profile preview --non-interactive
+          pnpm --filter apps/mobile expo build:ios --profile preview --non-interactive
