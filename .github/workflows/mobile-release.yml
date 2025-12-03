@@ -1,4 +1,4 @@
-name: Mobile Release Build (Expo EAS)
+name: Mobile Release Build (Expo EAS Production)
 
 on:
   workflow_dispatch:
@@ -6,41 +6,48 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout Repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Setup PNPM (no version → prevents version mismatch errors)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           run_install: false
 
+      # 3. Setup Node (prod standard: Node 20)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: pnpm
 
+      # 4. Install dependencies cleanly
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Expo Login
-        uses: expo/expo-github-action@v8
-        with:
-          expo-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+      # 5. Authenticate with Expo/EAS
+      - name: Setup EAS CLI
+        run: pnpm add -g eas-cli
 
-      - name: Build Android Release
-        run: pnpm --filter apps/mobile eas build --platform android --profile production --non-interactive
+      - name: Login to EAS
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas whoami || eas login --token "$EXPO_TOKEN"
 
-      - name: Build iOS Release
-        run: pnpm --filter apps/mobile eas build --platform ios --profile production --non-interactive
+      # 6. Build Production App
+      - name: Build EAS Production Release
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas build --platform all --profile production --non-interactive
 
-      # Optional: turn on when ready
-      # - name: Submit to Stores
-      #   run: |
-      #     pnpm --filter apps/mobile eas submit --platform android --latest --non-interactive
-      #     pnpm --filter apps/mobile eas submit --platform ios --latest --non-interactive
+      # 7. Submit builds to app stores (auto-submit)
+      - name: Submit to App Store and Play Store
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas submit --platform all --profile production --non-interactive
