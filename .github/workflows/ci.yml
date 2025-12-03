@@ -2,37 +2,35 @@ name: CI
 
 on:
   push:
-    branches: [main, skatehubbaV2]
   pull_request:
-    branches: [main, skatehubbaV2]
 
 jobs:
   build:
-    name: Build & Lint
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --include-optional
+
+      - name: Type check
+        run: pnpm turbo run typecheck --continue
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm turbo run lint --continue
 
-      - name: Build
-        run: pnpm build
-
+      - name: Run tests
+        run: pnpm turbo run test --continue
