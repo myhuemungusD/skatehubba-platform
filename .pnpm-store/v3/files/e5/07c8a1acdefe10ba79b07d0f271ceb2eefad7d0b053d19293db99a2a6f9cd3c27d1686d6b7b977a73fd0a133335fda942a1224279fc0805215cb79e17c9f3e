@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/RemoveScroll.tsx"],
-  "mappings": "AACA,SAAS,4BAA4B;AAO9B,MAAM,eAAe,CAAC,WAC3B,qBAAqB,EAAQ,MAAM,OAAQ,GAEpC,MAAM;",
-  "names": []
-}

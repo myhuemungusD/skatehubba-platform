@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/helpers/isActivePlatform.ts"],
-  "mappings": "AAAA,SAAS,uBAAuB;AAEzB,SAAS,iBAAiB,KAAa;AAC5C,MAAI,CAAC,IAAI,WAAW,WAAW;AAC7B,WAAO;AAET,QAAM,WAAW,IAAI,MAAM,EAAE;AAC7B;AAAA;AAAA,IAEE,aAAa;AAAA,IAEb,aAAa;AAAA;AAEjB;",
-  "names": []
-}

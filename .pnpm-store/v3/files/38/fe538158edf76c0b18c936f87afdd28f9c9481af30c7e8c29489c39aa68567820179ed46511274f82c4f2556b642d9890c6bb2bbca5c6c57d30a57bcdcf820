@@ -1,1 +1,0 @@
-{"version":3,"names":["empty","console","warn","getCSSStylesAtomic","getStyleAtomic","styleToCSS"],"sources":["../../../src/helpers/getCSSStylesAtomic.native.ts"],"sourcesContent":[null],"mappings":"AAAA,IAAIA,KAAA,GAAQ,SAAAA,CAAA,EAAW;IACnBC,OAAA,CAAQC,IAAA,CAAK,cAAc;EAC/B;EACWC,kBAAA,GAAqBH,KAAA;EACrBI,cAAA,GAAiBJ,KAAA;EACjBK,UAAA,GAAaL,KAAA","ignoreList":[]}

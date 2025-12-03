@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/index.tsx"],
-  "mappings": "AAAA,SAAS,cAAc;AAEvB,SAAS,kBAAkB;AAC3B,SAAS,+BAA+B;AAExC,SAAS,2BAAAA,gCAA+B;AACxC,cAAc;AACd,cAAc;AACd,cAAc;AAEP,MAAM,SAAS;AAAA,EACpB,GAAG;AAAA;AAAA,EAEH;AAAA,EACA;AACF;",
-  "names": ["configWithoutAnimations"]
-}

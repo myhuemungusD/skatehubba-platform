@@ -10,6 +10,7 @@ coverage
 .vercel
 *.log
 tsconfig.tsbuildinfo
+.pnpm-store
 
 # Unity AR Build Outputs
 apps/ar/Build/

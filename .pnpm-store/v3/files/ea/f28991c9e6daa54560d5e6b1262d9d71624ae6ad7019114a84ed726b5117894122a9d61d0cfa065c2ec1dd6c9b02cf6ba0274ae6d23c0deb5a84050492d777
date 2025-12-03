@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/views/Configuration.tsx"],
-  "mappings": "AAAA,SAAS,kBAAkB;AAC3B,OAAO,WAAW;AAClB,SAAS,wBAAwB;AAc3B;AALC,MAAM,gBAAgB,CAAC,UAA8B;AAC1D,QAAM,UAAU,MAAM,WAAW,gBAAgB;AAEjD,SACE,oBAAC,cAAW,SAAS,MAAM,cAAc,QAAQ,YAC/C,8BAAC,iBAAiB,UAAjB,EAA2B,GAAG,SAAU,GAAG,OAAO,GACrD;AAEJ;",
-  "names": []
-}

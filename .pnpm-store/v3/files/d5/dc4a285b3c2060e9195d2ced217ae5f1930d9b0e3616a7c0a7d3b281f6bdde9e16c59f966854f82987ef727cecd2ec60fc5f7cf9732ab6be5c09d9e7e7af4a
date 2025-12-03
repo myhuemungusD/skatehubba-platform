@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/StyledContext.tsx"],
-  "mappings": "AACA,SAAS,2BAA2B;AAE7B,MAAM,sBAAsB,oBAGhC;AAAA,EACD,MAAM;AAAA,EACN,UAAU,QAAQ,IAAI,qBAAqB;AAC7C,CAAC;",
-  "names": []
-}

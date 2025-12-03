@@ -1,1 +1,0 @@
-{"version":3,"names":["CheckboxFrame","CheckboxIndicatorFrame","createCheckbox","Checkbox","Frame","Indicator"],"sources":["../../src/index.ts"],"sourcesContent":[null],"mappings":"AAAA,SAASA,aAAA,EAAeC,sBAAA,QAA8B;AACtD,SAASC,cAAA,QAAsB;AAE/B,cAAc;AACd,cAAc;AACd,cAAc;AAGP,MAAMC,QAAA,GAAWD,cAAA,CAAe;EACrCE,KAAA,EAAOJ,aAAA;EACPK,SAAA,EAAWJ;AACb,CAAC","ignoreList":[]}

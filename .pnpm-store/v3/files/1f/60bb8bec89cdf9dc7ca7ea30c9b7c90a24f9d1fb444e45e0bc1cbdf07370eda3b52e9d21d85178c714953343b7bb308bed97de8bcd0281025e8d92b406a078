@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/index.reanimated.ts"],
-  "mappings": "AAAA,SAAS,kBAAkB;AAC3B,SAAS,+BAA+B;AACxC,cAAc;AACd,cAAc;AACd,cAAc;AAEP,MAAM,SAAS;AAAA,EACpB,GAAG;AAAA,EACH;AACF;",
-  "names": []
-}

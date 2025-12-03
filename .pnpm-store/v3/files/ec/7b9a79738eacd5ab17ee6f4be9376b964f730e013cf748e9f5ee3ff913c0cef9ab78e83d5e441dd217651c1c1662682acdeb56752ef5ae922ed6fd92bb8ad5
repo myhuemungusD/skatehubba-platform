@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/views/Configuration.tsx"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,gCAA2B,wCAC3B,eAAkB,8BAClB,0BAAiC,yCAc3B;AALC,MAAM,gBAAgB,CAAC,UAA8B;AAC1D,QAAM,UAAU,aAAAA,QAAM,WAAW,wCAAgB;AAEjD,SACE,4CAAC,wCAAW,SAAS,MAAM,cAAc,QAAQ,YAC/C,sDAAC,yCAAiB,UAAjB,EAA2B,GAAG,SAAU,GAAG,OAAO,GACrD;AAEJ;",
-  "names": ["React"]
-}

@@ -1,1 +1,0 @@
-{"version":3,"names":["useGet","useEvent","callback","defaultValue","Error"],"sources":["../../src/useEvent.ts"],"sourcesContent":[null],"mappings":"AAAA,SAASA,MAAA,QAAc;AAIhB,SAASC,SAAgCC,QAAA,EAAiB;EAC/D,OAAOF,MAAA,CAAOE,QAAA,EAAUC,YAAA,EAAc,EAAI;AAC5C;AAEA,MAAMA,YAAA,GAAeA,CAAA,KAAM;EACzB,MAAM,IAAIC,KAAA,CAAM,+CAA+C;AACjE","ignoreList":[]}

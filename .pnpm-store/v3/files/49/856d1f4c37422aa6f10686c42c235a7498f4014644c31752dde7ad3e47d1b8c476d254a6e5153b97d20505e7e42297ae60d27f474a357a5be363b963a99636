@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/views/TamaguiProvider.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AACA,kBAA8C,0BAC9C,gBAA+B,4BAC/B,uBAAmC,mCAM3B;AAJD,MAAM,kBAAkB,CAAC,EAAE,UAAU,GAAG,MAAM,MAEjD,4CAAC,YAAAA,iBAAA,EAAY,GAAG,OACd,sDAAC,wCAAmB,UAAnB,EAA4B,OAAO,GAClC,sDAAC,gCAAe,mBAAiB,IAAE,UAAS,GAC9C,GACF;",
-  "names": ["OGProvider"]
-}

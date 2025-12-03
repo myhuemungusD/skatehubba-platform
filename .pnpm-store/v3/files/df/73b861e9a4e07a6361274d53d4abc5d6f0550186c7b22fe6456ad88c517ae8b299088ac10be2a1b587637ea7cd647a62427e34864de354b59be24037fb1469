@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/useSelectBreakpointActive.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,mBAAiC;AAG1B,MAAM,qBAAqB,CAAC,YAAgC;AACjE,QAAM,uBAAmB,+BAAiB,QAAQ,UAAU;AAC5D,SAAO,QAAQ,SAAS,KAAQ,KAAQ;AAC1C;",
-  "names": []
-}

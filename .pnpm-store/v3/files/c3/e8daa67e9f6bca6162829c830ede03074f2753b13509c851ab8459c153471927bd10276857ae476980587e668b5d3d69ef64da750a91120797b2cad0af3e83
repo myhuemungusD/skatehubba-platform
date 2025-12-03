@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/v3.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,0BAAuB,2BACvB,mBAAuB,wBAGvB,gBAA+B,4BAC/BA,iBAAiC,4BACjCA,iBAA6B,4BAC7BA,iBAAmC,4BACnCA,iBAAmC,4BACnCA,iBAA+B,4BAC/BA,iBAAmC,4BACnCA,iBAA+B;",
-  "names": ["import_colors"]
-}

@@ -1,1 +1,0 @@
-{"version":3,"names":["requestAnimationFrame","globalThis","setTimeout"],"sources":["../../src/polyfill.ts"],"sourcesContent":[null],"mappings":"AACI,YAAO;;AAKP,OAAOA,qBACT,WAAWC,UAAY,CAAAD,qBAAA,GAAAE,UAAA","ignoreList":[]}

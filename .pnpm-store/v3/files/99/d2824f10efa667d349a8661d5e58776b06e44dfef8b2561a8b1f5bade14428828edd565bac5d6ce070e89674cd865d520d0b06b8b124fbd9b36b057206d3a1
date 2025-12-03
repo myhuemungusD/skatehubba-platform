@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/loadDuplicatedConfig.ts"],
-  "mappings": "AAEA,IAAI,YAAY;AAET,SAAS,uBAAqD;AACnE,SAAI,QAAQ,IAAI,aAAa,gBACvB,WAAW,mBACb,YAAY,IACP,aACH,QAAQ;AAAA,IACN;AAAA;AAAA;AAAA,EAGF,GAEK,WAAW,mBAGf;AACT;",
-  "names": []
-}

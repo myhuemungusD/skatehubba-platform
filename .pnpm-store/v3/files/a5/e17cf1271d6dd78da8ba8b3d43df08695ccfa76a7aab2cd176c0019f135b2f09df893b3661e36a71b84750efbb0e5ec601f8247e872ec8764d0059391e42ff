@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/v2.ts"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAEA,wBAA2B,6BAC3B,iBAAqC;AAE9B,MAAM,SAAS;AAAA,EACpB,GAAG,eAAAA;AAAA,EACH;AACF;",
-  "names": ["configBase"]
-}

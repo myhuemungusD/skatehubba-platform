@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/v4.tsx"],
-  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,uBAAuB,wBACvB,uBAA6B,mCAC7B,8BAAwC,mCACxC,sBAAwC;",
-  "names": []
-}

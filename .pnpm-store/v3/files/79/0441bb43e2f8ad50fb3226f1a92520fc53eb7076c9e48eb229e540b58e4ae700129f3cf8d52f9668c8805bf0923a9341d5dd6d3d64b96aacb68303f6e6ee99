@@ -1,1 +1,0 @@
-{"version":3,"names":["SELECT_NAME","WINDOW_PADDING","SCROLL_ARROW_VELOCITY","SCROLL_ARROW_THRESHOLD","MIN_HEIGHT","FALLBACK_THRESHOLD","VIEWPORT_NAME"],"sources":["../../src/constants.tsx"],"sourcesContent":[null],"mappings":"AAAO,IAAAA,WAAM,WAAc;EAAAC,cACd;EAAiBC,qBACjB;EAAwBC,sBACxB;EAAyBC,UACzB,KAAa;EAAAC,kBACb,KAAqB;EAAAC,aACrB,mBAAgB","ignoreList":[]}

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/useCurrentColor.tsx"],
-  "mappings": "AACA,SAAS,aAAa,gBAAgB;AAG/B,MAAM,kBAAkB,CAAC,cAAyB;AACvD,QAAM,QAAQ,SAAS;AAIvB,SAHY,YACR,YAAY,SAAS,IACrB,MAAM,SAAgB,GAAG,IAAI,KAAK,MAAM,OAAO,IAAI;AAEzD;",
-  "names": []
-}

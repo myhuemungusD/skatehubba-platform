@@ -1,1 +1,0 @@
-{"version":3,"names":["createStyledContext","SwitchStyledContext","size","unstyled","process","env","TAMAGUI_HEADLESS"],"sources":["../../src/StyledContext.tsx"],"sourcesContent":[null],"mappings":"AACA,SAASA,mBAAA,QAA2B;AAE7B,MAAMC,mBAAA,GAAsBD,mBAAA,CAGhC;EACDE,IAAA,EAAM;EACNC,QAAA,EAAUC,OAAA,CAAQC,GAAA,CAAIC,gBAAA,KAAqB;AAC7C,CAAC","ignoreList":[]}

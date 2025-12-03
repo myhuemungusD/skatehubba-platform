@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/helpers/getShorthandValue.ts"],
-  "mappings": "AAAA,SAAS,iBAAiB;AAG1B,IAAI,oBAA8C;AAE3C,MAAM,oBAAoB,CAAC,OAA4B,SAC5D,sBAAsB,UAAU,EAAE,mBAC3B,MAAM,GAAG,MAAM,oBAAoB,MAAM,kBAAkB,GAAG,CAAC,IAAI;",
-  "names": []
-}
