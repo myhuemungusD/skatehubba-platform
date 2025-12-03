@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,cAAc,YAAY,mBAAmB;AAI7C,cAAc,aAAa,kBAAkB;AAE7C,OAAO,cAAM,kBAAmB,UAAU,aACxC,OAAM,QAAQ,IACd,EACE,gBACA,aACC;CACD,kBAAkB;CAClB,YAAY;MAEb,WAAW,gBAAgB;AA0B9B,cAAM;UACJ,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,MAAM;UACN,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,GAAG;UACH,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI;UACJ,IAAI",
+  "names": [],
+  "sources": [
+    "src/index.ts"
+  ],
+  "sourcesContent": [
+    "import type { FillInFont, GenericFont } from '@tamagui/core'\nimport { createFont, getVariableValue, isWeb } from '@tamagui/core'\n\n// fix type portability issue?\nexport type { GenericFont, FillInFont } from '@tamagui/core'\n\nexport const createInterFont = <A extends GenericFont>(\n  font: Partial<A> = {},\n  {\n    sizeLineHeight = (size) => size + 10,\n    sizeSize = (size) => size * 1,\n  }: {\n    sizeLineHeight?: (fontSize: number) => number\n    sizeSize?: (size: number) => number\n  } = {}\n): FillInFont<A, keyof typeof defaultSizes> => {\n  // merge to allow individual overrides\n  const size = Object.fromEntries(\n    Object.entries({\n      ...defaultSizes,\n      ...font.size,\n    }).map(([k, v]) => [k, sizeSize(+v)])\n  )\n  return createFont({\n    family: isWeb\n      ? 'Inter, -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif'\n      : 'Inter',\n    lineHeight: Object.fromEntries(\n      Object.entries(size).map(([k, v]) => [k, sizeLineHeight(getVariableValue(v))])\n    ),\n    weight: {\n      4: '300',\n    },\n    letterSpacing: {\n      4: 0,\n    },\n    ...(font as any),\n    size,\n  })\n}\n\nconst defaultSizes = {\n  1: 11,\n  2: 12,\n  3: 13,\n  4: 14,\n  true: 14,\n  5: 16,\n  6: 18,\n  7: 20,\n  8: 23,\n  9: 30,\n  10: 46,\n  11: 55,\n  12: 62,\n  13: 72,\n  14: 92,\n  15: 114,\n  16: 134,\n} as const\n"
+  ],
+  "version": 3
+}

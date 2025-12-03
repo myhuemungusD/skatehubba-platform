@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/olive.ts"
+  ],
+  "sourcesContent": [
+    "export const olive = {\n  olive1: 'hsl(110, 20.0%, 99.0%)',\n  olive2: 'hsl(120, 16.7%, 97.6%)',\n  olive3: 'hsl(119, 10.1%, 95.2%)',\n  olive4: 'hsl(118, 8.1%, 93.0%)',\n  olive5: 'hsl(117, 7.1%, 90.8%)',\n  olive6: 'hsl(115, 6.4%, 88.5%)',\n  olive7: 'hsl(114, 5.9%, 85.4%)',\n  olive8: 'hsl(110, 5.2%, 77.3%)',\n  olive9: 'hsl(110, 3.5%, 55.5%)',\n  olive10: 'hsl(111, 2.8%, 51.7%)',\n  olive11: 'hsl(110, 3.0%, 43.0%)',\n  olive12: 'hsl(110, 25.0%, 9.5%)',\n}\n"
+  ],
+  "version": 3
+}

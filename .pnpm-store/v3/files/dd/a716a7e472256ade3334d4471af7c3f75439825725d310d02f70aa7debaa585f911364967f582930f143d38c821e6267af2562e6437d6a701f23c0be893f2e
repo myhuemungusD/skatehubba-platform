@@ -1,0 +1,7 @@
+import type { NavigationContainerRefWithCurrent } from '@react-navigation/native';
+type NavigationInstrumentationProps<T extends {}> = React.PropsWithChildren<{
+    ref: NavigationContainerRefWithCurrent<T>;
+}>;
+export declare function NavigationInstrumentation<T extends {}>({ ref, children, }: NavigationInstrumentationProps<T>): import("react/jsx-runtime").JSX.Element;
+export {};
+//# sourceMappingURL=NavigationInstrumentation.d.ts.map

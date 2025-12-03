@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,iBAAS,YAAY",
+  "names": [],
+  "sources": [
+    "src/isMinusZero.tsx"
+  ],
+  "sourcesContent": [
+    "export function isMinusZero(value: number): boolean {\n  return 1 / value === Number.NEGATIVE_INFINITY\n}\n"
+  ],
+  "version": 3
+}

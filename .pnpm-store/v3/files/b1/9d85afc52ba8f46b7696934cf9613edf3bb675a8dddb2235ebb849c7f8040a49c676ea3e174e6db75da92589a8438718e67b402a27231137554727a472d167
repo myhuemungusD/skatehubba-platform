@@ -1,0 +1,51 @@
+"use strict";
+
+import HoneycombOpentelemetryReactNative from './NativeHoneycombOpentelemetryReactNative';
+import { InstrumentationBase } from '@opentelemetry/instrumentation';
+import { VERSION } from "./version.js";
+const LIBRARY_NAME = '@honeycombio/app-startup';
+/**
+ * Emit a span with the total time from when the app was started to when this was called.
+ */
+export class ReactNativeStartupInstrumentation extends InstrumentationBase {
+  constructor({
+    enabled = true
+  } = {}) {
+    const config = {
+      enabled
+    };
+    super(LIBRARY_NAME, VERSION, config);
+    this._isEnabled = enabled;
+  }
+  enable() {
+    if (this._isEnabled) {
+      this._diag.debug('Instrumentation already enabled');
+    }
+    this._isEnabled = true;
+  }
+  disable() {
+    if (!this._isEnabled) {
+      this._diag.debug('Instrumentation already disabled');
+    }
+    this._isEnabled = false;
+  }
+  init() {}
+
+  /**
+   * Sets TracerProvider to this plugin
+   * @param tracerProvider
+   */
+  setTracerProvider(tracerProvider) {
+    super.setTracerProvider(tracerProvider);
+    if (this._isEnabled) {
+      this.sendAppStartTrace();
+    }
+  }
+  sendAppStartTrace() {
+    let startTime = HoneycombOpentelemetryReactNative.getAppStartTime();
+    this.tracer.startSpan('react native startup', {
+      startTime
+    }).end();
+  }
+}
+//# sourceMappingURL=ReactNativeStartupInstrumentation.js.map

@@ -1,0 +1,62 @@
+"use strict";
+
+import { recordException } from '@honeycombio/opentelemetry-web';
+import { InstrumentationBase } from '@opentelemetry/instrumentation';
+import { VERSION } from "./version.js";
+const LIBRARY_NAME = '@honeycombio/instrumentation-global-errors';
+
+// This is not exported by React Native so we need to decare it.
+
+export class UncaughtExceptionInstrumentation extends InstrumentationBase {
+  constructor({
+    enabled = true,
+    applyCustomAttributesOnSpan
+  } = {}) {
+    const config = {
+      enabled,
+      applyCustomAttributesOnSpan
+    };
+    super(LIBRARY_NAME, VERSION, config);
+    if (enabled) {
+      this.enable();
+    }
+    this._isEnabled = enabled;
+    this.applyCustomAttributesOnSpan = applyCustomAttributesOnSpan;
+  }
+  onError = (caughtError, isFatal) => {
+    const error = caughtError.stack && caughtError.message && caughtError.name ? caughtError : {
+      name: 'UnknownErrorType',
+      message: `${caughtError}`,
+      stack: caughtError.stack ?? ''
+    };
+
+    // Remove the "address at" in stack traces that break parsing.
+    error.stack = error.stack?.replace(/ \(address at \/?/g, ' (/');
+    recordException(error, {}, this.tracer, this.applyCustomAttributesOnSpan);
+    if (this._oldErrorHandler) {
+      return this._oldErrorHandler(caughtError, isFatal);
+    }
+  };
+  init() {}
+  enable() {
+    if (this._isEnabled) {
+      this._diag.debug(`Instrumentation already enabled`);
+    }
+    this._isEnabled = true;
+    this._oldErrorHandler = ErrorUtils.getGlobalHandler();
+    ErrorUtils.setGlobalHandler(this.onError);
+  }
+  disable() {
+    if (!this._isEnabled) {
+      this._diag.debug(`Instrumentation already disabled`);
+    }
+    this._isEnabled = false;
+    if (this._oldErrorHandler) {
+      ErrorUtils.setGlobalHandler(this._oldErrorHandler);
+    }
+  }
+  isEnabled() {
+    return this._isEnabled;
+  }
+}
+//# sourceMappingURL=UncaughtExceptionInstrumentation.js.map

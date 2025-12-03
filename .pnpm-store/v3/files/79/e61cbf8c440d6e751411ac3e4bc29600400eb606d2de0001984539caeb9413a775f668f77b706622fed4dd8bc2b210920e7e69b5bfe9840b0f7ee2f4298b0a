@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/animations.css.ts"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,4BAAiC;AAE1B,MAAM,iBAAa,wCAAiB;AAAA,EACzC,SAAS;AAAA,EACT,QAAQ;AAAA,EACR,MAAM;AAAA,EACN,MAAM;AAAA,EACN,QAAQ;AAAA,EACR,OAAO;AAAA,EACP,SAAS;AACX,CAAC;",
+  "names": []
+}

@@ -42,11 +42,12 @@ const MOCK_ITEMS: Record<string, Array<{ id: string; name: string; price: number
   ],
 };
 
-export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }: {
+export function ItemGrid({ category, ownedItems, equippedId, onEquip, onTrade, disabled }: {
   category: string;
   ownedItems: string[];
   equippedId?: string;
   onEquip: (id: string) => void;
+  onTrade?: (id: string) => void;
   disabled?: boolean;
 }) {
   const items = MOCK_ITEMS[category] || [];
@@ -60,6 +61,7 @@ export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }
       renderItem={({ item }: { item: any }) => {
         const isOwned = ownedItems.includes(item.id);
         const isEquipped = equippedId === item.id;
+        const canInteract = isOwned && (!disabled || !!onTrade);
 
         return (
           <Pressable
@@ -68,8 +70,14 @@ export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }
               !isOwned && styles.locked, 
               isEquipped && styles.equippedItem
             ]}
-            disabled={disabled || !isOwned}
-            onPress={() => onEquip(item.id)}
+            disabled={!canInteract}
+            onPress={() => {
+              if (onTrade && disabled) {
+                onTrade(item.id);
+              } else {
+                onEquip(item.id);
+              }
+            }}
           >
             <View style={styles.imageContainer}>
               <Image source={item.image} style={styles.image} resizeMode="contain" />
@@ -78,6 +86,9 @@ export function ItemGrid({ category, ownedItems, equippedId, onEquip, disabled }
             <Text style={styles.name}>{item.name}</Text>
             {isEquipped && <Text style={styles.equipped}>EQUIPPED</Text>}
             {!isOwned && <Text style={styles.price}>{item.price} ₿</Text>}
+            {onTrade && disabled && isOwned && (
+              <Text style={styles.tradeText}>TRADE</Text>
+            )}
           </Pressable>
         );
       }}
@@ -132,5 +143,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     marginTop: 4,
     fontSize: 12,
+  },
+  tradeText: {
+    color: SKATE.colors.neon,
+    fontSize: 10,
+    marginTop: 4,
+    fontWeight: 'bold',
+    borderWidth: 1,
+    borderColor: SKATE.colors.neon,
+    paddingHorizontal: 4,
+    borderRadius: 4,
   },
 });

@@ -1,0 +1,13 @@
+{
+  "mappings": "AAAA,cAAc,sBAAsB;KAK/B,cAAc,cAAc;KAE5B,YAAY,aAAa;AAE9B,OAAO,cAAM,gCAAgC,eAAe;CAQ9C;CAPZ,QAAQ;CAER,YAAY;CAKZ,YAAY,AAAQA;CAOpB,QAAQ;CAMR,YAAY,UAAU;CAItB,eAAe,UAAU;CAKzB,MAAM,eAAe,EAAE,OAAO,UAAU;EAAE;EAAe;;CASzD,IAAI",
+  "names": [
+    "query: string"
+  ],
+  "sources": [
+    "src/mediaQueryList.ts"
+  ],
+  "sourcesContent": [
+    "import type { MediaQueryList } from '@tamagui/web'\nimport { Dimensions } from 'react-native'\n\nimport { matchQuery } from './matchQuery'\n\ntype Orientation = 'landscape' | 'portrait'\n\ntype Listener = (orientation: Orientation) => void\n\nexport class NativeMediaQueryList implements MediaQueryList {\n  private listeners: Listener[] = []\n\n  private get orientation(): Orientation {\n    const windowDimensions = Dimensions.get('window')\n    return windowDimensions.height > windowDimensions.width ? 'portrait' : 'landscape'\n  }\n\n  constructor(private query: string) {\n    this.notify()\n    Dimensions.addEventListener('change', () => {\n      this.notify()\n    })\n  }\n\n  private notify() {\n    this.listeners.forEach((listener) => {\n      listener(this.orientation)\n    })\n  }\n\n  addListener(listener: Listener): void {\n    this.listeners.push(listener)\n  }\n\n  removeListener(listener: Listener): void {\n    const index = this.listeners.indexOf(listener)\n    if (index !== -1) this.listeners.splice(index, 1)\n  }\n\n  match(query: string, { width, height }: { width: number; height: number }): boolean {\n    return matchQuery(query, {\n      type: 'screen',\n      orientation: height > width ? 'portrait' : 'landscape',\n      'device-width': width,\n      'device-height': height,\n    })\n  }\n\n  get matches(): boolean {\n    const windowDimensions = Dimensions.get('window')\n    const matches = matchQuery(this.query, {\n      type: 'screen',\n      orientation: this.orientation,\n      ...windowDimensions,\n      'device-width': windowDimensions.width,\n      'device-height': windowDimensions.height,\n    })\n    return matches\n  }\n}\n"
+  ],
+  "version": 3
+}

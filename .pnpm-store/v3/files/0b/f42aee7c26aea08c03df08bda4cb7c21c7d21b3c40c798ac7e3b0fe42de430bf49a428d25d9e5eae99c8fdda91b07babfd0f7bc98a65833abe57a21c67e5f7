@@ -1,0 +1,1 @@
+{"version":3,"names":["AbortError","sleep","ms","signal","Promise","res","setTimeout","aborted"],"sources":["../../src/sleep.ts"],"sourcesContent":[null],"mappings":"AAAA,SAASA,UAAA,QAAkB;AAEpB,IAAAC,KAAM,kBAAAA,CAA2BC,EAAA,EAAAC,MAAwC;EAE9E,IADA,MAAM,IAAIC,OAAA,CAAQ,UAASC,GAAA;IAEzB,OAAMC,UAAI,CAAAD,GAAW,EAAAH,EAAA;EAEzB,IAAAC,MAAA,EAAAI,OAAA,E","ignoreList":[]}

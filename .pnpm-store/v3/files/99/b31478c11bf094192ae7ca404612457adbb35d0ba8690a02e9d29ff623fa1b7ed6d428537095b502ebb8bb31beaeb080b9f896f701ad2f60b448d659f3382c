@@ -1,0 +1,19 @@
+import { TamaguiProvider as OGProvider } from "@tamagui/core";
+import { PortalProvider } from "@tamagui/portal";
+import { ZIndexStackContext } from "@tamagui/z-index-stack";
+import { jsx } from "react/jsx-runtime";
+const TamaguiProvider = ({
+  children,
+  ...props
+}) => /* @__PURE__ */jsx(OGProvider, {
+  ...props,
+  children: /* @__PURE__ */jsx(ZIndexStackContext.Provider, {
+    value: 1,
+    children: /* @__PURE__ */jsx(PortalProvider, {
+      shouldAddRootHost: !0,
+      children
+    })
+  })
+});
+export { TamaguiProvider };
+//# sourceMappingURL=TamaguiProvider.mjs.map

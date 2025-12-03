@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/v5.tsx"],
+  "mappings": "AAAA,SAAS,cAAc;AACvB,SAAS,oBAAoB;AAC7B,SAAS,cAAc;",
+  "names": []
+}

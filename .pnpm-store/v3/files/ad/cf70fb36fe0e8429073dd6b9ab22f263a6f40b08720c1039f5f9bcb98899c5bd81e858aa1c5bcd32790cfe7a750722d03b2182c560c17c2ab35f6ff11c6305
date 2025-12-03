@@ -1,0 +1,223 @@
+import { createResponderEvent } from "./createResponderEvent.native.js";
+import { ResponderTouchHistoryStore } from "./ResponderTouchHistoryStore.native.js";
+import { isCancelish, isEndish, isMoveish, isScroll, isSelectionChange, isStartish } from "./types.native.js";
+import { canUseDOM } from "./utils.native.js";
+import { getLowestCommonAncestor, getResponderPaths, hasTargetTouches, hasValidSelection, isPrimaryPointerDown, setResponderId } from "./utils.native.js";
+var emptyObject = {},
+  startRegistration = ["onStartShouldSetResponderCapture", "onStartShouldSetResponder", {
+    bubbles: !0
+  }],
+  moveRegistration = ["onMoveShouldSetResponderCapture", "onMoveShouldSetResponder", {
+    bubbles: !0
+  }],
+  scrollRegistration = ["onScrollShouldSetResponderCapture", "onScrollShouldSetResponder", {
+    bubbles: !1
+  }],
+  shouldSetResponderEvents = {
+    touchstart: startRegistration,
+    mousedown: startRegistration,
+    touchmove: moveRegistration,
+    mousemove: moveRegistration,
+    scroll: scrollRegistration
+  },
+  emptyResponder = {
+    id: null,
+    idPath: null,
+    node: null
+  },
+  responderListenersMap = /* @__PURE__ */new Map(),
+  isEmulatingMouseEvents = !1,
+  trackedTouchCount = 0,
+  currentResponder = {
+    id: null,
+    node: null,
+    idPath: null
+  },
+  responderTouchHistoryStore = new ResponderTouchHistoryStore();
+function changeCurrentResponder(responder) {
+  currentResponder = responder;
+}
+function getResponderConfig(id) {
+  var config = responderListenersMap.get(id);
+  return config ?? emptyObject;
+}
+function eventListener(domEvent) {
+  var eventType = domEvent.type,
+    eventTarget = domEvent.target;
+  if (eventType === "touchstart" && (isEmulatingMouseEvents = !0), (eventType === "touchmove" || trackedTouchCount > 1) && (isEmulatingMouseEvents = !1),
+  // Ignore browser emulated mouse events
+  !(eventType === "mousedown" && isEmulatingMouseEvents || eventType === "mousemove" && isEmulatingMouseEvents ||
+  // Ignore mousemove if a mousedown didn't occur first
+  eventType === "mousemove" && trackedTouchCount < 1)) {
+    if (isEmulatingMouseEvents && eventType === "mouseup") {
+      trackedTouchCount === 0 && (isEmulatingMouseEvents = !1);
+      return;
+    }
+    var isStartEvent = isStartish(eventType) && isPrimaryPointerDown(domEvent),
+      isMoveEvent = isMoveish(eventType),
+      isEndEvent = isEndish(eventType),
+      isScrollEvent = isScroll(eventType),
+      isSelectionChangeEvent = isSelectionChange(eventType),
+      responderEvent = createResponderEvent(domEvent, responderTouchHistoryStore);
+    (isStartEvent || isMoveEvent || isEndEvent) && (domEvent.touches ? trackedTouchCount = domEvent.touches.length : isStartEvent ? trackedTouchCount = 1 : isEndEvent && (trackedTouchCount = 0), responderTouchHistoryStore.recordTouchTrack(eventType, responderEvent.nativeEvent));
+    var eventPaths = getResponderPaths(domEvent),
+      wasNegotiated = !1,
+      wantsResponder;
+    if (isStartEvent || isMoveEvent || isScrollEvent && trackedTouchCount > 0) {
+      var currentResponderIdPath = currentResponder.idPath,
+        eventIdPath = eventPaths.idPath;
+      if (currentResponderIdPath != null && eventIdPath != null) {
+        var lowestCommonAncestor = getLowestCommonAncestor(currentResponderIdPath, eventIdPath);
+        if (lowestCommonAncestor != null) {
+          var indexOfLowestCommonAncestor = eventIdPath.indexOf(lowestCommonAncestor),
+            index = indexOfLowestCommonAncestor + (lowestCommonAncestor === currentResponder.id ? 1 : 0);
+          eventPaths = {
+            idPath: eventIdPath.slice(index),
+            nodePath: eventPaths.nodePath.slice(index)
+          };
+        } else eventPaths = null;
+      }
+      eventPaths != null && (wantsResponder = findWantsResponder(eventPaths, domEvent, responderEvent), wantsResponder != null && (attemptTransfer(responderEvent, wantsResponder), wasNegotiated = !0));
+    }
+    if (currentResponder.id != null && currentResponder.node != null) {
+      var {
+          id,
+          node
+        } = currentResponder,
+        {
+          onResponderStart,
+          onResponderMove,
+          onResponderEnd,
+          onResponderRelease,
+          onResponderTerminate,
+          onResponderTerminationRequest
+        } = getResponderConfig(id);
+      if (responderEvent.bubbles = !1, responderEvent.cancelable = !1, responderEvent.currentTarget = node, isStartEvent) onResponderStart != null && (responderEvent.dispatchConfig.registrationName = "onResponderStart", onResponderStart(responderEvent));else if (isMoveEvent) onResponderMove != null && (responderEvent.dispatchConfig.registrationName = "onResponderMove", onResponderMove(responderEvent));else {
+        var isTerminateEvent = isCancelish(eventType) ||
+          // native context menu
+          eventType === "contextmenu" ||
+          // window blur
+          eventType === "blur" && eventTarget === window ||
+          // responder (or ancestors) blur
+          eventType === "blur" && eventTarget.contains(node) && domEvent.relatedTarget !== node ||
+          // native scroll without using a pointer
+          isScrollEvent && trackedTouchCount === 0 ||
+          // native scroll on node that is parent of the responder (allow siblings to scroll)
+          isScrollEvent && eventTarget.contains(node) && eventTarget !== node ||
+          // native select/selectionchange on node
+          isSelectionChangeEvent && hasValidSelection(domEvent),
+          isReleaseEvent = isEndEvent && !isTerminateEvent && !hasTargetTouches(node, domEvent.touches);
+        if (isEndEvent && onResponderEnd != null && (responderEvent.dispatchConfig.registrationName = "onResponderEnd", onResponderEnd(responderEvent)), isReleaseEvent && (onResponderRelease != null && (responderEvent.dispatchConfig.registrationName = "onResponderRelease", onResponderRelease(responderEvent)), changeCurrentResponder(emptyResponder)), isTerminateEvent) {
+          var shouldTerminate = !0;
+          (eventType === "contextmenu" || eventType === "scroll" || eventType === "selectionchange") && (wasNegotiated ? shouldTerminate = !1 : onResponderTerminationRequest != null && (responderEvent.dispatchConfig.registrationName = "onResponderTerminationRequest", onResponderTerminationRequest(responderEvent) === !1 && (shouldTerminate = !1))), shouldTerminate && (onResponderTerminate != null && (responderEvent.dispatchConfig.registrationName = "onResponderTerminate", onResponderTerminate(responderEvent)), changeCurrentResponder(emptyResponder), isEmulatingMouseEvents = !1, trackedTouchCount = 0);
+        }
+      }
+    }
+  }
+}
+function findWantsResponder(eventPaths, domEvent, responderEvent) {
+  var shouldSetCallbacks = shouldSetResponderEvents[domEvent.type];
+  if (shouldSetCallbacks != null) {
+    for (var {
+        idPath,
+        nodePath
+      } = eventPaths, shouldSetCallbackCaptureName = shouldSetCallbacks[0], shouldSetCallbackBubbleName = shouldSetCallbacks[1], {
+        bubbles
+      } = shouldSetCallbacks[2], check = function (id3, node3, callbackName) {
+        var config = getResponderConfig(id3),
+          shouldSetCallback = config[callbackName];
+        if (shouldSetCallback != null && (responderEvent.currentTarget = node3, shouldSetCallback(responderEvent) === !0)) {
+          var prunedIdPath = idPath.slice(idPath.indexOf(id3));
+          return {
+            id: id3,
+            node: node3,
+            idPath: prunedIdPath
+          };
+        }
+      }, i = idPath.length - 1; i >= 0; i--) {
+      var id = idPath[i],
+        node = nodePath[i],
+        result = check(id, node, shouldSetCallbackCaptureName);
+      if (result != null) return result;
+      if (responderEvent.isPropagationStopped() === !0) return;
+    }
+    if (bubbles) for (var i1 = 0; i1 < idPath.length; i1++) {
+      var id1 = idPath[i1],
+        node1 = nodePath[i1],
+        result1 = check(id1, node1, shouldSetCallbackBubbleName);
+      if (result1 != null) return result1;
+      if (responderEvent.isPropagationStopped() === !0) return;
+    } else {
+      var id2 = idPath[0],
+        node2 = nodePath[0],
+        target = domEvent.target;
+      if (target === node2) return check(id2, node2, shouldSetCallbackBubbleName);
+    }
+  }
+}
+function attemptTransfer(responderEvent, wantsResponder) {
+  var {
+      id: currentId,
+      node: currentNode
+    } = currentResponder,
+    {
+      id,
+      node
+    } = wantsResponder,
+    {
+      onResponderGrant,
+      onResponderReject
+    } = getResponderConfig(id);
+  if (responderEvent.bubbles = !1, responderEvent.cancelable = !1, responderEvent.currentTarget = node, currentId == null) onResponderGrant != null && (responderEvent.currentTarget = node, responderEvent.dispatchConfig.registrationName = "onResponderGrant", onResponderGrant(responderEvent)), changeCurrentResponder(wantsResponder);else {
+    var {
+        onResponderTerminate,
+        onResponderTerminationRequest
+      } = getResponderConfig(currentId),
+      allowTransfer = !0;
+    onResponderTerminationRequest != null && (responderEvent.currentTarget = currentNode, responderEvent.dispatchConfig.registrationName = "onResponderTerminationRequest", onResponderTerminationRequest(responderEvent) === !1 && (allowTransfer = !1)), allowTransfer ? (onResponderTerminate != null && (responderEvent.currentTarget = currentNode, responderEvent.dispatchConfig.registrationName = "onResponderTerminate", onResponderTerminate(responderEvent)), onResponderGrant != null && (responderEvent.currentTarget = node, responderEvent.dispatchConfig.registrationName = "onResponderGrant", onResponderGrant(responderEvent)), changeCurrentResponder(wantsResponder)) : onResponderReject != null && (responderEvent.currentTarget = node, responderEvent.dispatchConfig.registrationName = "onResponderReject", onResponderReject(responderEvent));
+  }
+}
+var documentEventsCapturePhase = ["blur", "scroll"],
+  documentEventsBubblePhase = [
+  // mouse
+  "mousedown", "mousemove", "mouseup", "dragstart",
+  // touch
+  "touchstart", "touchmove", "touchend", "touchcancel",
+  // other
+  "contextmenu", "select", "selectionchange"],
+  isTamaguiResponderActive = Symbol();
+function attachListeners() {
+  canUseDOM && !window[isTamaguiResponderActive] && (window.addEventListener("blur", eventListener), documentEventsBubblePhase.forEach(function (eventType) {
+    document.addEventListener(eventType, eventListener);
+  }), documentEventsCapturePhase.forEach(function (eventType) {
+    document.addEventListener(eventType, eventListener, !0);
+  }), window[isTamaguiResponderActive] = !0);
+}
+function addNode(id, node, config) {
+  setResponderId(node, id), responderListenersMap.set(id, config);
+}
+function removeNode(id) {
+  currentResponder.id === id && terminateResponder(), responderListenersMap.has(id) && responderListenersMap.delete(id);
+}
+function terminateResponder() {
+  var {
+    id,
+    node
+  } = currentResponder;
+  if (id != null && node != null) {
+    var {
+      onResponderTerminate
+    } = getResponderConfig(id);
+    if (onResponderTerminate != null) {
+      var event = createResponderEvent({}, responderTouchHistoryStore);
+      event.currentTarget = node, onResponderTerminate(event);
+    }
+    changeCurrentResponder(emptyResponder);
+  }
+  isEmulatingMouseEvents = !1, trackedTouchCount = 0;
+}
+function getResponderNode() {
+  return currentResponder.node;
+}
+export { addNode, attachListeners, getResponderNode, removeNode, terminateResponder };
+//# sourceMappingURL=ResponderSystem.native.js.map

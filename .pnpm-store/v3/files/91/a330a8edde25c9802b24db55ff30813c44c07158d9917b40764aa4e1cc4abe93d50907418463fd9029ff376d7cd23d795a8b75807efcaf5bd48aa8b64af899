@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,cAAc,iBAAiB;AAG/B,YAAY,oBAAoB;CAC9B;CACA,WAAW,MAAM;;AAGnB,OAAO,cAAM,eAAgB,OAAO,sBAAoB",
+  "names": [],
+  "sources": [
+    "src/RemoveScroll.tsx"
+  ],
+  "sourcesContent": [
+    "import type { ReactNode } from 'react'\nimport { useDisableBodyScroll } from './useDisableScroll'\n\nexport type RemoveScrollProps = {\n  enabled?: boolean\n  children?: React.ReactNode\n}\n\nexport const RemoveScroll = (props: RemoveScrollProps): ReactNode => {\n  useDisableBodyScroll(Boolean(props.enabled))\n\n  return props.children\n}\n"
+  ],
+  "version": 3
+}

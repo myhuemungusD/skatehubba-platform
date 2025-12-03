@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/brownA.ts"
+  ],
+  "sourcesContent": [
+    "export const brownA = {\n  brownA1: 'hsla(30, 94.3%, 34.6%, 0.012)',\n  brownA2: 'hsla(30, 94.3%, 34.6%, 0.036)',\n  brownA3: 'hsla(30, 97.7%, 33.9%, 0.083)',\n  brownA4: 'hsla(31, 98.5%, 34.2%, 0.134)',\n  brownA5: 'hsla(29, 100%, 34.3%, 0.200)',\n  brownA6: 'hsla(28, 99.2%, 34.6%, 0.291)',\n  brownA7: 'hsla(29, 99.8%, 33.8%, 0.412)',\n  brownA8: 'hsla(28, 100%, 33.3%, 0.553)',\n  brownA9: 'hsla(28, 99.9%, 25.5%, 0.655)',\n  brownA10: 'hsla(27, 99.7%, 22.4%, 0.675)',\n  brownA11: 'hsla(25, 99.8%, 17.3%, 0.714)',\n  brownA12: 'hsla(21, 99.4%, 6.6%, 0.867)',\n}\n"
+  ],
+  "version": 3
+}

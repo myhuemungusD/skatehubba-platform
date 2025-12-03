@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/plum.ts"
+  ],
+  "sourcesContent": [
+    "export const plum = {\n  plum1: 'hsl(292, 90.0%, 99.4%)',\n  plum2: 'hsl(300, 100%, 98.6%)',\n  plum3: 'hsl(299, 71.2%, 96.4%)',\n  plum4: 'hsl(299, 62.0%, 93.8%)',\n  plum5: 'hsl(298, 56.1%, 90.5%)',\n  plum6: 'hsl(296, 51.3%, 85.8%)',\n  plum7: 'hsl(295, 48.2%, 78.9%)',\n  plum8: 'hsl(292, 47.7%, 70.8%)',\n  plum9: 'hsl(292, 45.0%, 51.0%)',\n  plum10: 'hsl(292, 50.2%, 46.9%)',\n  plum11: 'hsl(292, 60.0%, 42.5%)',\n  plum12: 'hsl(291, 66.0%, 14.0%)',\n}\n"
+  ],
+  "version": 3
+}

@@ -1,0 +1,22 @@
+import { type TracerProvider } from '@opentelemetry/api';
+import { InstrumentationBase } from '@opentelemetry/instrumentation';
+import type { InstrumentationConfig } from '@opentelemetry/instrumentation';
+export interface ReactNativeStartupInstrumentationConfig extends InstrumentationConfig {
+}
+/**
+ * Emit a span with the total time from when the app was started to when this was called.
+ */
+export declare class ReactNativeStartupInstrumentation extends InstrumentationBase {
+    private _isEnabled;
+    constructor({ enabled, }?: ReactNativeStartupInstrumentationConfig);
+    enable(): void;
+    disable(): void;
+    protected init(): void;
+    /**
+     * Sets TracerProvider to this plugin
+     * @param tracerProvider
+     */
+    setTracerProvider(tracerProvider: TracerProvider): void;
+    sendAppStartTrace(): void;
+}
+//# sourceMappingURL=ReactNativeStartupInstrumentation.d.ts.map

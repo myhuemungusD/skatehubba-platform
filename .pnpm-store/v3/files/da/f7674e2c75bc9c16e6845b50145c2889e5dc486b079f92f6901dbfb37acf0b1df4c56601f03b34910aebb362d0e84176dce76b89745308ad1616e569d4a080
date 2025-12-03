@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/polyfill.ts"],
+  "mappings": "AACI,OAAO,wBAA0B,QACnC,WAAW,wBACT,OAAO,eAAiB,MAAc,aAAa;",
+  "names": []
+}

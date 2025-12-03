@@ -1,0 +1,125 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+    for (var name in all) __defProp(target, name, {
+      get: all[name],
+      enumerable: !0
+    });
+  },
+  __copyProps = (to, from, except, desc) => {
+    if (from && typeof from == "object" || typeof from == "function") for (let key of __getOwnPropNames(from)) !__hasOwnProp.call(to, key) && key !== except && __defProp(to, key, {
+      get: () => from[key],
+      enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+    });
+    return to;
+  };
+var __toCommonJS = mod => __copyProps(__defProp({}, "__esModule", {
+  value: !0
+}), mod);
+var Headings_exports = {};
+__export(Headings_exports, {
+  H1: () => H1,
+  H2: () => H2,
+  H3: () => H3,
+  H4: () => H4,
+  H5: () => H5,
+  H6: () => H6,
+  Heading: () => Heading
+});
+module.exports = __toCommonJS(Headings_exports);
+var import_web = require("@tamagui/web"),
+  import_Paragraph = require("./Paragraph.cjs");
+const Heading = (0, import_web.styled)(import_Paragraph.Paragraph, {
+    tag: "span",
+    name: "Heading",
+    accessibilityRole: "header",
+    fontFamily: "$heading",
+    size: "$8",
+    margin: 0
+  }),
+  H1 = (0, import_web.styled)(Heading, {
+    name: "H1",
+    tag: "h1",
+    variants: {
+      unstyled: {
+        false: {
+          size: "$10"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  H2 = (0, import_web.styled)(Heading, {
+    name: "H2",
+    tag: "h2",
+    variants: {
+      unstyled: {
+        false: {
+          size: "$9"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  H3 = (0, import_web.styled)(Heading, {
+    name: "H3",
+    tag: "h3",
+    variants: {
+      unstyled: {
+        false: {
+          size: "$8"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  H4 = (0, import_web.styled)(Heading, {
+    name: "H4",
+    tag: "h4",
+    variants: {
+      unstyled: {
+        false: {
+          size: "$7"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  H5 = (0, import_web.styled)(Heading, {
+    name: "H5",
+    tag: "h5",
+    variants: {
+      unstyled: {
+        false: {
+          size: "$6"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  H6 = (0, import_web.styled)(Heading, {
+    name: "H6",
+    tag: "h6",
+    variants: {
+      unstyled: {
+        false: {
+          size: "$5"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  });

@@ -1,0 +1,247 @@
+"use strict";
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+    for (var name in all) __defProp(target, name, {
+      get: all[name],
+      enumerable: !0
+    });
+  },
+  __copyProps = (to, from, except, desc) => {
+    if (from && typeof from == "object" || typeof from == "function") for (let key of __getOwnPropNames(from)) !__hasOwnProp.call(to, key) && key !== except && __defProp(to, key, {
+      get: () => from[key],
+      enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+    });
+    return to;
+  };
+var __toCommonJS = mod => __copyProps(__defProp({}, "__esModule", {
+  value: !0
+}), mod);
+var ListItem_exports = {};
+__export(ListItem_exports, {
+  ListItem: () => ListItem2,
+  ListItemFrame: () => ListItemFrame,
+  ListItemSubtitle: () => ListItemSubtitle,
+  ListItemText: () => ListItemText,
+  ListItemTitle: () => ListItemTitle,
+  useListItem: () => useListItem
+});
+module.exports = __toCommonJS(ListItem_exports);
+var import_jsx_runtime = require("react/jsx-runtime"),
+  import_font_size = require("@tamagui/font-size"),
+  import_get_font_sized = require("@tamagui/get-font-sized"),
+  import_get_token = require("@tamagui/get-token"),
+  import_helpers = require("@tamagui/helpers"),
+  import_helpers_tamagui = require("@tamagui/helpers-tamagui"),
+  import_stacks = require("@tamagui/stacks"),
+  import_text = require("@tamagui/text"),
+  import_web = require("@tamagui/web"),
+  NAME = "ListItem",
+  ListItemFrame = (0, import_web.styled)(import_stacks.ThemeableStack, {
+    name: NAME,
+    tag: "li",
+    variants: {
+      unstyled: {
+        false: {
+          size: "$true",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "nowrap",
+          width: "100%",
+          borderColor: "$borderColor",
+          maxWidth: "100%",
+          overflow: "hidden",
+          flexDirection: "row",
+          backgroundColor: "$background",
+          cursor: "default"
+        }
+      },
+      size: {
+        "...size": function (val, param) {
+          var {
+            tokens
+          } = param;
+          return {
+            minHeight: tokens.size[val],
+            paddingHorizontal: tokens.space[val],
+            paddingVertical: (0, import_get_token.getSpace)(tokens.space[val], {
+              shift: -4
+            })
+          };
+        }
+      },
+      active: {
+        true: {
+          hoverStyle: {
+            backgroundColor: "$background"
+          }
+        }
+      },
+      disabled: {
+        true: {
+          opacity: 0.5,
+          // TODO breaking types
+          pointerEvents: "none"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  ListItemText = (0, import_web.styled)(import_text.SizableText, {
+    name: "ListItemText",
+    variants: {
+      unstyled: {
+        false: {
+          color: "$color",
+          size: "$true",
+          flexGrow: 1,
+          flexShrink: 1,
+          ellipse: !0,
+          cursor: "inherit"
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  ListItemSubtitle = (0, import_web.styled)(ListItemText, {
+    name: "ListItemSubtitle",
+    variants: {
+      unstyled: {
+        false: {
+          opacity: 0.6,
+          maxWidth: "100%",
+          color: "$color"
+        }
+      },
+      size: {
+        "...size": function (val, extras) {
+          var oneSmaller = (0, import_get_token.getSize)(val, {
+              shift: -1,
+              excludeHalfSteps: !0
+            }),
+            fontStyle = (0, import_get_font_sized.getFontSized)(oneSmaller.key, extras);
+          return fontStyle;
+        }
+      }
+    },
+    defaultVariants: {
+      unstyled: process.env.TAMAGUI_HEADLESS === "1"
+    }
+  }),
+  ListItemTitle = (0, import_web.styled)(ListItemText, {
+    name: "ListItemTitle"
+  }),
+  useListItem = function (propsIn) {
+    var {
+        Text = ListItemText,
+        Subtitle = ListItemSubtitle,
+        Title = ListItemTitle
+      } = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
+        Text: ListItemText,
+        Subtitle: ListItemSubtitle,
+        Title: ListItemTitle
+      },
+      props = (0, import_web.useProps)(propsIn, {
+        resolveValues: "none"
+      }),
+      {
+        children,
+        icon,
+        iconAfter,
+        noTextWrap,
+        theme: themeName,
+        space,
+        spaceFlex,
+        scaleIcon = 1,
+        scaleSpace = 1,
+        unstyled = !1,
+        subTitle,
+        title,
+        // text props
+        color,
+        fontWeight,
+        fontSize,
+        fontFamily,
+        letterSpacing,
+        textAlign,
+        ellipse,
+        ...rest
+      } = props,
+      textProps = {
+        color,
+        fontWeight,
+        fontSize,
+        fontFamily,
+        letterSpacing,
+        textAlign,
+        ellipse,
+        children
+      },
+      size = props.size || "$true",
+      iconSize = (0, import_font_size.getFontSize)(size) * scaleIcon,
+      getThemedIcon = (0, import_helpers_tamagui.useGetThemedIcon)({
+        size: iconSize,
+        color
+      }),
+      [themedIcon, themedIconAfter] = [icon, iconAfter].map(getThemedIcon),
+      _getTokens_space_props_space,
+      sizeToken = (_getTokens_space_props_space = (0, import_web.getTokens)().space[props.space]) !== null && _getTokens_space_props_space !== void 0 ? _getTokens_space_props_space : iconSize,
+      spaceSize = (0, import_web.getVariableValue)(sizeToken) * scaleSpace,
+      contents = (0, import_text.wrapChildrenInText)(Text, textProps);
+    return {
+      props: {
+        ...rest,
+        children: /* @__PURE__ */(0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, {
+          children: [themedIcon ? /* @__PURE__ */(0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, {
+            children: [themedIcon, /* @__PURE__ */(0, import_jsx_runtime.jsx)(import_web.Spacer, {
+              size: spaceSize
+            })]
+          }) : null, /* helper for common title/subtitle pttern */
+          /* biome-ignore lint/complexity/noExtraBooleanCast: <explanation> */
+          title || subTitle ? /* @__PURE__ */(0, import_jsx_runtime.jsxs)(import_stacks.YStack, {
+            flex: 1,
+            children: [noTextWrap === "all" ? title : /* @__PURE__ */(0, import_jsx_runtime.jsx)(Title, {
+              size,
+              children: title
+            }), subTitle ? /* @__PURE__ */(0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, {
+              children: typeof subTitle == "string" && noTextWrap !== "all" ?
+              // TODO can use theme but we need to standardize to alt themes
+              // or standardize on subtle colors in themes
+              /* @__PURE__ */
+              (0, import_jsx_runtime.jsx)(Subtitle, {
+                unstyled,
+                size,
+                children: subTitle
+              }) : subTitle
+            }) : null, contents]
+          }) : contents, themedIconAfter ? /* @__PURE__ */(0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, {
+            children: [/* @__PURE__ */(0, import_jsx_runtime.jsx)(import_web.Spacer, {
+              size: spaceSize
+            }), themedIconAfter]
+          }) : null]
+        })
+      }
+    };
+  },
+  ListItemComponent = ListItemFrame.styleable(function (props, ref) {
+    var {
+      props: listItemProps
+    } = useListItem(props);
+    return /* @__PURE__ */(0, import_jsx_runtime.jsx)(ListItemFrame, {
+      ref,
+      ...listItemProps
+    });
+  }),
+  ListItem2 = (0, import_helpers.withStaticProperties)(ListItemComponent, {
+    Text: ListItemText,
+    Subtitle: ListItemSubtitle,
+    Title: ListItemTitle
+  });
+//# sourceMappingURL=ListItem.native.js.map

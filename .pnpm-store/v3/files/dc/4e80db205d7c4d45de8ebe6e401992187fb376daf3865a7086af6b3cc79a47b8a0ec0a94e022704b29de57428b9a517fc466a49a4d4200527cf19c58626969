@@ -1,0 +1,16 @@
+import { jsx } from "react/jsx-runtime";
+const FontLanguage = ({ children, ...props }) => /* @__PURE__ */ jsx(
+  "div",
+  {
+    style: {
+      display: "contents"
+    },
+    className: Object.entries(props).map(([name, language]) => `t_lang-${name}-${language}`).join(" "),
+    children
+  }
+);
+FontLanguage.displayName = "FontLanguage";
+export {
+  FontLanguage
+};
+//# sourceMappingURL=FontLanguage.js.map

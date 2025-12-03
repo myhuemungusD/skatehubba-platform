@@ -59,6 +59,10 @@ export default function ClosetScreen() {
     },
   });
 
+  const proposeTrade = (itemId: string) => {
+    router.push(`/trade?itemId=${itemId}` as any);
+  };
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotateY: `${rotateY.value}deg` }],
   }));
@@ -91,11 +95,12 @@ export default function ClosetScreen() {
           ownedItems={closet?.owned?.[activeCategory] || []}
           equippedId={equipped?.[activeCategory]}
           onEquip={(itemId) => equipMutation.mutate({ category: activeCategory, itemId })}
+          onTrade={!isOwnCloset ? proposeTrade : undefined}
           disabled={!isOwnCloset}
         />
 
         {isOwnCloset && (
-          <Pressable style={styles.equipBtn} onPress={() => router.push('/closet/equip')}>
+          <Pressable style={styles.equipBtn} onPress={() => router.push('/closet/equip' as any)}>
             <Text style={styles.equipText}>EQUIP</Text>
           </Pressable>
         )}

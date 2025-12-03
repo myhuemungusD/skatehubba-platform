@@ -1,0 +1,1 @@
+{"version":3,"names":["clamp","value","min","max","Math"],"sources":["../../src/clamp.ts"],"sourcesContent":[null],"mappings":"AAAO,SAASA,MAAMC,KAAA,EAAe,CAACC,GAAA,EAAKC,GAAG,GAA6B;EACzE,OAAOC,IAAA,CAAKF,GAAA,CAAIC,GAAA,EAAKC,IAAA,CAAKD,GAAA,CAAID,GAAA,EAAKD,KAAK,CAAC;AAC3C","ignoreList":[]}

@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/limeA.ts"
+  ],
+  "sourcesContent": [
+    "export const limeA = {\n  limeA1: 'hsla(80, 93.8%, 31.4%, 0.020)',\n  limeA2: 'hsla(85, 99.3%, 40.2%, 0.059)',\n  limeA3: 'hsla(84, 98.7%, 43.2%, 0.138)',\n  limeA4: 'hsla(84, 99.6%, 43.0%, 0.220)',\n  limeA5: 'hsla(85, 99.8%, 41.8%, 0.310)',\n  limeA6: 'hsla(82, 99.8%, 39.3%, 0.420)',\n  limeA7: 'hsla(79, 99.7%, 34.6%, 0.585)',\n  limeA8: 'hsla(76, 99.8%, 33.7%, 0.828)',\n  limeA9: 'hsla(81, 99.8%, 40.2%, 0.836)',\n  limeA10: 'hsla(80, 100%, 37.6%, 0.851)',\n  limeA11: 'hsla(75, 99.5%, 22.0%, 0.950)',\n  limeA12: 'hsla(78, 99.6%, 8.4%, 0.965)',\n}\n"
+  ],
+  "version": 3
+}

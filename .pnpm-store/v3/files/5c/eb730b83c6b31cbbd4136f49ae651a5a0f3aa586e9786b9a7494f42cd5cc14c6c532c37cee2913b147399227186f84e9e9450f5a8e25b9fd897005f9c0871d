@@ -1,0 +1,13 @@
+{
+  "mappings": "AAEA,OAAO,cAAMA,mBAAmB,MAAM;AAEtC,OAAO,cAAM,aAAc,EACzB,UACA,WACC;CAAE;CAAe;MAAsB,MAAM",
+  "names": [
+    "ClientOnlyContext: React.Context<boolean>"
+  ],
+  "sources": [
+    "src/ClientOnly.tsx"
+  ],
+  "sourcesContent": [
+    "import { createContext, useContext } from 'react'\n\nexport const ClientOnlyContext: React.Context<boolean> = createContext(false)\n\nexport const ClientOnly = ({\n  children,\n  enabled,\n}: { children: any; enabled?: boolean }): React.ReactNode => {\n  const existingValue = useContext(ClientOnlyContext)\n  return (\n    <ClientOnlyContext.Provider value={enabled ?? existingValue}>\n      {children}\n    </ClientOnlyContext.Provider>\n  )\n}\n"
+  ],
+  "version": 3
+}

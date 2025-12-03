@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, FlatList } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { doc, getDoc } from 'firebase/firestore';
 import Reanimated, { useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 import { useAuth } from '../../hooks/useAuth';
 import { GrittyButton } from '@skatehubba/ui';
-import { db } from '../../firebase';
+import { db } from '@/lib/firebase';
 import { SKATE } from '../../theme';
 import type { UserProfile } from '@skatehubba/types';
 
@@ -102,41 +102,41 @@ export default function ProfileScreen() {
         />
       </View>
 
-      {/* Buttons */}
-      <View style={styles.buttonRow}>
-        <GrittyButton onPress={() => router.push('/friends')} size="default">
-          CHALLENGE
-        </GrittyButton>
-        <GrittyButton onPress={() => router.push('/checkins')} size="default">
-          CHECK-INS
-        </GrittyButton>
-        <GrittyButton onPress={() => router.push('/closet')} size="default">
-          CLOSET
-        </GrittyButton>
-      </View>
-    </View>
-  );
+      {/* Buttons */}
+      <View style={styles.buttonRow}>
+        <GrittyButton onPress={() => router.push('/friends' as any)} size="default">
+          CHALLENGE
+        </GrittyButton>
+        <GrittyButton onPress={() => router.push('/checkins' as any)} size="default">
+          CHECK-INS
+        </GrittyButton>
+        <GrittyButton onPress={() => router.push('/closet' as any)} size="default">
+          CLOSET
+        </GrittyButton>
+      </View>
+    </View>
+  );
 }
 
-const styles = {
-  container: { flex: 1, backgroundColor: SKATE.colors.ink, padding: 16 },
-  avatarContainer: { alignItems: 'center', marginTop: 40, position: 'relative' as const },
-  buddy: { width: 100, height: 100, position: 'absolute' as const, left: 0, bottom: 0 },
-  avatar: { width: 150, height: 250 },
-  deck: { width: 120, height: 40, position: 'absolute' as const, bottom: 0 },
-  handle: { fontSize: 32, fontWeight: '900' as const, color: SKATE.colors.neon, textAlign: 'center' as const, marginTop: 16 },
-  levelContainer: { backgroundColor: SKATE.colors.grime, height: 24, borderRadius: 12, overflow: 'hidden' as const, marginVertical: 16, position: 'relative' as const },
-  levelFill: { backgroundColor: SKATE.colors.gold, height: '100%' },
-  levelLabel: { position: 'absolute' as const, left: 16, color: SKATE.colors.paper, fontWeight: 'bold' as const, fontSize: 14 },
-  xpLabel: { position: 'absolute' as const, right: 16, color: SKATE.colors.paper, fontSize: 12 },
-  statsList: { gap: 16 },
-  statCard: { flex: 1, backgroundColor: SKATE.colors.grime, padding: 16, borderRadius: 12, alignItems: 'center' as const, margin: 8 },
-  statValue: { fontSize: 28, fontWeight: '900' as const, color: SKATE.colors.neon },
-  statLabel: { fontSize: 14, color: SKATE.colors.gold },
-  section: { marginTop: 24 },
-  sectionTitle: { fontSize: 20, fontWeight: '900' as const, color: SKATE.colors.blood, marginBottom: 8 },
-  tag: { backgroundColor: SKATE.colors.grime, color: SKATE.colors.paper, padding: 8, borderRadius: 20, marginRight: 8 },
-  badge: { width: 60, height: 60, marginRight: 8 },
-  buttonRow: { flexDirection: 'row' as const, justifyContent: 'space-between', marginTop: 32 },
-  loading: { flex: 1, color: SKATE.colors.paper, textAlign: 'center' as const, fontSize: 20, justifyContent: 'center' as const },
-};
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: SKATE.colors.ink, padding: 16 },
+  avatarContainer: { alignItems: 'center', marginTop: 40, position: 'relative' },
+  buddy: { width: 100, height: 100, position: 'absolute', left: 0, bottom: 0 },
+  avatar: { width: 150, height: 250 },
+  deck: { width: 120, height: 40, position: 'absolute', bottom: 0 },
+  handle: { fontSize: 32, fontWeight: '900', color: SKATE.colors.neon, textAlign: 'center', marginTop: 16 },
+  levelContainer: { backgroundColor: SKATE.colors.grime, height: 24, borderRadius: 12, overflow: 'hidden', marginVertical: 16, position: 'relative' },
+  levelFill: { backgroundColor: SKATE.colors.gold, height: '100%' },
+  levelLabel: { position: 'absolute', left: 16, color: SKATE.colors.paper, fontWeight: 'bold', fontSize: 14 },
+  xpLabel: { position: 'absolute', right: 16, color: SKATE.colors.paper, fontSize: 12 },
+  statsList: { gap: 16 },
+  statCard: { flex: 1, backgroundColor: SKATE.colors.grime, padding: 16, borderRadius: 12, alignItems: 'center', margin: 8 },
+  statValue: { fontSize: 28, fontWeight: '900', color: SKATE.colors.neon },
+  statLabel: { fontSize: 14, color: SKATE.colors.gold },
+  section: { marginTop: 24 },
+  sectionTitle: { fontSize: 20, fontWeight: '900', color: SKATE.colors.blood, marginBottom: 8 },
+  tag: { backgroundColor: SKATE.colors.grime, color: SKATE.colors.paper, padding: 8, borderRadius: 20, marginRight: 8 },
+  badge: { width: 60, height: 60, marginRight: 8 },
+  buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 32 },
+  loading: { flex: 1, color: SKATE.colors.paper, textAlign: 'center', fontSize: 20, justifyContent: 'center' },
+});

@@ -1,5 +1,5 @@
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import ProfileScreen from '../app/profile/index';
+import ProfileScreen from './index';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../hooks/useAuth';

@@ -1,0 +1,1 @@
+{"version":3,"names":["hooks","setupHooks","next","Object","assign"],"sources":["../../src/setupHooks.ts"],"sourcesContent":[null],"mappings":"AAQO,MAAMA,KAAA,GAAuB,CAAC;AAG9B,SAASC,WAAWC,IAAA,EAAqB;EAC9CC,MAAA,CAAOC,MAAA,CAAOJ,KAAA,EAAOE,IAAI;AAC3B","ignoreList":[]}

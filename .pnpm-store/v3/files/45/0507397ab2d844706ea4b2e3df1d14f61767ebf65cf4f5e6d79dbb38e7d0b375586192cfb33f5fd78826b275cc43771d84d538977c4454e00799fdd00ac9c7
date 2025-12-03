@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/redA.ts"
+  ],
+  "sourcesContent": [
+    "export const redA = {\n  redA1: 'hsla(0, 100%, 51.0%, 0.012)',\n  redA2: 'hsla(0, 100%, 51.0%, 0.032)',\n  redA3: 'hsla(0, 100%, 50.2%, 0.063)',\n  redA4: 'hsla(0, 100%, 50.0%, 0.102)',\n  redA5: 'hsla(0, 99.9%, 47.5%, 0.153)',\n  redA6: 'hsla(0, 99.5%, 44.9%, 0.224)',\n  redA7: 'hsla(359, 99.7%, 42.7%, 0.318)',\n  redA8: 'hsla(359, 99.6%, 41.1%, 0.436)',\n  redA9: 'hsla(358, 99.9%, 42.9%, 0.718)',\n  redA10: 'hsla(358, 99.9%, 41.0%, 0.761)',\n  redA11: 'hsla(358, 99.8%, 38.3%, 0.832)',\n  redA12: 'hsla(355, 99.3%, 7.9%, 0.926)',\n}\n"
+  ],
+  "version": 3
+}

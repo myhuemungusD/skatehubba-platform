@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/goldA.ts"
+  ],
+  "sourcesContent": [
+    "export const goldA = {\n  goldA1: 'hsla(60, 89.3%, 18.3%, 0.012)',\n  goldA2: 'hsla(47, 99.9%, 34.6%, 0.051)',\n  goldA3: 'hsla(45, 97.0%, 27.9%, 0.087)',\n  goldA4: 'hsla(46, 98.0%, 25.4%, 0.134)',\n  goldA5: 'hsla(43, 98.4%, 22.6%, 0.185)',\n  goldA6: 'hsla(41, 99.7%, 22.0%, 0.259)',\n  goldA7: 'hsla(38, 99.8%, 21.5%, 0.357)',\n  goldA8: 'hsla(36, 99.3%, 21.5%, 0.487)',\n  goldA9: 'hsla(36, 99.9%, 16.2%, 0.604)',\n  goldA10: 'hsla(36, 99.2%, 14.6%, 0.636)',\n  goldA11: 'hsla(35, 99.1%, 11.2%, 0.687)',\n  goldA12: 'hsla(38, 98.0%, 3.8%, 0.832)',\n}\n"
+  ],
+  "version": 3
+}

@@ -1,0 +1,11 @@
+{
+  "mappings": "KAEK,yCAAyC,YAAY,YAAY;AAEtE,YAAY,iBAAiB,UAAU,OAAO,IAAI,UAAU;AAE5D,OAAO,iBAAS,yBAAyB,cAAc,yBACrD,QAAQ,iBAAiB,QACzB,QAAQ,YACP,MAAM,SAAS,MAAM,eAAe,QAAQ;AA4B/C,OAAO,iBAAS,uBAAuB,cAAc,yBACnD,MAAM,OACN,MAAM,QAAQ,SACb;AAQH,OAAO,iBAAS,eACd,MAAM,yBACN,MAAM",
+  "names": [],
+  "sources": [
+    "src/index.ts"
+  ],
+  "sourcesContent": [
+    "import { useCallback } from 'react'\n\ntype DebugProp = null | undefined | boolean | 'profile' | 'verbose' | 'break'\n\nexport type CallbackSetState<State> = (next: (cb: State) => State) => void\n\nexport function useCreateShallowSetState<State extends Record<string, unknown>>(\n  setter: CallbackSetState<State>,\n  debug?: DebugProp\n): React.Dispatch<React.SetStateAction<Partial<State>>> {\n  // this must be memoized or it ruins performance in components\n  return useCallback(\n    (stateOrGetState) => {\n      setter((prev) => {\n        const next =\n          typeof stateOrGetState === 'function' ? stateOrGetState(prev) : stateOrGetState\n        const update = mergeIfNotShallowEqual(prev, next)\n\n        if (process.env.NODE_ENV === 'development') {\n          if (debug && update !== prev) {\n            console.groupCollapsed(`setStateShallow CHANGE`, '=>', update)\n            console.info(`previously`, prev)\n            console.trace()\n            console.groupEnd()\n            if (debug === 'break') {\n              // biome-ignore lint/suspicious/noDebugger: <explanation>\n              debugger\n            }\n          }\n        }\n        return update\n      })\n    },\n    [setter, debug]\n  )\n}\n\nexport function mergeIfNotShallowEqual<State extends Record<string, unknown>>(\n  prev: State,\n  next: Partial<State>\n): State {\n  if (!prev || !next || isEqualShallow(prev, next)) {\n    if (!prev) return next as State\n    return prev\n  }\n  return { ...prev, ...next }\n}\n\nexport function isEqualShallow(\n  prev: Record<string, unknown>,\n  next: Record<string, unknown>\n): boolean {\n  for (const key in next) {\n    if (prev[key] !== next[key]) {\n      return false\n    }\n  }\n  return true\n}\n"
+  ],
+  "version": 3
+}

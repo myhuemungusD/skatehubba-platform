@@ -1,0 +1,71 @@
+{
+  "name": "@tamagui/sheet",
+  "version": "1.138.6",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "removeSideEffects": true,
+  "source": "src/index.ts",
+  "types": "./types/index.d.ts",
+  "main": "dist/cjs",
+  "module": "dist/esm",
+  "module:jsx": "dist/jsx",
+  "license": "MIT",
+  "files": [
+    "src",
+    "types",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tamagui-build",
+    "watch": "tamagui-build --watch",
+    "clean": "tamagui-build clean",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "react-native": {
+        "import": "./dist/esm/index.native.js",
+        "require": "./dist/cjs/index.native.js"
+      },
+      "types": "./types/index.d.ts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.cjs",
+      "default": "./dist/cjs/index.native.js"
+    }
+  },
+  "dependencies": {
+    "@tamagui/adapt": "1.138.6",
+    "@tamagui/animate-presence": "1.138.6",
+    "@tamagui/animations-react-native": "1.138.6",
+    "@tamagui/compose-refs": "1.138.6",
+    "@tamagui/constants": "1.138.6",
+    "@tamagui/core": "1.138.6",
+    "@tamagui/create-context": "1.138.6",
+    "@tamagui/helpers": "1.138.6",
+    "@tamagui/portal": "1.138.6",
+    "@tamagui/remove-scroll": "1.138.6",
+    "@tamagui/scroll-view": "1.138.6",
+    "@tamagui/stacks": "1.138.6",
+    "@tamagui/use-constant": "1.138.6",
+    "@tamagui/use-controllable-state": "1.138.6",
+    "@tamagui/use-did-finish-ssr": "1.138.6",
+    "@tamagui/use-keyboard-visible": "1.138.6",
+    "@tamagui/z-index-stack": "1.138.6"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@tamagui/build": "1.138.6",
+    "react": "*",
+    "react-native": "0.81.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

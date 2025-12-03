@@ -1,0 +1,101 @@
+import { AnimatePresence, ResetPresence } from "@tamagui/animate-presence";
+import { composeEventHandlers, withStaticProperties } from "@tamagui/helpers";
+import { useControllableState } from "@tamagui/use-controllable-state";
+import { Stack, createStyledContext, styled } from "@tamagui/web";
+import * as React from "react";
+import { jsx } from "react/jsx-runtime";
+const COLLAPSIBLE_NAME = "Collapsible",
+  {
+    Provider: CollapsibleProvider,
+    useStyledContext: useCollapsibleContext
+  } = createStyledContext(),
+  _Collapsible = React.forwardRef((props, forwardedRef) => {
+    const {
+        __scopeCollapsible,
+        open: openProp,
+        defaultOpen,
+        disabled,
+        onOpenChange,
+        ...collapsibleProps
+      } = props,
+      [open = !1, setOpen] = useControllableState({
+        prop: openProp,
+        defaultProp: defaultOpen,
+        onChange: onOpenChange
+      });
+    return /* @__PURE__ */jsx(CollapsibleProvider, {
+      scope: __scopeCollapsible,
+      disabled,
+      contentId: React.useId(),
+      open,
+      onOpenToggle: React.useCallback(() => setOpen(prevOpen => !prevOpen), [setOpen]),
+      children: /* @__PURE__ */jsx(Stack, {
+        "data-state": getState(open),
+        "data-disabled": disabled ? "" : void 0,
+        ...collapsibleProps,
+        ref: forwardedRef
+      })
+    });
+  });
+_Collapsible.displayName = COLLAPSIBLE_NAME;
+const TRIGGER_NAME = "CollapsibleTrigger",
+  CollapsibleTriggerFrame = styled(Stack, {
+    name: TRIGGER_NAME,
+    tag: "button"
+  }),
+  CollapsibleTrigger = CollapsibleTriggerFrame.styleable((props, forwardedRef) => {
+    const {
+        __scopeCollapsible,
+        children,
+        ...triggerProps
+      } = props,
+      context = useCollapsibleContext(__scopeCollapsible);
+    return /* @__PURE__ */jsx(CollapsibleTriggerFrame, {
+      "aria-controls": context.contentId,
+      "aria-expanded": context.open || !1,
+      "data-state": getState(context.open),
+      "data-disabled": context.disabled ? "" : void 0,
+      disabled: context.disabled,
+      ...triggerProps,
+      ref: forwardedRef,
+      onPress: composeEventHandlers(props.onPress, context.onOpenToggle),
+      children: typeof children == "function" ? children({
+        open: context.open
+      }) : children
+    });
+  });
+CollapsibleTrigger.displayName = TRIGGER_NAME;
+const CONTENT_NAME = "CollapsibleContent",
+  CollapsibleContentFrame = styled(Stack, {
+    name: CONTENT_NAME
+  }),
+  CollapsibleContent = CollapsibleContentFrame.styleable((props, forwardedRef) => {
+    const {
+        forceMount,
+        children,
+        // @ts-expect-error
+        __scopeCollapsible,
+        ...contentProps
+      } = props,
+      context = useCollapsibleContext(__scopeCollapsible);
+    return /* @__PURE__ */jsx(AnimatePresence, {
+      ...contentProps,
+      children: forceMount || context.open ? /* @__PURE__ */jsx(CollapsibleContentFrame, {
+        ref: forwardedRef,
+        ...contentProps,
+        children: /* @__PURE__ */jsx(ResetPresence, {
+          children
+        })
+      }) : null
+    });
+  });
+CollapsibleContent.displayName = CONTENT_NAME;
+function getState(open) {
+  return open ? "open" : "closed";
+}
+const Collapsible = withStaticProperties(_Collapsible, {
+  Trigger: CollapsibleTrigger,
+  Content: CollapsibleContent
+});
+export { Collapsible, CollapsibleContent, CollapsibleContentFrame, CollapsibleTrigger, CollapsibleTriggerFrame };
+//# sourceMappingURL=Collapsible.mjs.map

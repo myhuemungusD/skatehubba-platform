@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/pinkA.ts"
+  ],
+  "sourcesContent": [
+    "export const pinkA = {\n  pinkA1: 'hsla(320, 100%, 51.0%, 0.012)',\n  pinkA2: 'hsla(323, 100%, 51.0%, 0.032)',\n  pinkA3: 'hsla(323, 98.9%, 47.3%, 0.067)',\n  pinkA4: 'hsla(323, 99.9%, 44.3%, 0.102)',\n  pinkA5: 'hsla(324, 99.9%, 42.3%, 0.153)',\n  pinkA6: 'hsla(323, 99.5%, 39.6%, 0.224)',\n  pinkA7: 'hsla(323, 99.7%, 38.5%, 0.322)',\n  pinkA8: 'hsla(323, 99.5%, 37.7%, 0.444)',\n  pinkA9: 'hsla(322, 99.7%, 39.3%, 0.750)',\n  pinkA10: 'hsla(322, 100%, 39.1%, 0.808)',\n  pinkA11: 'hsla(322, 99.8%, 39.0%, 0.887)',\n  pinkA12: 'hsla(321, 99.8%, 10.0%, 0.961)',\n}\n"
+  ],
+  "version": 3
+}

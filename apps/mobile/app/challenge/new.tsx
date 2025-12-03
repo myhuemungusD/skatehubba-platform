@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert, Dimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Camera, useCameraDevices, useCameraPermission } from 'react-native-vision-camera';
+import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { storage, db, functions } from '@/lib/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,10 +22,8 @@ export default function NewChallengeScreen() {
   const [recordedUri, setRecordedUri] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const camera = useRef<Camera>(null);
-  const devices = useCameraDevices();
+  const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
-
-  const device = devices.back;
 
   if (!hasPermission) {
     requestPermission().then((granted) => {
@@ -41,7 +39,7 @@ export default function NewChallengeScreen() {
       const blob = await response.blob();
       if (blob.size > 8 * 1024 * 1024) throw new Error('Video exceeds 8MB limit');
 
-      const challengeRef = doc(db, 'challenges', doc().id);
+      const challengeRef = doc(collection(db, 'challenges'));
       const challengeData = {
         createdBy: user.uid,
         opponent: opponentHandle,
@@ -60,9 +58,10 @@ export default function NewChallengeScreen() {
     },
     onMutate: () => setUploadProgress(0),
     onSuccess: (challengeId) => {
+      if (!user) return;
       queryClient.invalidateQueries({ queryKey: ['challenges', user.uid] });
       Alert.alert('Challenge Sent!', `Your one-take is live. ${opponentHandle} has 24h to reply.`);
-      router.push(`/challenge/${challengeId}`);
+      router.push(`/challenge/${challengeId}` as any);
     },
     onError: (err) => Alert.alert('Upload Failed', err.message),
   });
@@ -71,13 +70,19 @@ export default function NewChallengeScreen() {
     if (camera.current && !isRecording) {
       setIsRecording(true);
       await camera.current.startRecording({
-        maxDuration: RECORD_DURATION,
         onRecordingFinished: (video) => {
             setIsRecording(false);
             setRecordedUri(video.path);
         },
         onRecordingError: (error) => console.error(error)
       });
+      
+      setTimeout(async () => {
+        if (camera.current) {
+            await camera.current.stopRecording();
+            setIsRecording(false);
+        }
+      }, RECORD_DURATION * 1000);
     }
   };
 

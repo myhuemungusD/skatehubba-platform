@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/skyA.ts"
+  ],
+  "sourcesContent": [
+    "export const skyA = {\n  skyA1: 'hsla(190, 100%, 51.0%, 0.024)',\n  skyA2: 'hsla(193, 100%, 50.1%, 0.055)',\n  skyA3: 'hsla(193, 100%, 50.1%, 0.106)',\n  skyA4: 'hsla(194, 99.6%, 47.7%, 0.165)',\n  skyA5: 'hsla(194, 99.2%, 45.4%, 0.244)',\n  skyA6: 'hsla(194, 99.9%, 42.3%, 0.357)',\n  skyA7: 'hsla(194, 99.8%, 42.2%, 0.526)',\n  skyA8: 'hsla(193, 99.9%, 43.8%, 0.820)',\n  skyA9: 'hsla(193, 99.7%, 49.4%, 0.593)',\n  skyA10: 'hsla(193, 99.8%, 46.6%, 0.628)',\n  skyA11: 'hsla(196, 100%, 31.2%, 0.980)',\n  skyA12: 'hsla(196, 100%, 12.2%, 0.980)',\n}\n"
+  ],
+  "version": 3
+}

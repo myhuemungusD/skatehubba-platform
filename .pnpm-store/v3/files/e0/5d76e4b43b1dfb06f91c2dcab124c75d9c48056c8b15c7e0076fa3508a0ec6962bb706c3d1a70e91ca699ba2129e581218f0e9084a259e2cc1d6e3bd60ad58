@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../../src/hooks/doesRootSchemeMatchSystem.ts"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,SAAS,4BAA4B;AAE1C,SAAO;AACT;",
+  "names": []
+}

@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/dark/tealA.ts"
+  ],
+  "sourcesContent": [
+    "export const tealA = {\n  tealA1: 'hsla(0, 0%, 0%, 0)',\n  tealA2: 'hsla(171, 100%, 49.2%, 0.031)',\n  tealA3: 'hsla(172, 100%, 49.7%, 0.070)',\n  tealA4: 'hsla(175, 100%, 49.7%, 0.105)',\n  tealA5: 'hsla(174, 98.9%, 50.1%, 0.140)',\n  tealA6: 'hsla(174, 100%, 51.8%, 0.187)',\n  tealA7: 'hsla(173, 99.6%, 53.2%, 0.257)',\n  tealA8: 'hsla(174, 99.6%, 53.3%, 0.366)',\n  tealA9: 'hsla(173, 99.9%, 54.6%, 0.609)',\n  tealA10: 'hsla(174, 99.9%, 53.8%, 0.670)',\n  tealA11: 'hsla(174, 100%, 52.0%, 0.748)',\n  tealA12: 'hsla(166, 98.6%, 95.0%, 0.979)',\n}\n"
+  ],
+  "version": 3
+}

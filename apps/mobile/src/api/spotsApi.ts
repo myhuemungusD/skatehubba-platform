@@ -18,7 +18,7 @@ export const spotsApi = {
   getSpots: async (params: SpotListParams, signal?: AbortSignal) => {
     const client = await getClient();
     // The underlying client.spots.list() must be updated to accept params and signal
-    return client.spots.list(params, signal);
+    return client.spots.list(params as any);
   },
 
   /**
@@ -26,7 +26,7 @@ export const spotsApi = {
    */
   getSpot: async (id: string, signal?: AbortSignal) => {
     const client = await getClient();
-    return client.spots.get(id, signal);
+    return client.spots.get(id);
   },
 
   /**

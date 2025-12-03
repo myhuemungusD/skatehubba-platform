@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/index.ts"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,mBAAwD;AAEjD,MAAM,kBAAkB,CAAC,aAA6C;AAMzE,mBAAAA,iBAAqB,QAAQ;AAEjC;",
+  "names": ["reactStartTransition"]
+}

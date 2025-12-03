@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,cAAc",
+  "names": [],
+  "sources": [
+    "src/index.ts"
+  ],
+  "sourcesContent": [
+    "export * from './createAnimations'\n"
+  ],
+  "version": 3
+}

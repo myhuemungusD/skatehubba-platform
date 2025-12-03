@@ -1,0 +1,16 @@
+import * as React from "react";
+function setRef(ref, value) {
+  typeof ref == "function" ? ref(value) : ref && (ref.current = value);
+}
+function composeRefs(...refs) {
+  return (node) => refs.forEach((ref) => setRef(ref, node));
+}
+function useComposedRefs(...refs) {
+  return React.useCallback(composeRefs(...refs), refs);
+}
+export {
+  composeRefs,
+  setRef,
+  useComposedRefs
+};
+//# sourceMappingURL=compose-refs.js.map

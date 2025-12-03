@@ -1,0 +1,11 @@
+{
+  "mappings": "",
+  "names": [],
+  "sources": [
+    "src/polyfill.ts"
+  ],
+  "sourcesContent": [
+    "// for SSR\nif (typeof requestAnimationFrame === 'undefined') {\n  globalThis['requestAnimationFrame'] = setTimeout\n}\n\n// for reanimated\nif (typeof global === 'undefined') {\n  globalThis['global'] = globalThis\n}\n"
+  ],
+  "version": 3
+}

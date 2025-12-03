@@ -1,0 +1,1 @@
+{"version":3,"names":["prevent","e","preventDefault","stopPropagation"],"sources":["../../src/prevent.tsx"],"sourcesContent":[null],"mappings":"AAAO,MAAMA,OAAA,GAAWC,CAAA,IAAM,CAACA,CAAA,CAAEC,cAAA,CAAe,GAAGD,CAAA,CAAEE,eAAA,CAAgB,CAAC","ignoreList":[]}

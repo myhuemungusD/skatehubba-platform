@@ -17,8 +17,8 @@ import Animated, {
   useSharedValue, 
   withSpring 
 } from 'react-native-reanimated';
-import { db } from '../../firebase'; // Ensure this path is correct for your repo
-import { useAuth } from '../../hooks/useAuth'; // Ensure this hook exists
+import { db } from '@/lib/firebase'; // Ensure this path is correct for your repo
+import { useAuth } from '@/hooks/useAuth'; // Ensure this hook exists
 // We'll use a standard TouchableOpacity if GrittyButton isn't available in context yet, 
 // but designed to match the theme.
 import type { UserProfile, AvatarItem } from '@skatehubba/types';
@@ -163,9 +163,9 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>CAREER STATS</Text>
           <View style={styles.statsGrid}>
             <StatBox label="WINS" value={profile.stats.wins} color={COLORS.green} />
-            <StatBox label="RANK" value={profile.stats.rank} color={COLORS.orange} />
-            <StatBox label="BUCKS" value={profile.extendedStats?.hubbaBucks || 0} color="#FFD700" />
-            <StatBox label="KM SKATED" value={profile.extendedStats?.distanceSkated || 0} color="#00BFFF" />
+            <StatBox label="RANK" value={profile.stats.rank || 0} color={COLORS.orange} />
+            <StatBox label="BUCKS" value={profile.stats.hubbaBucks || 0} color="#FFD700" />
+            <StatBox label="KM SKATED" value={profile.stats.distanceSkated || 0} color="#00BFFF" />
           </View>
         </View>
 

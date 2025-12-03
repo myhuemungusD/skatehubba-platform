@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { GrittyButton } from '@skatehubba/ui';
 import { getSpotById, getSpotCheckIns } from '@/lib/firebase/spots';
@@ -17,9 +17,9 @@ export async function generateMetadata({ params }: SpotPageProps): Promise<Metad
 
   return {
     title: `${spot.name} – SkateHubba™`,
-    description: `${spot.checkIns || 0} check-ins • ${spot.difficulty || 'Unknown'} • ${spot.city || 'Worldwide'}`,
+    description: `${spot.difficulty || 'Unknown'} • Worldwide`,
     openGraph: {
-      images: [spot.photoUrl || '/og-default.jpg'],
+      images: [spot.imageUrl || '/og-default.jpg'],
     },
   };
 }
@@ -35,7 +35,7 @@ export default async function SpotPage({ params }: SpotPageProps) {
       {/* Hero */}
       <div className="relative h-96 overflow-hidden">
         <Image
-          src={spot.photoUrl || '/spots/placeholder.jpg'}
+          src={spot.imageUrl || '/spots/placeholder.jpg'}
           alt={spot.name}
           fill
           className="object-cover brightness-75"
@@ -45,7 +45,7 @@ export default async function SpotPage({ params }: SpotPageProps) {
         <div className="absolute bottom-8 left-8">
           <h1 className="text-6xl font-black text-neon drop-shadow-lg">{spot.name}</h1>
           <p className="text-2xl text-gold mt-2">
-            {spot.city} • {spot.difficulty || 'Unknown'} • {checkIns.length} check-ins
+            {spot.difficulty || 'Unknown'} • {checkIns.length} check-ins
           </p>
         </div>
       </div>
@@ -56,14 +56,16 @@ export default async function SpotPage({ params }: SpotPageProps) {
           <div>
             <h2 className="text-3xl font-bold text-neon mb-6">Location</h2>
             <MapPreview
-              center={[spot.lng, spot.lat]}
+              center={[spot.longitude, spot.latitude]}
               zoom={15}
-              marker={{ lat: spot.lat, lng: spot.lng, name: spot.name }}
+              marker={{ lat: spot.latitude, lng: spot.longitude, name: spot.name }}
               className="h-96 rounded-2xl border-4 border-neon shadow-grit"
             />
-            <GrittyButton className="w-full mt-6" size="lg">
-              CHECK IN NOW
-            </GrittyButton>
+            <div className="w-full mt-6">
+              <GrittyButton onPress={() => {}} size="lg" style={{ width: '100%' }}>
+                CHECK IN NOW
+              </GrittyButton>
+            </div>
           </div>
 
           {/* Stats + Latest Clips */}

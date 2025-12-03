@@ -1,0 +1,14 @@
+{
+  "mappings": "AAEA,YAAY,WAAW;KAElB,YAAY,QAAQ;UAGf,uBAAuB;CAC/B,WAAW,MAAM;CACjB,KAAK;;AAGP,OAAO,cAAMA,mBAAmB,MAAM,GAAG;AAKzC,OAAO,iBAAS,aAAa,WAAW,YAAY;AAKpD,OAAO,cAAMC,UAAU,MAAM,GAAG",
+  "names": [
+    "DirectionProvider: React.FC<DirectionProviderProps>",
+    "Provider: React.FC<DirectionProviderProps>"
+  ],
+  "sources": [
+    "src/useDirection.tsx"
+  ],
+  "sourcesContent": [
+    "// forked from https://github.com/radix-ui/primitives/blob/main/packages/react/direction/src/Direction.tsx\n\nimport * as React from 'react'\n\ntype Direction = 'ltr' | 'rtl'\nconst DirectionContext = React.createContext<Direction | undefined>(undefined)\n\ninterface DirectionProviderProps {\n  children?: React.ReactNode\n  dir: Direction\n}\n\nexport const DirectionProvider: React.FC<DirectionProviderProps> = (props) => {\n  const { dir, children } = props\n  return <DirectionContext.Provider value={dir}>{children}</DirectionContext.Provider>\n}\n\nexport function useDirection(localDir?: Direction): Direction {\n  const globalDir = React.useContext(DirectionContext)\n  return localDir || globalDir || 'ltr'\n}\n\nexport const Provider: React.FC<DirectionProviderProps> = DirectionProvider\n"
+  ],
+  "version": 3
+}

@@ -1,0 +1,24 @@
+import { ThemeableStack } from "@tamagui/stacks";
+import { styled } from "@tamagui/web";
+import { getShapeSize } from "./getShapeSize";
+const Square = styled(
+  ThemeableStack,
+  {
+    name: "Square",
+    alignItems: "center",
+    justifyContent: "center",
+    variants: {
+      size: {
+        "...size": getShapeSize,
+        ":number": getShapeSize
+      }
+    }
+  },
+  {
+    memo: !0
+  }
+);
+export {
+  Square
+};
+//# sourceMappingURL=Square.js.map

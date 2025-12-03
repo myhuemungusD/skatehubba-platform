@@ -1,0 +1,1 @@
+{"version":3,"file":"ExampleMetadata.d.ts","sourceRoot":"","sources":["../../../../../../example/src/examples/common/ExampleMetadata.ts"],"names":[],"mappings":"AAAA,MAAM,MAAM,eAAe,GAAG;IAC5B,KAAK,EAAE,MAAM,CAAC;IACd,IAAI,EAAE,MAAM,EAAE,CAAC;IACf,IAAI,EAAE,MAAM,CAAC;CACd,CAAC;AAEF,MAAM,MAAM,mBAAmB,GAAG,KAAK,CAAC,aAAa,GAAG;IACtD,QAAQ,EAAE,eAAe,CAAC;CAC3B,CAAC"}

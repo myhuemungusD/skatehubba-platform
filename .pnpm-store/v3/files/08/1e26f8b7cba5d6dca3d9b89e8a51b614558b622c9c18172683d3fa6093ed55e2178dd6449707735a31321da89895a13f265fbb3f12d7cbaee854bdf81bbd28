@@ -1,0 +1,484 @@
+"use strict";
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+    for (var name in all) __defProp(target, name, {
+      get: all[name],
+      enumerable: !0
+    });
+  },
+  __copyProps = (to, from, except, desc) => {
+    if (from && typeof from == "object" || typeof from == "function") for (let key of __getOwnPropNames(from)) !__hasOwnProp.call(to, key) && key !== except && __defProp(to, key, {
+      get: () => from[key],
+      enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+    });
+    return to;
+  };
+var __toCommonJS = mod => __copyProps(__defProp({}, "__esModule", {
+  value: !0
+}), mod);
+var v2_themes_exports = {};
+__export(v2_themes_exports, {
+  maskOptions: () => maskOptions,
+  masks: () => import_theme_builder2.masks,
+  palettes: () => palettes,
+  templates: () => templates,
+  themes: () => themes,
+  tokens: () => tokens
+});
+module.exports = __toCommonJS(v2_themes_exports);
+var import_theme_builder = require("@tamagui/theme-builder"),
+  import_colors = require("@tamagui/colors"),
+  import_web = require("@tamagui/web"),
+  import_theme_builder2 = require("@tamagui/theme-builder"),
+  colorTokens = {
+    light: {
+      blue: import_colors.blue,
+      gray: import_colors.gray,
+      green: import_colors.green,
+      orange: import_colors.orange,
+      pink: import_colors.pink,
+      purple: import_colors.purple,
+      red: import_colors.red,
+      yellow: import_colors.yellow
+    },
+    dark: {
+      blue: import_colors.blueDark,
+      gray: import_colors.grayDark,
+      green: import_colors.greenDark,
+      orange: import_colors.orangeDark,
+      pink: import_colors.pinkDark,
+      purple: import_colors.purpleDark,
+      red: import_colors.redDark,
+      yellow: import_colors.yellowDark
+    }
+  },
+  palettes = function () {
+    var lightTransparent = "rgba(255,255,255,0)",
+      darkTransparent = "rgba(10,10,10,0)",
+      transparent = function (hsl) {
+        var opacity = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
+        return hsl.replace("%)", `%, ${opacity})`).replace("hsl(", "hsla(");
+      },
+      getColorPalette = function (colors) {
+        var color2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : colors[0],
+          colorPalette = Object.values(colors),
+          [head, tail] = [colorPalette.slice(0, 6), colorPalette.slice(colorPalette.length - 5)];
+        return [transparent(colorPalette[0]), ...head, ...tail, color2, transparent(colorPalette[colorPalette.length - 1])];
+      },
+      lightColor = "hsl(0, 0%, 9.0%)",
+      lightPalette = [lightTransparent, "#fff", "#f8f8f8", "hsl(0, 0%, 96.3%)", "hsl(0, 0%, 94.1%)", "hsl(0, 0%, 92.0%)", "hsl(0, 0%, 90.0%)", "hsl(0, 0%, 88.5%)", "hsl(0, 0%, 81.0%)", "hsl(0, 0%, 56.1%)", "hsl(0, 0%, 50.3%)", "hsl(0, 0%, 42.5%)", lightColor, darkTransparent],
+      darkColor = "#fff",
+      darkPalette = [darkTransparent, "#050505", "#151515", "#191919", "#232323", "#282828", "#323232", "#424242", "#494949", "#545454", "#626262", "#a5a5a5", darkColor, lightTransparent],
+      lightPalettes = objectFromEntries(objectKeys(colorTokens.light).map(function (key) {
+        return [`light_${key}`, getColorPalette(colorTokens.light[key], lightColor)];
+      })),
+      darkPalettes = objectFromEntries(objectKeys(colorTokens.dark).map(function (key) {
+        return [`dark_${key}`, getColorPalette(colorTokens.dark[key], darkColor)];
+      })),
+      colorPalettes = {
+        ...lightPalettes,
+        ...darkPalettes
+      };
+    return {
+      light: lightPalette,
+      dark: darkPalette,
+      ...colorPalettes
+    };
+  }(),
+  templateColorsSpecific = {
+    color1: 1,
+    color2: 2,
+    color3: 3,
+    color4: 4,
+    color5: 5,
+    color6: 6,
+    color7: 7,
+    color8: 8,
+    color9: 9,
+    color10: 10,
+    color11: 11,
+    color12: 12
+  },
+  templates = function () {
+    var template = {
+      ...templateColorsSpecific,
+      // the background, color, etc keys here work like generics - they make it so you
+      // can publish components for others to use without mandating a specific color scale
+      // the @tamagui/button Button component looks for `$background`, so you set the
+      // dark_red_Button theme to have a stronger background than the dark_red theme.
+      background: 2,
+      backgroundHover: 3,
+      backgroundPress: 4,
+      backgroundFocus: 5,
+      backgroundStrong: 1,
+      backgroundTransparent: 0,
+      color: -1,
+      colorHover: -2,
+      colorPress: -1,
+      colorFocus: -2,
+      colorTransparent: -0,
+      borderColor: 5,
+      borderColorHover: 6,
+      borderColorFocus: 4,
+      borderColorPress: 5,
+      placeholderColor: -4,
+      // in the future this should be partially transparent
+      outlineColor: 5
+    };
+    return {
+      base: template,
+      colorLight: {
+        ...template,
+        // light color themes are a bit less sensitive
+        borderColor: 4,
+        borderColorHover: 5,
+        borderColorFocus: 4,
+        borderColorPress: 4
+      }
+    };
+  }(),
+  maskOptions = function () {
+    var shadows2 = {
+        shadowColor: 0,
+        shadowColorHover: 0,
+        shadowColorPress: 0,
+        shadowColorFocus: 0
+      },
+      colors = {
+        ...shadows2,
+        color: 0,
+        colorHover: 0,
+        colorFocus: 0,
+        colorPress: 0
+      },
+      baseMaskOptions = {
+        override: shadows2,
+        skip: shadows2,
+        // avoids the transparent ends
+        max: palettes.light.length - 2,
+        min: 1
+      },
+      skipShadowsAndSpecificColors = {
+        ...shadows2,
+        ...templateColorsSpecific
+      };
+    return {
+      component: {
+        ...baseMaskOptions,
+        override: colors,
+        skip: skipShadowsAndSpecificColors
+      },
+      alt: {
+        ...baseMaskOptions
+      },
+      button: {
+        ...baseMaskOptions,
+        override: {
+          ...colors,
+          borderColor: "transparent",
+          borderColorHover: "transparent"
+        },
+        skip: skipShadowsAndSpecificColors
+      }
+    };
+  }(),
+  lightShadowColor = "rgba(0,0,0,0.04)",
+  lightShadowColorStrong = "rgba(0,0,0,0.085)",
+  darkShadowColor = "rgba(0,0,0,0.2)",
+  darkShadowColorStrong = "rgba(0,0,0,0.3)",
+  size = {
+    $0: 0,
+    "$0.25": 2,
+    "$0.5": 4,
+    "$0.75": 8,
+    $1: 20,
+    "$1.5": 24,
+    $2: 28,
+    "$2.5": 32,
+    $3: 36,
+    "$3.5": 40,
+    $4: 44,
+    $true: 44,
+    "$4.5": 48,
+    $5: 52,
+    $6: 64,
+    $7: 74,
+    $8: 84,
+    $9: 94,
+    $10: 104,
+    $11: 124,
+    $12: 144,
+    $13: 164,
+    $14: 184,
+    $15: 204,
+    $16: 224,
+    $17: 224,
+    $18: 244,
+    $19: 264,
+    $20: 284
+  },
+  spaces = Object.entries(size).map(function (param) {
+    var [k, v] = param;
+    return [k, sizeToSpace(v)];
+  }),
+  spacesNegative = spaces.slice(1).map(function (param) {
+    var [k, v] = param;
+    return [`-${k.slice(1)}`, -v];
+  }),
+  space = {
+    ...Object.fromEntries(spaces),
+    ...Object.fromEntries(spacesNegative)
+  },
+  zIndex = {
+    0: 0,
+    1: 100,
+    2: 200,
+    3: 300,
+    4: 400,
+    5: 500
+  },
+  darkColors = {
+    ...colorTokens.dark.blue,
+    ...colorTokens.dark.gray,
+    ...colorTokens.dark.green,
+    ...colorTokens.dark.orange,
+    ...colorTokens.dark.pink,
+    ...colorTokens.dark.purple,
+    ...colorTokens.dark.red,
+    ...colorTokens.dark.yellow
+  },
+  lightColors = {
+    ...colorTokens.light.blue,
+    ...colorTokens.light.gray,
+    ...colorTokens.light.green,
+    ...colorTokens.light.orange,
+    ...colorTokens.light.pink,
+    ...colorTokens.light.purple,
+    ...colorTokens.light.red,
+    ...colorTokens.light.yellow
+  },
+  color = {
+    ...postfixObjKeys(lightColors, "Light"),
+    ...postfixObjKeys(darkColors, "Dark")
+  },
+  radius = {
+    0: 0,
+    1: 3,
+    2: 5,
+    3: 7,
+    4: 9,
+    true: 9,
+    5: 10,
+    6: 16,
+    7: 19,
+    8: 22,
+    9: 26,
+    10: 34,
+    11: 42,
+    12: 50
+  },
+  tokens = (0, import_web.createTokens)({
+    color,
+    radius,
+    zIndex,
+    space,
+    size
+  }),
+  shadows = {
+    light: {
+      shadowColor: lightShadowColorStrong,
+      shadowColorHover: lightShadowColorStrong,
+      shadowColorPress: lightShadowColor,
+      shadowColorFocus: lightShadowColor
+    },
+    dark: {
+      shadowColor: darkShadowColorStrong,
+      shadowColorHover: darkShadowColorStrong,
+      shadowColorPress: darkShadowColor,
+      shadowColorFocus: darkShadowColor
+    }
+  },
+  colorThemeDefinition = function (colorName) {
+    return [{
+      parent: "light",
+      palette: colorName,
+      template: "colorLight"
+    }, {
+      parent: "dark",
+      palette: colorName,
+      template: "base"
+    }];
+  },
+  nonInherited = {
+    light: {
+      ...lightColors,
+      ...shadows.light
+    },
+    dark: {
+      ...darkColors,
+      ...shadows.dark
+    }
+  },
+  overlayThemeDefinitions = [{
+    parent: "light",
+    theme: {
+      background: "rgba(0,0,0,0.5)"
+    }
+  }, {
+    parent: "dark",
+    theme: {
+      background: "rgba(0,0,0,0.9)"
+    }
+  }],
+  themeBuilder = (0, import_theme_builder.createThemeBuilder)().addPalettes(palettes).addTemplates(templates).addMasks(import_theme_builder.masks).addThemes({
+    light: {
+      template: "base",
+      palette: "light",
+      nonInheritedValues: nonInherited.light
+    },
+    dark: {
+      template: "base",
+      palette: "dark",
+      nonInheritedValues: nonInherited.dark
+    }
+  }).addChildThemes({
+    orange: colorThemeDefinition("orange"),
+    yellow: colorThemeDefinition("yellow"),
+    green: colorThemeDefinition("green"),
+    blue: colorThemeDefinition("blue"),
+    purple: colorThemeDefinition("purple"),
+    pink: colorThemeDefinition("pink"),
+    red: colorThemeDefinition("red"),
+    gray: colorThemeDefinition("gray")
+  }).addChildThemes({
+    alt1: {
+      mask: "soften",
+      ...maskOptions.alt
+    },
+    alt2: {
+      mask: "soften2Border1",
+      ...maskOptions.alt
+    },
+    active: {
+      mask: "soften3FlatBorder",
+      skip: {
+        color: 1
+      }
+    }
+  }).addComponentThemes({
+    ListItem: [{
+      parent: "light",
+      avoidNestingWithin: ["active"],
+      mask: "identity",
+      ...maskOptions.component
+    }, {
+      parent: "dark",
+      avoidNestingWithin: ["active"],
+      mask: "identity",
+      ...maskOptions.component
+    }],
+    Card: {
+      mask: "soften",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    Button: {
+      mask: "soften2Border1",
+      ...maskOptions.component
+    },
+    Checkbox: {
+      mask: "softenBorder2",
+      ...maskOptions.component
+    },
+    Switch: {
+      mask: "soften2Border1",
+      ...maskOptions.component
+    },
+    SwitchThumb: {
+      mask: "inverseStrengthen2",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    TooltipContent: {
+      mask: "soften2Border1",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    DrawerFrame: {
+      mask: "soften",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    Progress: {
+      mask: "soften",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    RadioGroupItem: {
+      mask: "softenBorder2",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    TooltipArrow: {
+      mask: "soften",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    SliderTrackActive: {
+      mask: "inverseSoften",
+      ...maskOptions.component
+    },
+    SliderTrack: {
+      mask: "soften2Border1",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    SliderThumb: {
+      mask: "inverse",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    Tooltip: {
+      mask: "inverse",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    ProgressIndicator: {
+      mask: "inverse",
+      avoidNestingWithin: ["active"],
+      ...maskOptions.component
+    },
+    SheetOverlay: overlayThemeDefinitions,
+    DialogOverlay: overlayThemeDefinitions,
+    ModalOverlay: overlayThemeDefinitions,
+    Input: {
+      mask: "softenBorder2",
+      ...maskOptions.component
+    },
+    TextArea: {
+      mask: "softenBorder2",
+      ...maskOptions.component
+    }
+  }, {}),
+  themesIn = themeBuilder.build(),
+  themes = themesIn;
+function postfixObjKeys(obj, postfix) {
+  return Object.fromEntries(Object.entries(obj).map(function (param) {
+    var [k, v] = param;
+    return [`${k}${postfix}`, v];
+  }));
+}
+function sizeToSpace(v) {
+  return v === 0 ? 0 : v === 2 ? 0.5 : v === 4 ? 1 : v === 8 ? 1.5 : v <= 16 ? Math.round(v * 0.333) : Math.floor(v * 0.7 - 12);
+}
+function objectFromEntries(arr) {
+  return Object.fromEntries(arr);
+}
+function objectKeys(obj) {
+  return Object.keys(obj);
+}
+//# sourceMappingURL=v2-themes.native.js.map

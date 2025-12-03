@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/dark/greenA.ts"
+  ],
+  "sourcesContent": [
+    "export const greenA = {\n  greenA1: 'hsla(0, 0%, 0%, 0)',\n  greenA2: 'hsla(169, 100%, 48.5%, 0.027)',\n  greenA3: 'hsla(162, 98.7%, 57.9%, 0.070)',\n  greenA4: 'hsla(158, 98.6%, 59.7%, 0.105)',\n  greenA5: 'hsla(158, 98.6%, 60.7%, 0.140)',\n  greenA6: 'hsla(156, 99.9%, 62.0%, 0.187)',\n  greenA7: 'hsla(154, 99.5%, 63.1%, 0.257)',\n  greenA8: 'hsla(152, 99.7%, 64.2%, 0.370)',\n  greenA9: 'hsla(151, 99.7%, 63.8%, 0.605)',\n  greenA10: 'hsla(152, 99.9%, 66.5%, 0.661)',\n  greenA11: 'hsla(151, 99.7%, 69.2%, 0.740)',\n  greenA12: 'hsla(137, 100%, 95.8%, 0.980)',\n}\n"
+  ],
+  "version": 3
+}

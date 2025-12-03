@@ -1,0 +1,47 @@
+import { composeRefs } from "@tamagui/compose-refs";
+import { isWeb } from "@tamagui/constants";
+import { composeEventHandlers } from "@tamagui/helpers";
+import { Children, cloneElement, forwardRef, isValidElement, version, memo } from "react";
+import { Fragment, jsx } from "react/jsx-runtime";
+const is19 = version.startsWith("19."), Slot = memo(
+  forwardRef(function(props, forwardedRef) {
+    const { children, ...slotProps } = props;
+    if (isValidElement(children)) {
+      const mergedProps = mergeSlotProps(children, slotProps);
+      return cloneElement(
+        children,
+        children.type.avoidForwardRef ? mergedProps : {
+          ...mergedProps,
+          ref: composeRefs(
+            forwardedRef,
+            is19 ? children.props.ref : children.ref
+          )
+        }
+      );
+    }
+    return Children.count(children) > 1 ? Children.only(null) : null;
+  })
+), Slottable = ({ children }) => /* @__PURE__ */ jsx(Fragment, { children });
+Slottable.displayName = "Slottable";
+const pressMap = isWeb ? {
+  onPress: "onClick",
+  onPressOut: "onMouseUp",
+  onPressIn: "onMouseDown"
+} : {};
+function mergeSlotProps(child, slotProps) {
+  const childProps = child.props, overrideProps = { ...childProps }, isHTMLChild = typeof child.type == "string";
+  if (isHTMLChild)
+    for (const key in pressMap)
+      key in slotProps && (slotProps[pressMap[key]] = slotProps[key], delete slotProps[key]);
+  for (let propName in childProps) {
+    const slotPropValue = slotProps[propName], childPropValue = childProps[propName];
+    isHTMLChild && propName in pressMap && (propName = pressMap[propName], delete overrideProps[propName]), handleRegex.test(propName) ? overrideProps[propName] = composeEventHandlers(childPropValue, slotPropValue) : propName === "style" ? overrideProps[propName] = { ...slotPropValue, ...childPropValue } : propName === "className" && (overrideProps[propName] = [slotPropValue, childPropValue].filter(Boolean).join(" "));
+  }
+  return { ...slotProps, ...overrideProps };
+}
+const handleRegex = /^on[A-Z]/;
+export {
+  Slot,
+  Slottable
+};
+//# sourceMappingURL=Slot.js.map

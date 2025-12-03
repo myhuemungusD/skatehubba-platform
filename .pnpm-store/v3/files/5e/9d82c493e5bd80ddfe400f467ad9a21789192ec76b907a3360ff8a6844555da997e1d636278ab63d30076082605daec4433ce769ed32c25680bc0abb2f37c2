@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": ["../../src/CheckboxStyledContext.tsx"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AACA,kBAAoC;AAE7B,MAAM,4BAAwB,iCAAoB;AAAA,EACvD,MAAM;AAAA,EACN,WAAW;AACb,CAAC;",
+  "names": []
+}

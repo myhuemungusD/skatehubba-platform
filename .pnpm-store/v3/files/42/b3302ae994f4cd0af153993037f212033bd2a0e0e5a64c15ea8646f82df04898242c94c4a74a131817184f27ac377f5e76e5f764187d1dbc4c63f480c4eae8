@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/dark/slate.ts"
+  ],
+  "sourcesContent": [
+    "export const slate = {\n  slate1: 'hsl(200, 7.0%, 8.8%)',\n  slate2: 'hsl(195, 7.1%, 11.0%)',\n  slate3: 'hsl(197, 6.8%, 13.6%)',\n  slate4: 'hsl(198, 6.6%, 15.8%)',\n  slate5: 'hsl(199, 6.4%, 17.9%)',\n  slate6: 'hsl(201, 6.2%, 20.5%)',\n  slate7: 'hsl(203, 6.0%, 24.3%)',\n  slate8: 'hsl(207, 5.6%, 31.6%)',\n  slate9: 'hsl(206, 6.0%, 43.9%)',\n  slate10: 'hsl(206, 5.2%, 49.5%)',\n  slate11: 'hsl(206, 6.0%, 63.0%)',\n  slate12: 'hsl(210, 6.0%, 93.0%)',\n}\n"
+  ],
+  "version": 3
+}

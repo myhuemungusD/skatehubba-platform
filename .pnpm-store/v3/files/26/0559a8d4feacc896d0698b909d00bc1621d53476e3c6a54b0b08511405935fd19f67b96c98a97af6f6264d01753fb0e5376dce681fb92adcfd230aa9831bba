@@ -1,0 +1,11 @@
+{
+  "mappings": "KAEK,eAAe,GAAG;AAEvB,OAAO,iBAAS,SAAS,UAAU,aAAa,WAAW,IAAI",
+  "names": [],
+  "sources": [
+    "src/useEvent.ts"
+  ],
+  "sourcesContent": [
+    "import { useGet } from './useGet'\n\ntype AnyFunction = (...args: any[]) => any\n\nexport function useEvent<T extends AnyFunction>(callback?: T): T {\n  return useGet(callback, defaultValue, true) as T\n}\n\nconst defaultValue = () => {\n  throw new Error('Cannot call an event handler while rendering.')\n}\n"
+  ],
+  "version": 3
+}

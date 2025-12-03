@@ -1,0 +1,11 @@
+{
+  "mappings": "AACA,cAAc,YAAY,0BAA0B;AAEpD,OAAO,iBAAS,iBAAiB;AAUjC,OAAO,iBAAS,UAAU,IAAI",
+  "names": [],
+  "sources": [
+    "src/helpers.native.ts"
+  ],
+  "sourcesContent": [
+    "import { Dimensions } from 'react-native'\nimport type { WindowSize, WindowSizeListener } from './types'\n\nexport function getWindowSize(): WindowSize {\n  return Dimensions.get('window')\n}\n\nconst cbs = new Set<WindowSizeListener>()\n\nDimensions.addEventListener('change', ({ window }) => {\n  cbs.forEach((cb) => cb(window))\n})\n\nexport function subscribe(cb: WindowSizeListener): () => void {\n  cbs.add(cb)\n  return () => cbs.delete(cb)\n}\n"
+  ],
+  "version": 3
+}

@@ -1,0 +1,1 @@
+{"version":3,"names":["React","useGetIcon","el","props","isValidElement","cloneElement"],"sources":["../../src/useGetIcon.tsx"],"sourcesContent":[null],"mappings":"AAAA,OAAOA,KAAA,MAAW;AAEX,IAAAC,UAAM,YAAAA,CAAA,EACH;EAIF,OAAG,UAAAC,EAAA,EAAAC,KAAA;IAAA,OAAAD,EAAA,oBAAAF,KAAA,CAAAI,cAAA,CAAAF,EAAA,mBAAAF,KAAA,CAAAK,YAAA,CAAAH,EAAA;MAEA,GAAGC,KAAA;MAGH","ignoreList":[]}

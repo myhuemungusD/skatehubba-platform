@@ -1,0 +1,1 @@
+{"version":3,"names":["React","useConstant","fn","document","useMemo","ref","useRef"],"sources":["../../src/index.ts"],"sourcesContent":[null],"mappings":"AAAA,YAAYA,KAAA,MAAW;AAIhB,SAASC,YAAeC,EAAA,EAAgB;EAE7C,IAAI,OAAOC,QAAA,GAAa,KACtB,OAAOH,KAAA,CAAMI,OAAA,CAAQ,YAAS;IAGhC,OAAMF,EAAM;EAEZ,KAAK;EAKP,IAAAG,GAAA,GAAAL,KAAA,CAAAM,MAAA","ignoreList":[]}

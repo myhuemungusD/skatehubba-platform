@@ -1,0 +1,5 @@
+function getThemeCSSRules() {
+  return [];
+}
+export { getThemeCSSRules };
+//# sourceMappingURL=getThemeCSSRules.native.js.map

@@ -1,0 +1,11 @@
+{
+  "mappings": "AAAA,OAAO,cAAM;CACX;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA;CACA",
+  "names": [],
+  "sources": [
+    "src/light/amber.ts"
+  ],
+  "sourcesContent": [
+    "export const amber = {\n  amber1: 'hsl(39, 70.0%, 99.0%)',\n  amber2: 'hsl(40, 100%, 96.5%)',\n  amber3: 'hsl(44, 100%, 91.7%)',\n  amber4: 'hsl(43, 100%, 86.8%)',\n  amber5: 'hsl(42, 100%, 81.8%)',\n  amber6: 'hsl(38, 99.7%, 76.3%)',\n  amber7: 'hsl(36, 86.1%, 67.1%)',\n  amber8: 'hsl(35, 85.2%, 55.1%)',\n  amber9: 'hsl(39, 100%, 57.0%)',\n  amber10: 'hsl(35, 100%, 55.5%)',\n  amber11: 'hsl(30, 100%, 34.0%)',\n  amber12: 'hsl(20, 80.0%, 17.0%)',\n}\n"
+  ],
+  "version": 3
+}

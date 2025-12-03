@@ -1,0 +1,19 @@
+import { InstrumentationBase, type InstrumentationConfig } from '@opentelemetry/instrumentation';
+import type { Span } from '@opentelemetry/api';
+type ApplyCustomAttributesOnSpanFunction = (span: Span, error: Error) => void;
+export interface UncaughtExceptionInstrumentationConfig extends InstrumentationConfig {
+    applyCustomAttributesOnSpan?: ApplyCustomAttributesOnSpanFunction;
+}
+export declare class UncaughtExceptionInstrumentation extends InstrumentationBase {
+    private _isEnabled;
+    readonly applyCustomAttributesOnSpan?: ApplyCustomAttributesOnSpanFunction;
+    private _oldErrorHandler?;
+    constructor({ enabled, applyCustomAttributesOnSpan, }?: UncaughtExceptionInstrumentationConfig);
+    onError: (caughtError: any, isFatal?: boolean) => void;
+    init(): void;
+    enable(): void;
+    disable(): void;
+    isEnabled(): boolean;
+}
+export {};
+//# sourceMappingURL=UncaughtExceptionInstrumentation.d.ts.map
