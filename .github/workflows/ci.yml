@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install pnpm (NO version parameter → avoids the version conflict error)
+      # Install pnpm (NO version parameter → avoids the multiple-version error)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -26,18 +26,18 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      # Install dependencies for the whole monorepo
+      # Install dependencies for the entire monorepo
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Build all apps/packages in the monorepo using Turborepo
-      - name: Turborepo build
+      # Build all apps/packages with Turborepo
+      - name: Build
         run: pnpm turbo run build --continue
 
-      # Lint (web + native + backend)
+      # Lint all workspaces
       - name: Lint
         run: pnpm turbo run lint --continue
 
-      # Type Checking
+      # Type checking across monorepo
       - name: Type Check
         run: pnpm turbo run typecheck --continue
