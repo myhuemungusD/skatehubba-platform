@@ -1,0 +1,27 @@
+name: "SkateHubba CodeQL Config"
+
+paths:
+  - apps/web
+  - apps/mobile
+  - packages/*
+  - server
+  - functions
+
+paths-ignore:
+  - node_modules
+  - .pnpm-store
+  - .expo
+  - .turbo
+  - android
+  - ios
+  - dist
+  - build
+  - coverage
+  - **/*.test.ts
+  - **/*.spec.ts
+  - apps/mobile/assets/*
+  - apps/web/next-env.d.ts
+
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
