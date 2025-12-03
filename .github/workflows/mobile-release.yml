@@ -1,173 +1,46 @@
-name: Mobile Release
+name: Mobile Release Build (Expo EAS)
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
-    tags:
-      - 'v*'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
+    branches: [main]
 
 jobs:
-  detect-changes:
-    name: Detect Native Changes
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      native_changed: ${{ steps.check.outputs.native_changed }}
-      is_tag: ${{ steps.check.outputs.is_tag }}
-      profile: ${{ steps.check.outputs.profile }}
-      channel: ${{ steps.check.outputs.channel }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          fetch-depth: 0
+          run_install: false
 
-      - name: Determine release type and check for native changes
-        id: check
-        run: |
-          IS_TAG=false
-          PROFILE=preview
-          CHANNEL=preview
-          NATIVE_CHANGED=false
-          
-          # Check if this is a tag push (Production release)
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            IS_TAG=true
-            PROFILE=production
-            CHANNEL=production
-            # For production tags, always do a full build
-            NATIVE_CHANGED=true
-          else
-            # Native paths that indicate a full build is needed
-            # Both root-level and apps/mobile-level paths are checked
-            # to support different monorepo structures
-            NATIVE_PATHS="ios/ android/ apps/mobile/ios/ apps/mobile/android/"
-            NATIVE_FILES="package.json apps/mobile/package.json app.json apps/mobile/app.json Podfile Gemfile"
-            
-            # Get changed files, handling the case of first commit
-            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff-tree --no-commit-id --name-only -r HEAD)
-            
-            # Check paths
-            for path in $NATIVE_PATHS; do
-              if echo "$CHANGED_FILES" | grep -q "^$path"; then
-                NATIVE_CHANGED=true
-                break
-              fi
-            done
-            
-            # Check specific files that affect native builds
-            if [ "$NATIVE_CHANGED" = false ]; then
-              for file in $NATIVE_FILES; do
-                if echo "$CHANGED_FILES" | grep -q "^$file$"; then
-                  NATIVE_CHANGED=true
-                  break
-                fi
-              done
-            fi
-          fi
-          
-          # Output all values
-          echo "is_tag=$IS_TAG" >> $GITHUB_OUTPUT
-          echo "profile=$PROFILE" >> $GITHUB_OUTPUT
-          echo "channel=$CHANNEL" >> $GITHUB_OUTPUT
-          echo "native_changed=$NATIVE_CHANGED" >> $GITHUB_OUTPUT
-          
-          # Debug output
-          echo "Detected changes:"
-          echo "  is_tag: $IS_TAG"
-          echo "  profile: $PROFILE"
-          echo "  channel: $CHANNEL"
-          echo "  native_changed: $NATIVE_CHANGED"
-
-  ota-update:
-    name: Publish OTA Update
-    needs: detect-changes
-    if: needs.detect-changes.outputs.native_changed == 'false'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Mapbox credentials
-        run: |
-          # Configure .netrc for Mapbox SDK downloads
-          cat >> ~/.netrc << NETRC_EOF
-          machine api.mapbox.com
-          login mapbox
-          password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}
-          NETRC_EOF
-          chmod 600 ~/.netrc
-
-      - uses: pnpm/action-setup@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          node-version: 20
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Setup EAS
+      - name: Expo Login
         uses: expo/expo-github-action@v8
         with:
-          eas-version: latest
+          expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Publish OTA update
-        working-directory: apps/mobile
-        run: |
-          eas update --branch ${{ needs.detect-changes.outputs.channel }} \
-            --message "${{ github.event.head_commit.message }}" \
-            --non-interactive
+      - name: Build Android Release
+        run: pnpm --filter apps/mobile eas build --platform android --profile production --non-interactive
 
-  native-build:
-    name: Native Build
-    needs: detect-changes
-    if: needs.detect-changes.outputs.native_changed == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - name: Build iOS Release
+        run: pnpm --filter apps/mobile eas build --platform ios --profile production --non-interactive
 
-      - name: Setup Mapbox credentials
-        run: |
-          # Configure .netrc for Mapbox SDK downloads
-          cat >> ~/.netrc << NETRC_EOF
-          machine api.mapbox.com
-          login mapbox
-          password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}
-          NETRC_EOF
-          chmod 600 ~/.netrc
-
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Setup EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Build app
-        working-directory: apps/mobile
-        run: |
-          eas build \
-            --profile ${{ needs.detect-changes.outputs.profile }} \
-            --platform all \
-            --non-interactive
+      # Optional: turn on when ready
+      # - name: Submit to Stores
+      #   run: |
+      #     pnpm --filter apps/mobile eas submit --platform android --latest --non-interactive
+      #     pnpm --filter apps/mobile eas submit --platform ios --latest --non-interactive
