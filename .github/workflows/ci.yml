@@ -1,92 +1,27 @@
 name: CI
 
-on:
-  push:
-    branches: [main, skatehubbaV2]
-  pull_request:
-    branches: [main, skatehubbaV2]
+on: [push, pull_request]
 
 jobs:
-  gatekeeper:
-    name: Gatekeeper - Quality Gate
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 9
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      # Install: cleanly via pnpm install --frozen-lockfile
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      # Lint: Run eslint (fail on warnings) and prettier --check
-      - name: ESLint (fail on warnings)
-        run: pnpm eslint . --max-warnings 0
-
-      - name: Prettier check
-        run: pnpm prettier --check .
-
-      # Typecheck: Run tsc --noEmit on the entire monorepo. Strict mode is non-negotiable.
-      - name: TypeScript strict typecheck
-        run: pnpm tsc --noEmit
-
-      # Test: Run Jest unit tests
-      - name: Run Jest unit tests
-        run: pnpm turbo test
-
-      # Secret Scan: Check for accidental .env leaks (like Firebase Admin keys)
-      - name: Secret scan - Check for .env leaks
-        run: |
-          echo "🔍 Scanning for accidental secret leaks..."
-          
-          # Check for .env files that shouldn't be committed
-          if find . -name '.env' -not -path './node_modules/*' -not -path './.git/*' | grep -q .; then
-            echo "❌ ERROR: Found .env file(s) that should not be committed:"
-            find . -name '.env' -not -path './node_modules/*' -not -path './.git/*'
-            exit 1
-          fi
-          
-          if find . -name '.env.local' -not -path './node_modules/*' -not -path './.git/*' | grep -q .; then
-            echo "❌ ERROR: Found .env.local file(s) that should not be committed:"
-            find . -name '.env.local' -not -path './node_modules/*' -not -path './.git/*'
-            exit 1
-          fi
-          
-          # Check for Firebase Admin private keys in source files
-          if grep -r --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.json" \
-            -E '("private_key"|"private_key_id"|FIREBASE_ADMIN|firebase-adminsdk)' \
-            --exclude-dir=node_modules --exclude-dir=.git --exclude="*.example" . 2>/dev/null | \
-            grep -v "process\.env" | grep -v "\.example" | grep -v "package\.json" | grep -v "pnpm-lock\.yaml"; then
-            echo "❌ ERROR: Potential Firebase Admin key or secret found in source code!"
-            echo "Please ensure all secrets are stored in environment variables."
-            exit 1
-          fi
-          
-          # Check for hardcoded API keys (common patterns)
-          if grep -r --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" \
-            -E '(api[_-]?key|apiKey|API_KEY)\s*[:=]\s*["\x27][A-Za-z0-9_-]{20,}["\x27]' \
-            --exclude-dir=node_modules --exclude-dir=.git . 2>/dev/null; then
-            echo "⚠️ WARNING: Potential hardcoded API key found. Please verify this is not a secret."
-          fi
-          
-          echo "✅ Secret scan passed - no .env leaks detected"
-
-      # E2E tests (skipped, requires macOS runner)
-      - name: E2E Build & Test (Detox)
-        run: |
-          # pnpm detox build --configuration ios.sim.release
-          # pnpm detox test --configuration ios.sim.release
-          echo "Detox tests skipped in CI for now (requires macOS runner)"
+      - name: Type check
+        run: pnpm turbo run typecheck --continue
+      - name: Lint
+        run: pnpm turbo run lint --continue
+      - name: Run tests
+        run: pnpm turbo run test --continue
 

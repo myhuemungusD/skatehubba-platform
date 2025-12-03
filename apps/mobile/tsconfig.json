@@ -1,11 +1,20 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
+    "moduleResolution": "node",
+    "jsx": "react-native",
+    "rootDir": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules"]
 }

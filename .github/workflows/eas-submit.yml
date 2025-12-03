@@ -1,0 +1,27 @@
+name: EAS Build & Submit
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Expo login
+        run: npx expo login -u ${{ secrets.EXPO_USERNAME }} -p ${{ secrets.EXPO_PASSWORD }}
+      - name: Build iOS
+        run: pnpm --filter @skatehubba/mobile eas build --platform ios --non-interactive
+      - name: Submit to App Store
+        run: pnpm --filter @skatehubba/mobile eas submit -p ios --non-interactive

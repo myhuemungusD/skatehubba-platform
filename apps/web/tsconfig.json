@@ -1,22 +1,26 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    /* === Core === */
+    /* === Next.js 14 Requirements === */
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "moduleResolution": "bundler",
-
-    /* === Next.js 14 Requirements === */
     "jsx": "preserve",
     "incremental": true,
-    "allowJs": false,                  // prevent stray JS files from breaking builds
+    "allowJs": false,
     "noEmit": true,
-    "verbatimModuleSyntax": true,      // REQUIRED for Next.js 14 App Router
+    "verbatimModuleSyntax": true,
     "isolatedModules": true,
 
-    /* === Type Safety === */
+    /* === Type Safety (from base + overrides) === */
     "strict": true,
-    "skipLibCheck": true,              // best practice for Next.js
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
@@ -25,8 +29,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-
-      /* Shared packages inside monorepo */
       "@repo/ui/*": ["../../packages/ui/src/*"],
       "@repo/utils/*": ["../../packages/utils/src/*"],
       "@repo/types/*": ["../../packages/types/src/*"],
