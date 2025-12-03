@@ -1,9 +1,7 @@
 name: SkateHubba Repo Repair CI
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [main]
+  workflow_dispatch:  # Only run when manually triggered
 
 jobs:
   repair:
@@ -43,11 +41,10 @@ jobs:
       - name: Build Web (Next.js)
         run: pnpm --filter apps/web build
 
-      - name: Build Mobile (Expo)
+      - name: Build Mobile (Expo export)
         run: pnpm --filter apps/mobile expo export || true
 
       - name: Auto-commit fixes
-        if: ${{ steps.format.outcome == 'success' }}
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
