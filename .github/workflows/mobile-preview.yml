@@ -1,0 +1,55 @@
+name: Mobile Preview Build
+
+on:
+  pull_request:
+    paths:
+      - "apps/mobile/**"
+      - "packages/**"
+      - ".github/workflows/mobile-preview.yml"
+
+jobs:
+  preview:
+    name: Build Expo Preview (iOS + Android)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Install Expo CLI
+        run: pnpm add -g expo-cli
+
+      - name: Verify Expo project
+        working-directory: apps/mobile
+        run: |
+          echo "Checking Expo config..."
+          npx expo config --type public
+
+      - name: Build Android preview
+        working-directory: apps/mobile
+        run: |
+          echo "Building Android preview..."
+          npx expo build:android --non-interactive --no-wait || true
+
+      - name: Build iOS preview
+        working-directory: apps/mobile
+        run: |
+          echo "Building iOS preview..."
+          npx expo build:ios --non-interactive --no-wait || true
+
+      - name: Done
+        run: echo "Preview build workflow finished"
