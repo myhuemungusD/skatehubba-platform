@@ -26,11 +26,11 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      # Install dependencies for the entire monorepo
+      # Install dependencies for the monorepo
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Build all apps/packages with Turborepo
+      # Build all apps/packages via Turborepo
       - name: Build
         run: pnpm turbo run build --continue
 
