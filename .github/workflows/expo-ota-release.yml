@@ -1,64 +1,37 @@
-name: Expo OTA Release (Manual Only)
+name: Expo OTA Release
 
 on:
   workflow_dispatch:
-    inputs:
-      release_channel:
-        description: "Expo release channel"
-        required: true
-        default: "production"
-      message:
-        description: "Update message"
-        required: true
-        default: "OTA update"
-
-concurrency:
-  group: expo-ota-release
-  cancel-in-progress: false
+  push:
+    branches: [main]
 
 jobs:
-  publish:
-    name: Publish OTA Update
+  ota:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (LTS)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: 'pnpm'
 
-      - name: Install Expo CLI
-        run: npm install -g expo-cli
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Install project dependencies
-        run: npm install --legacy-peer-deps
+      - name: Expo Login
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Configure Expo Authentication
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "❌ ERROR: EXPO_TOKEN secret is missing!"
-            exit 1
-          fi
-          echo "🔐 Expo token detected. Proceeding…"
-
-      - name: Publish OTA Update to Expo
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          echo "🚀 Publishing OTA update..."
-          expo publish \
-            --release-channel "${{ github.event.inputs.release_channel }}" \
-            --non-interactive \
-            --message "${{ github.event.inputs.message }}"
-
-      - name: Success Output
-        run: echo "🎉 OTA update published successfully!"
+      - name: Publish OTA Update
+        run: pnpm --filter apps/mobile expo publish --non-interactive
