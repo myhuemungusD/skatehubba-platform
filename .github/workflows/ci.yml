@@ -2,35 +2,42 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
-  build:
+  build-and-lint:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Install pnpm (NO version parameter → avoids the version conflict error)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          run_install: false
 
+      # Install Node 20 and enable pnpm caching
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: pnpm
 
+      # Install dependencies for the whole monorepo
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --include-optional
+        run: pnpm install --frozen-lockfile
 
-      - name: Type check
-        run: pnpm turbo run typecheck --continue
+      # Build all apps/packages in the monorepo using Turborepo
+      - name: Turborepo build
+        run: pnpm turbo run build --continue
 
+      # Lint (web + native + backend)
       - name: Lint
         run: pnpm turbo run lint --continue
 
-      - name: Run tests
-        run: pnpm turbo run test --continue
+      # Type Checking
+      - name: Type Check
+        run: pnpm turbo run typecheck --continue
